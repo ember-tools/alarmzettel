@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     adressen_datei: Path = Path(__file__).resolve().parent.parent.parent / "data" / "adressen.sqlite"
     adressen_tage: int = 30
     adressen_laden: bool = True
+    tile_dir: Path = Path(__file__).resolve().parent.parent.parent / "data" / "tiles"
     typst_binary: str = "typst"
     render_timeout_seconds: int = 30
     render_root: Path = Path(__file__).resolve().parent.parent / "render"

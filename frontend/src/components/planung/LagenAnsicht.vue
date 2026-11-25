@@ -57,13 +57,13 @@ function zeit(wann: string): string {
     <p v-if="!liste.length" class="text-muted text-sm">{{ t('ablauf.keineLagen') }}</p>
 
     <section v-for="einsatz in liste" :key="`${einsatz.programmpunkt.id}-${einsatz.nummer}`"
-             class="abschnitt">
+             class="panel">
       <div class="flex items-baseline gap-3 flex-wrap">
         <span class="tabular text-lg">{{ zeit(einsatz.von) }}</span>
-        <h2 class="abschnitt-titel">
+        <h2 class="section-title">
           {{ lageName(einsatz.programmpunkt.id) || t('ablauf.ohneName') }}
         </h2>
-        <span v-if="einsatz.nummer > 1" class="label text-muted">
+        <span v-if="einsatz.nummer > 1" class="eyebrow text-muted">
           {{ t('ablauf.derWievielte', {n: einsatz.nummer}) }}
         </span>
         <span class="text-muted text-sm">{{ ortName(einsatz.ortId) }}</span>
@@ -76,13 +76,13 @@ function zeit(wann: string): string {
       </div>
 
       <p v-if="einsatz.programmpunkt.alarmId" class="text-muted text-[13px] mt-1">
-        <font-awesome-icon icon="fa-solid fa-file-pdf" class="mr-1"/>
+        <UIcon name="i-lucide-file-text" class="mr-1"/>
         {{ alarmStichwort(einsatz.programmpunkt.alarmId) || t('ablauf.ohneName') }}
       </p>
 
       <div class="mt-3 text-sm">
         <div v-for="eintrag in einsatz.beteiligte" :key="eintrag.schritt.id"
-             class="border-t border-rule py-1 flex flex-wrap items-baseline gap-x-3">
+             class="border-t border-default py-1 flex flex-wrap items-baseline gap-x-3">
           <span class="font-bold">{{ wer(eintrag) }}</span>
           <span class="tabular whitespace-nowrap">
             {{ uhrzeit(eintrag.aufbruch) }}–{{ uhrzeit(eintrag.bis) }}
@@ -94,7 +94,7 @@ function zeit(wann: string): string {
       </div>
 
       <p v-for="(befund, nummer) in befunde.get(einsatz.programmpunkt.id)" :key="nummer"
-         class="text-signal-ink text-[13px] mt-2">
+         class="text-(--eb-signal-text) text-[13px] mt-2">
         {{ t(`ablauf.befund.${befund.art}`, {
           ...befund.werte, was: lageName(einsatz.programmpunkt.id) || t('ablauf.ohneName')}) }}
       </p>

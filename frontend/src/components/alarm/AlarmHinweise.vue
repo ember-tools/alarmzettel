@@ -63,22 +63,22 @@ function antwortEntfernen(hinweis: Hinweis, index: number) {
 </script>
 
 <template>
-  <section class="abschnitt">
+  <section class="panel">
     <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
-      <h2 class="abschnitt-titel">{{ t('abschnitt.hinweise') }}</h2>
+      <h2 class="section-title">{{ t('abschnitt.hinweise') }}</h2>
       <div class="flex gap-2 flex-wrap">
-        <button type="button" class="knopf knopf-klein knopf-primaer" @click="abfrage = true">
-          <font-awesome-icon icon="fa-solid fa-list-check"/>
+        <UButton size="sm" @click="abfrage = true">
+          <UIcon name="i-lucide-list-checks"/>
           {{ t('sna.oeffnen') }}
-        </button>
-        <button type="button" class="knopf knopf-klein" @click="textHinzufuegen">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
+        </UButton>
+        <UButton size="sm" color="neutral" variant="outline" @click="textHinzufuegen">
+          <UIcon name="i-lucide-plus"/>
           {{ t('hinweise.neuerText') }}
-        </button>
-        <button type="button" class="knopf knopf-klein" @click="codeHinzufuegen">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
+        </UButton>
+        <UButton size="sm" color="neutral" variant="outline" @click="codeHinzufuegen">
+          <UIcon name="i-lucide-plus"/>
           {{ t('hinweise.neuerCode') }}
-        </button>
+        </UButton>
       </div>
     </div>
 
@@ -86,40 +86,40 @@ function antwortEntfernen(hinweis: Hinweis, index: number) {
 
     <ul class="grid gap-3">
       <li v-for="(hinweis, index) in alarm.hinweise" :key="index"
-          class="border border-rule rounded p-3 bg-page">
+          class="border border-default rounded p-3 bg-muted">
         <div class="flex items-start gap-2">
           <div class="grow grid gap-2">
-            <input v-if="hinweis.typ === 'text'" v-model="hinweis.text" type="text" class="field"
-                   :placeholder="t('hinweise.platzhalterText')"/>
+            <UInput v-if="hinweis.typ === 'text'" v-model="hinweis.text" type="text"
+                    :placeholder="t('hinweise.platzhalterText')" class="w-full"/>
 
             <template v-else>
               <div class="grid md:grid-cols-[160px_1fr] gap-2">
                 <div>
-                  <label class="feld-label">{{ t('hinweise.code') }}</label>
-                  <input v-model="hinweis.code" type="text" class="field"
-                         :placeholder="t('hinweise.platzhalterCode')"/>
+                  <label class="field-label">{{ t('hinweise.code') }}</label>
+                  <UInput v-model="hinweis.code" type="text"
+                          :placeholder="t('hinweise.platzhalterCode')" class="w-full"/>
                 </div>
                 <div>
-                  <label class="feld-label">{{ t('hinweise.meldung') }}</label>
-                  <input v-model="hinweis.meldung" type="text" class="field"/>
+                  <label class="field-label">{{ t('hinweise.meldung') }}</label>
+                  <UInput v-model="hinweis.meldung" type="text" class="w-full"/>
                 </div>
               </div>
               <div>
-                <label class="feld-label">{{ t('hinweise.antworten') }}</label>
+                <label class="field-label">{{ t('hinweise.antworten') }}</label>
                 <ol class="grid gap-2">
                   <li v-for="(_, nummer) in hinweis.antworten" :key="nummer" class="flex gap-2 items-center">
                     <span class="tabular text-muted text-[13px] w-6 text-right shrink-0">{{ nummer + 1 }}.</span>
-                    <input v-model="hinweis.antworten[nummer]" type="text" class="field"/>
-                    <button type="button" class="knopf knopf-klein knopf-gefahr shrink-0"
-                            :title="t('hinweise.entfernen')" @click="antwortEntfernen(hinweis, nummer)">
-                      <font-awesome-icon icon="fa-solid fa-xmark"/>
-                    </button>
+                    <UInput v-model="hinweis.antworten[nummer]" type="text" class="w-full"/>
+                    <UButton size="sm" color="signal" variant="outline" class="shrink-0"
+                             :title="t('hinweise.entfernen')" @click="antwortEntfernen(hinweis, nummer)">
+                      <UIcon name="i-lucide-x"/>
+                    </UButton>
                   </li>
                 </ol>
-                <button type="button" class="knopf knopf-klein mt-2" @click="antwortHinzufuegen(hinweis)">
-                  <font-awesome-icon icon="fa-solid fa-plus"/>
+                <UButton size="sm" color="neutral" variant="outline" class="mt-2" @click="antwortHinzufuegen(hinweis)">
+                  <UIcon name="i-lucide-plus"/>
                   {{ t('hinweise.antwortHinzufuegen') }}
-                </button>
+                </UButton>
               </div>
               <p v-if="hinweis.code" class="tabular text-[13px] text-muted">
                 Code: {{ codeAnzeige(hinweis.code) }}
@@ -128,18 +128,18 @@ function antwortEntfernen(hinweis: Hinweis, index: number) {
           </div>
 
           <div class="flex flex-col gap-1 shrink-0">
-            <button type="button" class="knopf knopf-klein" :title="t('liste.hoch')"
-                    :disabled="index === 0" @click="hinweisVerschieben(index, -1)">
-              <font-awesome-icon icon="fa-solid fa-angle-up"/>
-            </button>
-            <button type="button" class="knopf knopf-klein" :title="t('liste.runter')"
-                    :disabled="index === alarm.hinweise.length - 1" @click="hinweisVerschieben(index, 1)">
-              <font-awesome-icon icon="fa-solid fa-angle-down"/>
-            </button>
-            <button type="button" class="knopf knopf-klein knopf-gefahr" :title="t('hinweise.entfernen')"
-                    @click="entfernen(index)">
-              <font-awesome-icon icon="fa-solid fa-trash"/>
-            </button>
+            <UButton size="sm" color="neutral" variant="outline" :title="t('liste.hoch')"
+                     :disabled="index === 0" @click="hinweisVerschieben(index, -1)">
+              <UIcon name="i-lucide-chevron-up"/>
+            </UButton>
+            <UButton size="sm" color="neutral" variant="outline" :title="t('liste.runter')"
+                     :disabled="index === alarm.hinweise.length - 1" @click="hinweisVerschieben(index, 1)">
+              <UIcon name="i-lucide-chevron-down"/>
+            </UButton>
+            <UButton size="sm" color="signal" variant="outline" :title="t('hinweise.entfernen')"
+                     @click="entfernen(index)">
+              <UIcon name="i-lucide-trash-2"/>
+            </UButton>
           </div>
         </div>
       </li>

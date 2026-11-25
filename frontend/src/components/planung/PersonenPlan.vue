@@ -104,8 +104,8 @@ function lage(eintrag: Personenschritt): string {
 
 <template>
   <div class="grid gap-5">
-    <section v-for="plan in plaene" :key="plan.person.id" class="abschnitt">
-      <h2 class="abschnitt-titel">
+    <section v-for="plan in plaene" :key="plan.person.id" class="panel">
+      <h2 class="section-title">
         {{ plan.person.name || t('ablauf.ohneName') }}
         <span v-if="plan.person.anzahl > 1" class="text-muted">({{ plan.person.anzahl }})</span>
       </h2>
@@ -114,7 +114,7 @@ function lage(eintrag: Personenschritt): string {
         <table class="w-full text-sm">
         <tbody>
           <tr v-for="(zeile, nummer) in plan.zeilen" :key="zeile.schluessel"
-              class="border-t border-rule">
+              class="border-t border-default">
             <td v-if="mehrereTage()" class="tabular py-1 pr-3 text-muted whitespace-nowrap">
               {{ plan.tage[nummer] }}
             </td>
@@ -129,7 +129,7 @@ function lage(eintrag: Personenschritt): string {
         </table>
       </div>
       <p v-for="(befund, nummer) in befunde.get(plan.person.id)" :key="nummer"
-         class="text-signal-ink text-[13px] mt-1">
+         class="text-(--eb-signal-text) text-[13px] mt-1">
         {{ t(`ablauf.befund.${befund.art}`, befund.werte ?? {}) }}
       </p>
     </section>

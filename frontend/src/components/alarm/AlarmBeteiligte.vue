@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import TextFeld from '../base/TextFeld.vue'
-import TextBereich from '../base/TextBereich.vue'
+import {TextAreaField, TextField} from '@emberbox/ui'
 import {t} from '../../i18n'
 import {festnetznummer, mobilnummer, zufallsname} from '../../scripts/generator'
 import type {Alarm} from '../../interfaces/Alarm'
@@ -16,24 +15,24 @@ function neuErzeugen() {
 </script>
 
 <template>
-  <section class="abschnitt">
+  <section class="panel">
     <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
-      <h2 class="abschnitt-titel">{{ t('abschnitt.beteiligte') }}</h2>
-      <button type="button" class="knopf knopf-klein" :title="t('feld.erzeugenHinweis')"
-              @click="neuErzeugen">
-        <font-awesome-icon icon="fa-solid fa-rotate"/>
+      <h2 class="section-title">{{ t('abschnitt.beteiligte') }}</h2>
+      <UButton size="sm" color="neutral" variant="outline" :title="t('feld.erzeugenHinweis')"
+               @click="neuErzeugen">
+        <UIcon name="i-lucide-refresh-cw"/>
         {{ t('feld.erzeugen') }}
-      </button>
+      </UButton>
     </div>
     <div class="grid md:grid-cols-2 gap-3">
-      <TextFeld v-model="alarm.meldungsquelle" :label="t('feld.meldungsquelle')"/>
-      <TextFeld v-model="alarm.rueckrufnummer" :label="t('feld.rueckrufnummer')"/>
-      <TextFeld v-model="alarm.anrufer" :label="t('feld.anrufer')"/>
-      <TextFeld v-model="alarm.betroffener" :label="t('feld.betroffener')"/>
-      <TextFeld v-model="alarm.meldender" :label="t('feld.meldender')"/>
+      <TextField v-model="alarm.meldungsquelle" :label="t('feld.meldungsquelle')"/>
+      <TextField v-model="alarm.rueckrufnummer" :label="t('feld.rueckrufnummer')"/>
+      <TextField v-model="alarm.anrufer" :label="t('feld.anrufer')"/>
+      <TextField v-model="alarm.betroffener" :label="t('feld.betroffener')"/>
+      <TextField v-model="alarm.meldender" :label="t('feld.meldender')"/>
     </div>
     <div class="mt-3">
-      <TextBereich v-model="alarm.wasIstPassiert" :label="t('feld.wasIstPassiert')" :zeilen="2"/>
+      <TextAreaField v-model="alarm.wasIstPassiert" :label="t('feld.wasIstPassiert')" :rows="2"/>
     </div>
   </section>
 </template>

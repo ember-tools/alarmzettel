@@ -8,9 +8,9 @@ RUN npm ci
 # kein .git, also werden sie hereingereicht.
 FROM frontend-deps AS frontend-build
 ARG COMMIT=dev
-ARG GEBAUT
-ENV ALARMPLANER_COMMIT=$COMMIT
-ENV ALARMPLANER_GEBAUT=$GEBAUT
+ARG BUILD_TIME
+ENV COMMIT=$COMMIT
+ENV BUILD_TIME=$BUILD_TIME
 COPY frontend/ ./
 RUN npm run build
 
@@ -42,7 +42,7 @@ RUN pipenv sync --system && pip uninstall -y pipenv
 FROM runtime AS production
 LABEL org.opencontainers.image.title="Alarmzettel" \
       org.opencontainers.image.description="Berlin fire brigade alarm slips, rendered with Typst" \
-      org.opencontainers.image.source="https://github.com/rainbowdashlabs/alarmzettel" \
+      org.opencontainers.image.source="https://github.com/ember-tools/alarmzettel" \
       org.opencontainers.image.licenses="AGPL-3.0-or-later"
 WORKDIR /app
 
@@ -54,8 +54,9 @@ COPY --from=frontend-build /app/dist ./static/
 # that outlives the container. The address list is fetched on first start, not shipped.
 ENV SITZUNG_VERZEICHNIS=/data/freigaben \
     ADRESSEN_DATEI=/data/adressen.sqlite \
+    TILE_DIR=/data/tiles \
     LOG_FORMAT=json
-RUN mkdir -p src/render/tmp /data/freigaben && chmod 1777 src/render/tmp \
+RUN mkdir -p src/render/tmp /data/freigaben /data/tiles && chmod 1777 src/render/tmp \
  && useradd --system --uid 10001 alarmplaner \
  && chown -R alarmplaner:alarmplaner /app /data
 USER alarmplaner

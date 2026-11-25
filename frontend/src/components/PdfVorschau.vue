@@ -89,23 +89,23 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="abschnitt h-full flex flex-col">
+  <div class="panel h-full flex flex-col">
     <div class="flex items-center justify-between mb-3 gap-2">
-      <h2 class="abschnitt-titel">{{ t('abschnitt.vorschau') }}</h2>
-      <span class="label transition-opacity duration-200" :class="laedt ? 'opacity-100' : 'opacity-0'">
+      <h2 class="section-title">{{ t('abschnitt.vorschau') }}</h2>
+      <span class="eyebrow transition-opacity duration-200" :class="laedt ? 'opacity-100' : 'opacity-0'">
         {{ t('vorschau.laedt') }}
       </span>
     </div>
 
-    <p v-if="fehler && zeigtEtwas" class="text-signal-ink text-[13px] mb-2">{{ fehler }}</p>
+    <p v-if="fehler && zeigtEtwas" class="text-(--eb-signal-text) text-[13px] mb-2">{{ fehler }}</p>
 
     <div v-if="fehler && !zeigtEtwas"
          class="grow flex flex-col items-center justify-center gap-3 text-center p-4">
-      <p class="text-signal-ink text-sm">{{ fehler }}</p>
-      <button type="button" class="knopf" @click="erzeugen">{{ t('vorschau.erneut') }}</button>
+      <p class="text-(--eb-signal-text) text-sm">{{ fehler }}</p>
+      <UButton color="neutral" variant="outline" @click="erzeugen">{{ t('vorschau.erneut') }}</UButton>
     </div>
 
-    <div v-else-if="zeigtEtwas" class="grow relative border border-rule rounded overflow-hidden bg-white">
+    <div v-else-if="zeigtEtwas" class="grow relative border border-default rounded overflow-hidden bg-white">
       <iframe v-for="rahmen in RAHMEN" :key="rahmen" :src="anzeige(rahmen)" title="PDF"
               class="absolute inset-0 w-full h-full transition-opacity duration-300"
               :class="aktiv === rahmen ? 'opacity-100' : 'opacity-0 pointer-events-none'"

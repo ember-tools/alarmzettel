@@ -6,7 +6,7 @@ import {sitzungLesen} from '../api/sitzung'
 import {fehlertext} from '../api/render'
 import {arbeitsmappe, ersetzen, uebernehmen} from '../store/arbeitsmappe'
 import {sitzungWechseln, nameSetzen} from '../store/sitzung'
-import Rueckfrage from '../components/base/Rueckfrage.vue'
+import {useConfirm} from '@emberbox/ui'
 import type {GeleseneSitzung} from '../api/sitzung'
 
 const route = useRoute()
@@ -14,7 +14,12 @@ const router = useRouter()
 const freigabe = ref<GeleseneSitzung | null>(null)
 const fehler = ref<string | null>(null)
 const name = ref(localStorage.getItem('alarmzettel_name') ?? '')
-const rueckfrage = ref<'mitarbeiten' | 'kopie' | null>(null)
+const confirm = useConfirm()
+
+/** Whether replacing what is in this browser may go ahead: at once when it holds nothing. */
+async function replaceConfirmed(): Promise<boolean> {
+  return !arbeitsmappe.alarme.length || await confirm(t('datei.ersetzen'), {confirmLabel: t('aktion.weiter')})
+}
 
 onMounted(async () => {
   try {
@@ -25,15 +30,13 @@ onMounted(async () => {
 })
 
 /** The shared copy replaces what is in this browser, so the existing set is not lost silently. */
-function kopieAnfordern() {
+async function kopieAnfordern() {
   if (!freigabe.value) return
-  if (arbeitsmappe.alarme.length) rueckfrage.value = 'kopie'
-  else kopieUebernehmen()
+  if (await replaceConfirmed()) kopieUebernehmen()
 }
 
 function kopieUebernehmen() {
   if (!freigabe.value) return
-  rueckfrage.value = null
   ersetzen(uebernehmen(freigabe.value.arbeitsmappe))
   router.push('/')
 }
@@ -42,16 +45,14 @@ function kopieUebernehmen() {
  * Joining replaces what is in this browser with the workspace. A shared room is not merged with
  * whatever happened to be open here, or one person's leftovers would land on everyone else.
  */
-function mitarbeitenAnfordern() {
+async function mitarbeitenAnfordern() {
   if (!freigabe.value || !(name.value.trim() || freigabe.value.nurLesen)) return
-  if (arbeitsmappe.alarme.length) rueckfrage.value = 'mitarbeiten'
-  else void mitarbeiten()
+  if (await replaceConfirmed()) await mitarbeiten()
 }
 
 /** Mit einem Lesetoken heißt dasselbe „ansehen“: der Browser folgt der Sitzung, ohne zu schreiben. */
 async function mitarbeiten() {
   if (!freigabe.value) return
-  rueckfrage.value = null
   if (name.value.trim()) localStorage.setItem('alarmzettel_name', name.value.trim())
   try {
     nameSetzen(name.value)
@@ -71,10 +72,10 @@ function datum(wert: string): string {
   <div class="grid gap-5 max-w-2xl">
     <h1 class="headline text-2xl">{{ t('freigabe.titel') }}</h1>
 
-    <p v-if="fehler" class="abschnitt text-signal-ink">{{ fehler }}</p>
+    <p v-if="fehler" class="panel text-(--eb-signal-text)">{{ fehler }}</p>
     <p v-else-if="!freigabe" class="text-muted text-sm">{{ t('freigabe.laedt') }}</p>
 
-    <div v-else class="abschnitt grid gap-3">
+    <div v-else class="panel grid gap-3">
       <p>{{ t('freigabe.enthaelt', freigabe.arbeitsmappe.alarme.length) }}</p>
       <ul class="grid gap-1">
         <li v-for="alarm in freigabe.arbeitsmappe.alarme" :key="alarm.id" class="text-sm">
@@ -86,40 +87,37 @@ function datum(wert: string): string {
         </li>
       </ul>
       <p class="text-muted text-[13px]">{{ t('freigabe.laeuftAb', {datum: datum(freigabe.laeuftAb)}) }}</p>
-      <div v-if="freigabe.nurLesen" class="grid gap-2 border-t border-rule pt-3">
-        <button type="button" class="knopf knopf-primaer justify-self-start"
-                @click="mitarbeitenAnfordern">
-          <font-awesome-icon icon="fa-solid fa-users"/>
+      <div v-if="freigabe.nurLesen" class="grid gap-2 border-t border-default pt-3">
+        <UButton class="justify-self-start"
+                 @click="mitarbeitenAnfordern">
+          <UIcon name="i-lucide-users"/>
           {{ t('freigabe.ansehen') }}
-        </button>
+        </UButton>
         <p class="text-muted text-[13px]">{{ t('freigabe.ansehenHinweis') }}</p>
       </div>
 
-      <div v-else class="grid gap-2 border-t border-rule pt-3">
-        <label class="feld-label" for="wer">{{ t('freigabe.name') }}</label>
+      <div v-else class="grid gap-2 border-t border-default pt-3">
+        <label class="field-label" for="wer">{{ t('freigabe.name') }}</label>
         <div class="flex gap-2 flex-wrap">
-          <input id="wer" v-model="name" type="text" class="field grow min-w-40"
-                 :placeholder="t('freigabe.namePlatzhalter')"/>
-          <button type="button" class="knopf knopf-primaer shrink-0"
-                  :disabled="!name.trim()" @click="mitarbeitenAnfordern">
-            <font-awesome-icon icon="fa-solid fa-users"/>
+          <UInput id="wer" v-model="name" type="text"
+                  :placeholder="t('freigabe.namePlatzhalter')" class="grow min-w-40"/>
+          <UButton class="shrink-0"
+                   :disabled="!name.trim()" @click="mitarbeitenAnfordern">
+            <UIcon name="i-lucide-users"/>
             {{ t('freigabe.mitarbeiten') }}
-          </button>
+          </UButton>
         </div>
         <p class="text-muted text-[13px]">{{ t('freigabe.mitarbeitenHinweis') }}</p>
       </div>
 
-      <div class="border-t border-rule pt-3">
-        <button type="button" class="knopf" @click="kopieAnfordern">
-          <font-awesome-icon icon="fa-solid fa-download"/>
+      <div class="border-t border-default pt-3">
+        <UButton color="neutral" variant="outline" @click="kopieAnfordern">
+          <UIcon name="i-lucide-download"/>
           {{ t('freigabe.uebernehmen') }}
-        </button>
+        </UButton>
         <p class="text-muted text-[13px] mt-2">{{ t('freigabe.kopieHinweis') }}</p>
       </div>
     </div>
 
-    <Rueckfrage v-if="rueckfrage" :frage="t('datei.ersetzen')"
-                @nein="rueckfrage = null"
-                @ja="rueckfrage === 'mitarbeiten' ? mitarbeiten() : kopieUebernehmen()"/>
   </div>
 </template>

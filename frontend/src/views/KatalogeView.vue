@@ -1,8 +1,7 @@
 <script setup lang="ts">
+import {CollapsibleSection, TextField} from '@emberbox/ui'
 import {computed, reactive, ref, watch} from 'vue'
-import AdresseFeld from '../components/base/AdresseFeld.vue'
-import KlappAbschnitt from '../components/base/KlappAbschnitt.vue'
-import TextFeld from '../components/base/TextFeld.vue'
+import AddressField from '../components/base/AddressField.vue'
 import {t} from '../i18n'
 import {arbeitsmappe} from '../store/arbeitsmappe'
 import {
@@ -220,8 +219,8 @@ function truppVorschau(staerke: string): string {
       <p class="text-muted text-sm mt-1">{{ t('kataloge.beschreibung') }}</p>
     </div>
 
-    <section class="abschnitt">
-      <h2 class="abschnitt-titel">{{ t('planung.titel') }}</h2>
+    <section class="panel">
+      <h2 class="section-title">{{ t('planung.titel') }}</h2>
       <label class="flex items-center gap-3 cursor-pointer">
         <input v-model="arbeitsmappe.planung.aktiv" type="checkbox" class="h-4 w-4"/>
         <span class="text-sm">{{ t('planung.einschalten') }}</span>
@@ -229,63 +228,63 @@ function truppVorschau(staerke: string): string {
       <p class="text-muted text-[13px] mt-2">{{ t('planung.einschaltenHinweis') }}</p>
     </section>
 
-    <KlappAbschnitt name="dienststelle" :titel="t('kataloge.dienststelle')">
+    <CollapsibleSection storage-key="alarmplaner_kataloge" name="dienststelle" :title="t('kataloge.dienststelle')">
       <div class="grid md:grid-cols-3 gap-3">
-        <TextFeld v-model="arbeitsmappe.kataloge.arbeitsgruppe" :label="t('feld.arbeitsgruppe')"/>
-        <TextFeld v-model="arbeitsmappe.kataloge.wacheName" :label="t('kataloge.wacheName')"
-                  :platzhalter="t('kataloge.wachePlatzhalter')"/>
+        <TextField v-model="arbeitsmappe.kataloge.arbeitsgruppe" :label="t('feld.arbeitsgruppe')"/>
+        <TextField v-model="arbeitsmappe.kataloge.wacheName" :label="t('kataloge.wacheName')"
+                  :placeholder="t('kataloge.wachePlatzhalter')"/>
         <div>
-          <label class="feld-label">{{ t('kataloge.alarmeProTag') }}</label>
-          <input v-model.number="arbeitsmappe.kataloge.alarmeProTag" type="number" min="0"
-                 step="100" class="field tabular"/>
+          <label class="field-label">{{ t('kataloge.alarmeProTag') }}</label>
+          <UInput v-model.number="arbeitsmappe.kataloge.alarmeProTag" type="number" min="0"
+                  step="100" class="w-full" :ui="{base: 'tabular'}"/>
         </div>
       </div>
       <p class="text-muted text-[13px] mt-3 mb-4">{{ t('kataloge.arbeitsgruppeHinweis') }}</p>
       <p class="text-muted text-[13px] mb-4">{{ t('kataloge.alarmeProTagHinweis') }}</p>
 
-      <AdresseFeld v-model="arbeitsmappe.kataloge.wache" :titel="t('kataloge.wache')"/>
+      <AddressField v-model="arbeitsmappe.kataloge.wache" :title="t('kataloge.wache')"/>
       <p class="text-muted text-[13px] mt-3">{{ t('kataloge.wacheHinweis') }}</p>
-    </KlappAbschnitt>
+    </CollapsibleSection>
 
-    <KlappAbschnitt name="orte" :titel="t('kataloge.orte')"
-                    :anzahl="arbeitsmappe.kataloge.orte.length + 1">
-      <template #werkzeug>
-        <button type="button" class="knopf knopf-klein" @click="ortAnlegen">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
+    <CollapsibleSection storage-key="alarmplaner_kataloge" name="orte" :title="t('kataloge.orte')"
+                    :count="arbeitsmappe.kataloge.orte.length + 1">
+      <template #actions>
+        <UButton size="sm" color="neutral" variant="outline" @click="ortAnlegen">
+          <UIcon name="i-lucide-plus"/>
           {{ t('kataloge.ortNeu') }}
-        </button>
+        </UButton>
       </template>
       <p class="text-muted text-[13px] mb-3">{{ t('kataloge.orteHinweis') }}</p>
 
       <div class="grid gap-4">
-        <div class="border border-rule rounded p-3 bg-page">
-          <span class="label">{{ arbeitsmappe.kataloge.wacheName || t('kataloge.dienststelle') }}</span>
+        <div class="border border-default rounded p-3 bg-muted">
+          <span class="eyebrow">{{ arbeitsmappe.kataloge.wacheName || t('kataloge.dienststelle') }}</span>
           <p class="text-muted text-[13px] mt-1">{{ t('kataloge.dienststelleOrt') }}</p>
         </div>
 
         <div v-for="ort in arbeitsmappe.kataloge.orte" :key="ort.id"
-             class="border border-rule rounded p-3 bg-page grid gap-3">
+             class="border border-default rounded p-3 bg-muted grid gap-3">
           <div class="grid md:grid-cols-[1fr_auto] gap-3 items-end">
-            <TextFeld v-model="ort.name" :label="t('kataloge.ortName')"
-                      :platzhalter="t('kataloge.ortPlatzhalter')"/>
-            <button type="button" class="knopf knopf-klein knopf-gefahr"
-                    @click="ortEntfernen(ort)">
-              <font-awesome-icon icon="fa-solid fa-trash"/>
+            <TextField v-model="ort.name" :label="t('kataloge.ortName')"
+                      :placeholder="t('kataloge.ortPlatzhalter')"/>
+            <UButton size="sm" color="signal" variant="outline"
+                     @click="ortEntfernen(ort)">
+              <UIcon name="i-lucide-trash-2"/>
               {{ t('kataloge.ortEntfernen') }}
-            </button>
+            </UButton>
           </div>
-          <AdresseFeld v-model="ort.adresse" :titel="t('kataloge.ortAdresse')"/>
+          <AddressField v-model="ort.adresse" :title="t('kataloge.ortAdresse')"/>
         </div>
       </div>
-    </KlappAbschnitt>
+    </CollapsibleSection>
 
-    <KlappAbschnitt name="fahrzeuge" :titel="t('kataloge.fahrzeuge')"
-                    :anzahl="arbeitsmappe.kataloge.fahrzeuge.length">
-      <template #werkzeug>
-        <button type="button" class="knopf knopf-klein" @click="fahrzeugHinzufuegen">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
+    <CollapsibleSection storage-key="alarmplaner_kataloge" name="fahrzeuge" :title="t('kataloge.fahrzeuge')"
+                    :count="arbeitsmappe.kataloge.fahrzeuge.length">
+      <template #actions>
+        <UButton size="sm" color="neutral" variant="outline" @click="fahrzeugHinzufuegen">
+          <UIcon name="i-lucide-plus"/>
           {{ t('kataloge.hinzufuegen') }}
-        </button>
+        </UButton>
       </template>
       <p class="text-muted text-[13px] mb-3">{{ t('kataloge.fahrzeugeHinweis') }}</p>
 
@@ -298,38 +297,38 @@ function truppVorschau(staerke: string): string {
              class="grid md:grid-cols-[1fr_auto] gap-2 items-end">
           <div class="grid grid-cols-2 gap-2"
                :class="arbeitsmappe.planung.aktiv ? 'md:grid-cols-6' : 'md:grid-cols-4'">
-            <TextFeld v-model="fahrzeug.funkrufname" :label="t('feld.funkrufname')"
+            <TextField v-model="fahrzeug.funkrufname" :label="t('feld.funkrufname')"
                       @change="fahrzeugUmbenannt(fahrzeug)"/>
-            <TextFeld v-model="fahrzeug.staerke" :label="t('feld.staerke')"/>
-            <TextFeld v-model="fahrzeug.ezp" :label="t('feld.ezp')"/>
-            <TextFeld v-model="fahrzeug.status" :label="t('feld.status')"/>
-            <TextFeld v-if="arbeitsmappe.planung.aktiv" v-model="fahrzeug.plaetze"
+            <TextField v-model="fahrzeug.staerke" :label="t('feld.staerke')"/>
+            <TextField v-model="fahrzeug.ezp" :label="t('feld.ezp')"/>
+            <TextField v-model="fahrzeug.status" :label="t('feld.status')"/>
+            <TextField v-if="arbeitsmappe.planung.aktiv" v-model="fahrzeug.plaetze"
                       :label="t('planung.plaetze')"/>
-            <TextFeld v-if="arbeitsmappe.planung.aktiv" v-model="fahrzeug.fuehrerschein"
+            <TextField v-if="arbeitsmappe.planung.aktiv" v-model="fahrzeug.fuehrerschein"
                       :label="t('planung.fuehrerschein')"
-                      :vorschlaege="arbeitsmappe.kataloge.fahrerlaubnisse"/>
+                      :suggestions="arbeitsmappe.kataloge.fahrerlaubnisse"/>
           </div>
-          <button type="button" class="knopf knopf-klein knopf-gefahr"
-                  :title="t('kataloge.eintragEntfernen')"
-                  @click="fahrzeugEntfernen(arbeitsmappe.kataloge.fahrzeuge.indexOf(fahrzeug))">
-            <font-awesome-icon icon="fa-solid fa-xmark"/>
-          </button>
+          <UButton size="sm" color="signal" variant="outline"
+                   :title="t('kataloge.eintragEntfernen')"
+                   @click="fahrzeugEntfernen(arbeitsmappe.kataloge.fahrzeuge.indexOf(fahrzeug))">
+            <UIcon name="i-lucide-x"/>
+          </UButton>
           <p v-if="truppVorschau(fahrzeug.staerke)" class="tabular text-[13px] text-muted md:col-span-2">
             {{ truppVorschau(fahrzeug.staerke) }}
           </p>
         </div>
       </div>
-    </KlappAbschnitt>
+    </CollapsibleSection>
 
-    <KlappAbschnitt name="material" :titel="t('kataloge.material')"
-                    :anzahl="arbeitsmappe.kataloge.material.length">
+    <CollapsibleSection storage-key="alarmplaner_kataloge" name="material" :title="t('kataloge.material')"
+                    :count="arbeitsmappe.kataloge.material.length">
       <p class="text-muted text-[13px] mb-3">{{ t('kataloge.materialHinweis') }}</p>
       <form class="flex gap-2 mb-3" @submit.prevent="materialHinzufuegen">
-        <input v-model="materialname" type="text" class="field"
-               :placeholder="t('kataloge.materialPlatzhalter')"/>
-        <button type="submit" class="knopf shrink-0">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
-        </button>
+        <UInput v-model="materialname" type="text"
+                :placeholder="t('kataloge.materialPlatzhalter')" class="w-full"/>
+        <UButton color="neutral" variant="outline" class="shrink-0" type="submit">
+          <UIcon name="i-lucide-plus"/>
+        </UButton>
       </form>
       <p v-if="!arbeitsmappe.kataloge.material.length" class="text-muted text-sm">
         {{ t('kataloge.keinMaterial') }}
@@ -337,35 +336,35 @@ function truppVorschau(staerke: string): string {
       <div class="grid gap-2" @focusout="verlassen($event, materialliste.ordnen)">
         <div v-for="stueck in materialliste.liste" :key="stueck.id"
              class="flex gap-2 items-center">
-          <input v-model="stueck.name" type="text" class="field"/>
-          <input v-model.number="stueck.bestand" type="number" min="0" step="1"
-                 class="field field-menge shrink-0 tabular" :title="t('kataloge.bestand')"
-                 :placeholder="t('kataloge.bestandPlatzhalter')"/>
-          <button type="button" class="knopf knopf-klein knopf-gefahr shrink-0"
-                  @click="materialEntfernen(stueck)">
-            <font-awesome-icon icon="fa-solid fa-trash"/>
-          </button>
+          <UInput v-model="stueck.name" type="text" class="w-full"/>
+          <UInput v-model.number="stueck.bestand" type="number" min="0" step="1"
+                  :title="t('kataloge.bestand')"
+                  :placeholder="t('kataloge.bestandPlatzhalter')" class="w-20 shrink-0" :ui="{base: 'text-right tabular'}"/>
+          <UButton size="sm" color="signal" variant="outline" class="shrink-0"
+                   @click="materialEntfernen(stueck)">
+            <UIcon name="i-lucide-trash-2"/>
+          </UButton>
         </div>
       </div>
-    </KlappAbschnitt>
+    </CollapsibleSection>
 
-    <KlappAbschnitt name="stichwoerter" :titel="t('kataloge.stichwoerter')"
-                    :anzahl="arbeitsmappe.kataloge.stichwoerter.length">
+    <CollapsibleSection storage-key="alarmplaner_kataloge" name="stichwoerter" :title="t('kataloge.stichwoerter')"
+                    :count="arbeitsmappe.kataloge.stichwoerter.length">
       <p class="text-muted text-[13px] mb-3">{{ t('kataloge.stichwoerterHinweis') }}</p>
 
       <form class="flex gap-2 mb-3" @submit.prevent="stichwortHinzufuegen">
-        <input v-model="stichwort" type="text" class="field" list="stichwortliste"
-               :placeholder="t('kataloge.stichwortPlatzhalter')"/>
-        <button type="submit" class="knopf shrink-0">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
-        </button>
+        <UInput v-model="stichwort" type="text" list="stichwortliste"
+                :placeholder="t('kataloge.stichwortPlatzhalter')" class="w-full"/>
+        <UButton color="neutral" variant="outline" class="shrink-0" type="submit">
+          <UIcon name="i-lucide-plus"/>
+        </UButton>
       </form>
       <p v-if="stichwortvorschlaege.length" class="text-muted text-[13px] mb-3">
         {{ t('kataloge.stichwortFehlen') }}
-        <button v-for="text in stichwortvorschlaege" :key="text" type="button"
-                class="knopf knopf-klein ml-2 mb-1" @click="stichwortUebernehmen(text)">
+        <UButton size="sm" color="neutral" variant="outline" class="ml-2 mb-1" v-for="text in stichwortvorschlaege" :key="text"
+                 @click="stichwortUebernehmen(text)">
           {{ text }}
-        </button>
+        </UButton>
       </p>
 
       <p v-if="!arbeitsmappe.kataloge.stichwoerter.length" class="text-muted text-sm">
@@ -375,24 +374,24 @@ function truppVorschau(staerke: string): string {
       <div class="grid md:grid-cols-2 gap-2" @focusout="verlassen($event, stichwoerter.ordnen)">
         <div v-for="eintrag in stichwoerter.liste" :key="eintrag.id"
              class="flex gap-2 items-center">
-          <input v-model="eintrag.text" type="text" class="field"
-                 @change="stichwortUmbenannt(eintrag)"/>
-          <button type="button" class="knopf knopf-klein knopf-gefahr shrink-0"
-                  :title="t('kataloge.eintragEntfernen')"
-                  @click="stichwortEntfernen(arbeitsmappe.kataloge.stichwoerter.indexOf(eintrag))">
-            <font-awesome-icon icon="fa-solid fa-xmark"/>
-          </button>
+          <UInput v-model="eintrag.text" type="text"
+                  @change="stichwortUmbenannt(eintrag)" class="w-full"/>
+          <UButton size="sm" color="signal" variant="outline" class="shrink-0"
+                   :title="t('kataloge.eintragEntfernen')"
+                   @click="stichwortEntfernen(arbeitsmappe.kataloge.stichwoerter.indexOf(eintrag))">
+            <UIcon name="i-lucide-x"/>
+          </UButton>
         </div>
       </div>
-    </KlappAbschnitt>
+    </CollapsibleSection>
 
-    <KlappAbschnitt name="tage" :titel="t('planung.tage')"
-                    :anzahl="arbeitsmappe.kataloge.tage.length">
-      <template #werkzeug>
-        <button type="button" class="knopf knopf-klein" @click="tagAnlegen">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
+    <CollapsibleSection storage-key="alarmplaner_kataloge" name="tage" :title="t('planung.tage')"
+                    :count="arbeitsmappe.kataloge.tage.length">
+      <template #actions>
+        <UButton size="sm" color="neutral" variant="outline" @click="tagAnlegen">
+          <UIcon name="i-lucide-plus"/>
           {{ t('planung.tagNeu') }}
-        </button>
+        </UButton>
       </template>
       <p v-if="!arbeitsmappe.kataloge.tage.length" class="text-muted text-sm">{{ t('planung.keineTage') }}</p>
 
@@ -400,26 +399,26 @@ function truppVorschau(staerke: string): string {
         <div v-for="tag in arbeitsmappe.kataloge.tage" :key="tag.id"
              class="grid md:grid-cols-[10rem_1fr_auto] gap-2 items-end">
           <div>
-            <label class="feld-label">{{ t('planung.datum') }}</label>
-            <input v-model="tag.datum" type="date" class="field"/>
+            <label class="field-label">{{ t('planung.datum') }}</label>
+            <UInput v-model="tag.datum" type="date" class="w-full"/>
           </div>
-          <TextFeld v-model="tag.name" :label="t('planung.tagName')"
-                    :platzhalter="t('planung.tagPlatzhalter')"/>
-          <button type="button" class="knopf knopf-klein knopf-gefahr"
-                  @click="ausListe(arbeitsmappe.kataloge.tage, tag)">
-            <font-awesome-icon icon="fa-solid fa-xmark"/>
-          </button>
+          <TextField v-model="tag.name" :label="t('planung.tagName')"
+                    :placeholder="t('planung.tagPlatzhalter')"/>
+          <UButton size="sm" color="signal" variant="outline"
+                   @click="ausListe(arbeitsmappe.kataloge.tage, tag)">
+            <UIcon name="i-lucide-x"/>
+          </UButton>
         </div>
       </div>
-    </KlappAbschnitt>
+    </CollapsibleSection>
 
-    <KlappAbschnitt name="personen" :titel="t('planung.personen')"
-                    :anzahl="arbeitsmappe.kataloge.personen.length">
-      <template #werkzeug>
-        <button type="button" class="knopf knopf-klein" @click="personAnlegen">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
+    <CollapsibleSection storage-key="alarmplaner_kataloge" name="personen" :title="t('planung.personen')"
+                    :count="arbeitsmappe.kataloge.personen.length">
+      <template #actions>
+        <UButton size="sm" color="neutral" variant="outline" @click="personAnlegen">
+          <UIcon name="i-lucide-plus"/>
           {{ t('planung.personNeu') }}
-        </button>
+        </UButton>
       </template>
       <p class="text-muted text-[13px] mb-3">{{ t('planung.personenHinweis') }}</p>
       <p v-if="!arbeitsmappe.kataloge.personen.length" class="text-muted text-sm">
@@ -428,64 +427,62 @@ function truppVorschau(staerke: string): string {
 
       <div class="grid gap-4">
         <div v-for="person in arbeitsmappe.kataloge.personen" :key="person.id"
-             class="border border-rule rounded p-3 bg-page grid gap-3">
+             class="border border-default rounded p-3 bg-muted grid gap-3">
           <div class="grid md:grid-cols-[1fr_6rem_auto_auto] gap-3 items-end">
-            <TextFeld v-model="person.name" :label="t('planung.personName')"/>
+            <TextField v-model="person.name" :label="t('planung.personName')"/>
             <div>
-              <label class="feld-label">{{ t('planung.anzahl') }}</label>
-              <input v-model.number="person.anzahl" type="number" min="1" class="field"/>
+              <label class="field-label">{{ t('planung.anzahl') }}</label>
+              <UInput v-model.number="person.anzahl" type="number" min="1" class="w-full"/>
             </div>
             <label class="flex items-center gap-2 text-sm h-9.5"
                    :title="t('planung.blattHinweis')">
               <input v-model="person.blatt" type="checkbox"/>
               {{ t('planung.blatt') }}
             </label>
-            <button type="button" class="knopf knopf-klein knopf-gefahr"
-                    @click="ausListe(arbeitsmappe.kataloge.personen, person)">
-              <font-awesome-icon icon="fa-solid fa-trash"/>
-            </button>
+            <UButton size="sm" color="signal" variant="outline"
+                     @click="ausListe(arbeitsmappe.kataloge.personen, person)">
+              <UIcon name="i-lucide-trash-2"/>
+            </UButton>
           </div>
 
           <div class="grid md:grid-cols-2 gap-3">
             <div>
-              <span class="feld-label">{{ t('planung.rollen') }}</span>
+              <span class="field-label">{{ t('planung.rollen') }}</span>
               <div class="flex flex-wrap gap-2 items-center">
-                <button v-for="wert in arbeitsmappe.kataloge.rollen" :key="wert" type="button"
-                        class="knopf knopf-klein"
-                        :class="person.rollen.includes(wert) ? 'knopf-primaer' : ''"
-                        @click="umschalten(person.rollen, wert)">
+                <UButton size="sm" v-for="wert in arbeitsmappe.kataloge.rollen" :key="wert"
+                         :color="person.rollen.includes(wert) ? 'primary' : 'neutral'" :variant="person.rollen.includes(wert) ? 'solid' : 'outline'"
+                         @click="umschalten(person.rollen, wert)">
                   {{ wert }}
-                </button>
-                <input type="text" class="field w-auto" list="rollenliste"
-                       :placeholder="t('planung.rolleDazu')"
-                       @change="wortGeben('rollen', person.rollen, $event.target as HTMLInputElement)"/>
+                </UButton>
+                <UInput type="text" list="rollenliste"
+                        :placeholder="t('planung.rolleDazu')"
+                        @change="wortGeben('rollen', person.rollen, $event.target as HTMLInputElement)" class="w-auto"/>
               </div>
             </div>
             <div>
-              <span class="feld-label">{{ t('planung.fahrerlaubnis') }}</span>
+              <span class="field-label">{{ t('planung.fahrerlaubnis') }}</span>
               <div class="flex flex-wrap gap-2 items-center">
-                <button v-for="wert in arbeitsmappe.kataloge.fahrerlaubnisse" :key="wert" type="button"
-                        class="knopf knopf-klein"
-                        :class="person.fahrerlaubnis.includes(wert) ? 'knopf-primaer' : ''"
-                        @click="umschalten(person.fahrerlaubnis, wert)">
+                <UButton size="sm" v-for="wert in arbeitsmappe.kataloge.fahrerlaubnisse" :key="wert"
+                         :color="person.fahrerlaubnis.includes(wert) ? 'primary' : 'neutral'" :variant="person.fahrerlaubnis.includes(wert) ? 'solid' : 'outline'"
+                         @click="umschalten(person.fahrerlaubnis, wert)">
                   {{ wert }}
-                </button>
-                <input type="text" class="field w-auto" list="klassenliste"
-                       :placeholder="t('planung.klasseDazu')"
-                       @change="wortGeben('fahrerlaubnisse', person.fahrerlaubnis,
-                                          $event.target as HTMLInputElement)"/>
+                </UButton>
+                <UInput type="text" list="klassenliste"
+                        :placeholder="t('planung.klasseDazu')"
+                        @change="wortGeben('fahrerlaubnisse', person.fahrerlaubnis,
+                        $event.target as HTMLInputElement)" class="w-auto"/>
               </div>
             </div>
           </div>
 
           <div>
             <div class="flex items-center gap-3 mb-2 flex-wrap">
-              <span class="feld-label mb-0">{{ t('planung.verfuegbar') }}</span>
-              <button type="button" class="knopf knopf-klein"
-                      @click="verfuegbarkeitAnlegen(person)">
-                <font-awesome-icon icon="fa-solid fa-plus"/>
+              <span class="field-label mb-0">{{ t('planung.verfuegbar') }}</span>
+              <UButton size="sm" color="neutral" variant="outline"
+                       @click="verfuegbarkeitAnlegen(person)">
+                <UIcon name="i-lucide-plus"/>
                 {{ t('planung.fensterNeu') }}
-              </button>
+              </UButton>
             </div>
             <p v-if="!person.verfuegbar.length" class="text-muted text-[13px]">
               {{ t('planung.immerDa') }}
@@ -494,32 +491,32 @@ function truppVorschau(staerke: string): string {
               <div v-for="fenster in person.verfuegbar" :key="fenster.id"
                    class="grid md:grid-cols-[1fr_1fr_auto] gap-2 items-end">
                 <div>
-                  <label class="feld-label">{{ t('planung.von') }}</label>
-                  <input v-model="fenster.von" type="datetime-local" class="field"/>
+                  <label class="field-label">{{ t('planung.von') }}</label>
+                  <UInput v-model="fenster.von" type="datetime-local" class="w-full"/>
                 </div>
                 <div>
-                  <label class="feld-label">{{ t('planung.bis') }}</label>
-                  <input v-model="fenster.bis" type="datetime-local" class="field"/>
+                  <label class="field-label">{{ t('planung.bis') }}</label>
+                  <UInput v-model="fenster.bis" type="datetime-local" class="w-full"/>
                 </div>
-                <button type="button" class="knopf knopf-klein knopf-gefahr"
-                        @click="ausListe(person.verfuegbar, fenster)">
-                  <font-awesome-icon icon="fa-solid fa-xmark"/>
-                </button>
+                <UButton size="sm" color="signal" variant="outline"
+                         @click="ausListe(person.verfuegbar, fenster)">
+                  <UIcon name="i-lucide-x"/>
+                </UButton>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </KlappAbschnitt>
+    </CollapsibleSection>
     <div class="grid md:grid-cols-2 gap-4">
-      <KlappAbschnitt v-for="liste in listen" :key="liste.schluessel" :name="liste.schluessel"
-                      :titel="liste.titel" :anzahl="arbeitsmappe.kataloge[liste.schluessel].length">
+      <CollapsibleSection storage-key="alarmplaner_kataloge" v-for="liste in listen" :key="liste.schluessel" :name="liste.schluessel"
+                      :title="liste.titel" :count="arbeitsmappe.kataloge[liste.schluessel].length">
 
         <form class="flex gap-2 mb-3" @submit.prevent="hinzufuegen(liste.schluessel)">
-          <input v-model="entwurf[liste.schluessel]" type="text" class="field"/>
-          <button type="submit" class="knopf shrink-0">
-            <font-awesome-icon icon="fa-solid fa-plus"/>
-          </button>
+          <UInput v-model="entwurf[liste.schluessel]" type="text" class="w-full"/>
+          <UButton color="neutral" variant="outline" class="shrink-0" type="submit">
+            <UIcon name="i-lucide-plus"/>
+          </UButton>
         </form>
 
         <p v-if="!arbeitsmappe.kataloge[liste.schluessel].length" class="text-muted text-sm">
@@ -528,16 +525,16 @@ function truppVorschau(staerke: string): string {
 
         <ul class="flex flex-wrap gap-2">
           <li v-for="(wert, index) in arbeitsmappe.kataloge[liste.schluessel]" :key="wert"
-              class="flex items-center gap-2 border border-rule rounded px-2 py-1 bg-page">
+              class="flex items-center gap-2 border border-default rounded px-2 py-1 bg-muted">
             <span class="text-sm">{{ wert }}</span>
             <button type="button" class="text-muted hover:text-signal"
                     :title="t('kataloge.eintragEntfernen')"
                     @click="entfernen(liste.schluessel, index)">
-              <font-awesome-icon icon="fa-solid fa-xmark"/>
+              <UIcon name="i-lucide-x"/>
             </button>
           </li>
         </ul>
-      </KlappAbschnitt>
+      </CollapsibleSection>
     </div>
   </div>
 </template>

@@ -1,9 +1,10 @@
 import type {RouteLocation} from 'vue-router'
-import {createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router'
-import {t} from '../i18n'
+import {createRouter, type RouteRecordRaw, type RouterHistory} from 'vue-router'
 import {sitzung} from '../store/sitzung'
 
 const routes: RouteRecordRaw[] = [
+    {path: '/info', name: 'Info', component: () => import('../views/InfoView.vue'), meta: {public: true}},
+    {path: '/hilfe', name: 'Hilfe', component: () => import('../views/HelpView.vue'), meta: {public: true}},
     {path: '/', name: 'Alarme', component: () => import('../views/AlarmeView.vue'),
         meta: {titleKey: 'routes.alarme'}},
     {path: '/alarm/:id', name: 'Alarm', component: () => import('../views/AlarmView.vue'),
@@ -27,23 +28,20 @@ const routes: RouteRecordRaw[] = [
         meta: {titleKey: 'routes.notFound'}},
 ]
 
-const router = createRouter({history: createWebHistory(), routes})
-
-const NUR_ZUM_LESEN = ['Ansicht', 'Ablauf', 'Sitzung', 'Blatt', 'NotFound']
+const READ_ONLY_ROUTES = ['Ansicht', 'Ablauf', 'Sitzung', 'Blatt', 'NotFound', 'Info', 'Hilfe']
 
 /**
- * Wer nur zusieht, landet in der Übersicht statt in einem Editor. Die Felder änderten ohnehin
- * nichts — der Server nimmt von einem Lesetoken keine Änderung an —, und ein Formular, das man
- * ausfüllen kann und das nichts bewirkt, ist schlimmer als keins.
+ * The tool's router, with web history in the browser and memory history when prerendering.
+ *
+ * Whoever only watches lands in the overview instead of an editor. The fields would change nothing
+ * anyway, since the server takes no change from a read token, and a form that can be filled in to
+ * no effect is worse than none.
  */
-router.beforeEach((ziel) => {
-    if (!sitzung.nurLesen || NUR_ZUM_LESEN.includes(String(ziel.name))) return true
-    return {name: 'Ansicht'}
-})
-
-router.afterEach((to) => {
-    const key = to.meta?.titleKey as string | undefined
-    document.title = key ? `${t(key)} | ${t('app.name')}` : t('app.name')
-})
-
-export default router
+export function createAppRouter(history: RouterHistory) {
+    const router = createRouter({history, routes})
+    router.beforeEach((target) => {
+        if (!sitzung.nurLesen || READ_ONLY_ROUTES.includes(String(target.name))) return true
+        return {name: 'Ansicht'}
+    })
+    return router
+}

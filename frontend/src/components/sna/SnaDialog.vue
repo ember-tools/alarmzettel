@@ -135,35 +135,25 @@ watch(amEnde, (erreicht) => {
 </script>
 
 <template>
-  <div class="fixed inset-0 z-50 bg-black/55 flex items-start justify-center p-4 overflow-auto"
-       @click.self="emit('schliessen')">
-    <div class="abschnitt w-full max-w-3xl my-6">
-      <div class="flex items-start justify-between gap-3 mb-4">
-        <div>
-          <h2 class="abschnitt-titel mb-1">{{ t('sna.titel') }}</h2>
-          <p class="text-muted text-sm">{{ t('sna.beschreibung') }}</p>
-        </div>
-        <button type="button" class="knopf knopf-klein" @click="emit('schliessen')">
-          <font-awesome-icon icon="fa-solid fa-xmark"/>
-          {{ t('aktion.abbrechen') }}
-        </button>
-      </div>
+  <UModal :open="true" :title="t('sna.titel')" :description="t('sna.beschreibung')" :ui="{content: 'sm:max-w-3xl'}"
+          @update:open="(open: boolean) => !open && emit('schliessen')">
+    <template #body>
 
-      <p v-if="fehler" class="text-signal-ink text-sm">{{ t('sna.ladefehler') }} {{ fehler }}</p>
+      <p v-if="fehler" class="text-(--eb-signal-text) text-sm">{{ t('sna.ladefehler') }} {{ fehler }}</p>
       <p v-else-if="!baum" class="text-muted text-sm">{{ t('sna.laedt') }}</p>
 
       <template v-else>
         <div class="mb-4">
-          <label class="feld-label">{{ t('sna.suche') }}</label>
-          <input v-model="suchtext" type="text" class="field" :placeholder="t('sna.suchePlatzhalter')"/>
+          <label class="field-label">{{ t('sna.suche') }}</label>
+          <UInput v-model="suchtext" type="text" :placeholder="t('sna.suchePlatzhalter')" class="w-full"/>
           <ul v-if="gefunden.length" class="mt-2 grid gap-1 max-h-64 overflow-auto">
             <li v-for="fund in gefunden" :key="`${fund.disziplin.id}-${fund.code}-${fund.anlass}`">
               <button type="button"
-                      class="w-full text-left border border-rule rounded px-3 py-2 bg-page hover:bg-raised"
+                      class="w-full text-left border border-default rounded px-3 py-2 bg-muted hover:bg-elevated"
                       @click="ausSuche(fund)">
-                <span class="tabular text-signal-ink">{{ codeAnzeige(fund.code) }}</span>
+                <span class="tabular text-(--eb-signal-text)">{{ codeAnzeige(fund.code) }}</span>
                 <span class="ml-2">{{ fund.anlass }}</span>
-                <span class="label ml-2">{{ fund.disziplin.label }}</span>
+                <span class="eyebrow ml-2">{{ fund.disziplin.label }}</span>
               </button>
             </li>
           </ul>
@@ -171,12 +161,12 @@ watch(amEnde, (erreicht) => {
 
         <div v-if="!disziplin" class="grid gap-2">
           <button v-for="wahl in baum.disziplinen" :key="wahl.id" type="button"
-                  class="border border-rule rounded p-3 bg-page hover:bg-raised text-left"
+                  class="border border-default rounded p-3 bg-muted hover:bg-elevated text-left"
                   @click="starten(wahl)">
             <div class="flex items-center gap-2">
               <span class="font-condensed font-bold uppercase tracking-wide">{{ wahl.label }}</span>
               <span v-if="wahl.quelle === 'erfunden'"
-                    class="label text-signal-ink border border-signal rounded px-1.5">
+                    class="eyebrow text-(--eb-signal-text) border border-signal rounded px-1.5">
                 {{ t('sna.erfunden') }}
               </span>
             </div>
@@ -186,18 +176,18 @@ watch(amEnde, (erreicht) => {
 
         <template v-else>
           <div class="flex items-center gap-2 flex-wrap mb-3">
-            <button type="button" class="knopf knopf-klein" @click="neuStarten">
+            <UButton size="sm" color="neutral" variant="outline" @click="neuStarten">
               {{ disziplin.label }}
-            </button>
+            </UButton>
             <template v-for="(schritt, index) in pfad" :key="index">
-              <font-awesome-icon icon="fa-solid fa-angle-right" class="text-faint text-xs"/>
-              <button type="button" class="knopf knopf-klein" @click="zurueckZu(index)">
+              <UIcon name="i-lucide-chevron-right" class="text-dimmed text-xs"/>
+              <UButton size="sm" color="neutral" variant="outline" @click="zurueckZu(index)">
                 {{ schritt.label }}
-              </button>
+              </UButton>
             </template>
           </div>
 
-          <p v-if="disziplin.quelle === 'erfunden'" class="text-signal-ink text-[13px] mb-3">
+          <p v-if="disziplin.quelle === 'erfunden'" class="text-(--eb-signal-text) text-[13px] mb-3">
             {{ t('sna.erfundenWarnung') }}
           </p>
 
@@ -205,17 +195,17 @@ watch(amEnde, (erreicht) => {
             <p class="font-condensed font-bold uppercase tracking-wide">{{ knoten.frage }}</p>
 
             <form v-if="knoten.eingabe" class="flex gap-2 flex-wrap" @submit.prevent="eintragen">
-              <input v-model="eingegeben" type="text" class="field grow min-w-40"
-                     :placeholder="knoten.eingabe.platzhalter" autofocus/>
-              <button type="submit" class="knopf knopf-primaer shrink-0">
+              <UInput v-model="eingegeben" type="text"
+                      :placeholder="knoten.eingabe.platzhalter" autofocus class="grow min-w-40"/>
+              <UButton class="shrink-0" type="submit">
                 {{ eingegeben.trim() ? t('sna.weiter')
                    : (knoten.eingabe.leer?.label ?? t('sna.ueberspringen')) }}
-              </button>
+              </UButton>
             </form>
 
             <button v-for="antwort in knoten.antworten" :key="antwort.ziel + antwort.label"
                     type="button"
-                    class="border border-rule rounded px-3 py-2 bg-page hover:bg-raised text-left"
+                    class="border border-default rounded px-3 py-2 bg-muted hover:bg-elevated text-left"
                     @click="antworten(antwort.label, antwort.aussage, antwort.ziel)">
               <span v-if="antwort.nr" class="tabular text-muted mr-2">{{ antwort.nr }}</span>
               {{ antwort.label }}
@@ -223,10 +213,10 @@ watch(amEnde, (erreicht) => {
           </div>
 
           <div v-else-if="treffer" class="grid gap-3">
-            <div class="border border-rule rounded p-3 bg-page grid gap-2">
+            <div class="border border-default rounded p-3 bg-muted grid gap-2">
               <div class="flex items-baseline gap-3 flex-wrap">
                 <span class="headline text-xl tabular">{{ codeAnzeige(treffer.code) }}</span>
-                <span v-if="treffer.kategorie" class="label">{{ treffer.kategorie }}</span>
+                <span v-if="treffer.kategorie" class="eyebrow">{{ treffer.kategorie }}</span>
               </div>
               <p v-if="treffer.anlass">{{ treffer.anlass }}</p>
               <p v-if="aufgebot" class="text-muted text-[13px]">
@@ -235,12 +225,12 @@ watch(amEnde, (erreicht) => {
             </div>
 
             <div>
-              <label class="feld-label">{{ t('sna.meldung') }}</label>
-              <input v-model="meldung" type="text" class="field"/>
+              <label class="field-label">{{ t('sna.meldung') }}</label>
+              <UInput v-model="meldung" type="text" class="w-full"/>
             </div>
 
             <div v-if="eigeneHinweise.length">
-              <div class="feld-label">{{ t('sna.eigeneHinweise') }}</div>
+              <div class="field-label">{{ t('sna.eigeneHinweise') }}</div>
               <ul class="grid gap-1">
                 <li v-for="(schritt, index) in eigeneHinweise" :key="index"
                     class="text-sm flex gap-2">
@@ -251,7 +241,7 @@ watch(amEnde, (erreicht) => {
             </div>
 
             <div>
-              <div class="feld-label">{{ t('sna.abfrageweg') }}</div>
+              <div class="field-label">{{ t('sna.abfrageweg') }}</div>
               <ol class="grid gap-1">
                 <li v-for="(schritt, index) in abfrageweg" :key="index" class="text-sm flex gap-2">
                   <span class="tabular text-muted w-6 text-right shrink-0">{{ index + 1 }}.</span>
@@ -263,15 +253,15 @@ watch(amEnde, (erreicht) => {
             <p class="text-muted text-[13px]">{{ t('sna.wasPassiert') }}</p>
 
             <div class="flex gap-2 flex-wrap">
-              <button type="button" class="knopf knopf-primaer" @click="uebernehmen">
-                <font-awesome-icon icon="fa-solid fa-check"/>
+              <UButton @click="uebernehmen">
+                <UIcon name="i-lucide-check"/>
                 {{ t('sna.uebernehmen') }}
-              </button>
-              <button type="button" class="knopf" @click="neuStarten">{{ t('sna.neu') }}</button>
+              </UButton>
+              <UButton color="neutral" variant="outline" @click="neuStarten">{{ t('sna.neu') }}</UButton>
             </div>
           </div>
         </template>
       </template>
-    </div>
-  </div>
+    </template>
+  </UModal>
 </template>

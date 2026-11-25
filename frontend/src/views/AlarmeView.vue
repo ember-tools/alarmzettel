@@ -7,7 +7,7 @@ import {
 } from '../store/arbeitsmappe'
 import {renderAlle, fehlertext} from '../api/render'
 import {tabelleImportieren} from '../api/tabelle'
-import Rueckfrage from '../components/base/Rueckfrage.vue'
+import {useConfirm} from '@emberbox/ui'
 import {jetztAbgleichen} from '../store/sync'
 
 const router = useRouter()
@@ -15,12 +15,11 @@ const datei = ref<HTMLInputElement>()
 const tabelle = ref<HTMLInputElement>()
 const meldung = ref<string | null>(null)
 const fehler = ref<string | null>(null)
-const anstehend = ref<(() => void) | null>(null)
+const confirm = useConfirm()
 
 /** Asks before replacing a working set that has something in it, without blocking the page. */
-function ersetzenLassen(tun: () => void) {
-  if (arbeitsmappe.alarme.length) anstehend.value = tun
-  else tun()
+async function ersetzenLassen(tun: () => void) {
+  if (!arbeitsmappe.alarme.length || await confirm(t('datei.ersetzen'), {confirmLabel: t('aktion.weiter')})) tun()
 }
 
 function anlegen() {
@@ -100,29 +99,29 @@ async function laden(event: Event) {
     <div class="flex items-center justify-between gap-3 flex-wrap">
       <div>
         <h1 class="headline text-2xl">{{ t('nav.alarme') }}</h1>
-        <p class="label mt-1">{{ t('liste.anzahl', arbeitsmappe.alarme.length) }}</p>
+        <p class="eyebrow mt-1">{{ t('liste.anzahl', arbeitsmappe.alarme.length) }}</p>
       </div>
       <div class="flex gap-2 flex-wrap">
-        <button type="button" class="knopf" @click="tabelle?.click()">
-          <font-awesome-icon icon="fa-solid fa-table"/>
+        <UButton color="neutral" variant="outline" @click="tabelle?.click()">
+          <UIcon name="i-lucide-table"/>
           {{ t('datei.tabelle') }}
-        </button>
-        <button type="button" class="knopf" @click="datei?.click()">
-          <font-awesome-icon icon="fa-solid fa-upload"/>
+        </UButton>
+        <UButton color="neutral" variant="outline" @click="datei?.click()">
+          <UIcon name="i-lucide-upload"/>
           {{ t('datei.hochladen') }}
-        </button>
-        <button type="button" class="knopf" :disabled="!arbeitsmappe.alarme.length" @click="herunterladen">
-          <font-awesome-icon icon="fa-solid fa-download"/>
+        </UButton>
+        <UButton color="neutral" variant="outline" :disabled="!arbeitsmappe.alarme.length" @click="herunterladen">
+          <UIcon name="i-lucide-download"/>
           {{ t('datei.herunterladen') }}
-        </button>
-        <button type="button" class="knopf" :disabled="!arbeitsmappe.alarme.length" @click="pdf">
-          <font-awesome-icon icon="fa-solid fa-file-pdf"/>
+        </UButton>
+        <UButton color="neutral" variant="outline" :disabled="!arbeitsmappe.alarme.length" @click="pdf">
+          <UIcon name="i-lucide-file-text"/>
           {{ t('datei.pdfAlle') }}
-        </button>
-        <button type="button" class="knopf knopf-primaer" @click="anlegen">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
+        </UButton>
+        <UButton @click="anlegen">
+          <UIcon name="i-lucide-plus"/>
           {{ t('liste.neu') }}
-        </button>
+        </UButton>
       </div>
     </div>
 
@@ -131,16 +130,16 @@ async function laden(event: Event) {
            accept=".ods,.xlsx,application/vnd.oasis.opendocument.spreadsheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
 
     <p v-if="meldung" class="text-sm text-muted">{{ meldung }}</p>
-    <p v-if="fehler" class="text-sm text-signal-ink">{{ fehler }}</p>
+    <p v-if="fehler" class="text-sm text-(--eb-signal-text)">{{ fehler }}</p>
 
-    <div v-if="!arbeitsmappe.alarme.length" class="abschnitt text-center py-10">
-      <p class="text-ink">{{ t('liste.leer') }}</p>
+    <div v-if="!arbeitsmappe.alarme.length" class="panel text-center py-10">
+      <p class="text-highlighted">{{ t('liste.leer') }}</p>
       <p class="text-muted text-sm mt-1">{{ t('liste.leerHinweis') }}</p>
     </div>
 
     <ul v-else class="grid gap-2">
       <li v-for="(alarm, index) in arbeitsmappe.alarme" :key="alarm.id"
-          class="abschnitt flex items-center gap-3 flex-wrap">
+          class="panel flex items-center gap-3 flex-wrap">
         <span class="tabular text-muted w-8 shrink-0">{{ alarm.einsatzNr || index }}</span>
         <div class="grow min-w-40">
           <div class="font-condensed font-bold tracking-wide uppercase">
@@ -153,37 +152,34 @@ async function laden(event: Event) {
             </span>
           </div>
         </div>
-        <span class="label shrink-0">
+        <span class="eyebrow shrink-0">
           {{ alarm.einsatzDatum }} {{ alarm.einsatzZeit }}
         </span>
         <div class="flex gap-1 shrink-0">
-          <button type="button" class="knopf knopf-klein" :title="t('liste.hoch')"
-                  :disabled="index === 0" @click="alarmVerschieben(alarm.id, -1)">
-            <font-awesome-icon icon="fa-solid fa-angle-up"/>
-          </button>
-          <button type="button" class="knopf knopf-klein" :title="t('liste.runter')"
-                  :disabled="index === arbeitsmappe.alarme.length - 1"
-                  @click="alarmVerschieben(alarm.id, 1)">
-            <font-awesome-icon icon="fa-solid fa-angle-down"/>
-          </button>
-          <button type="button" class="knopf knopf-klein" :title="t('liste.kopieren')"
-                  @click="alarmKopieren(alarm.id)">
-            <font-awesome-icon icon="fa-solid fa-copy"/>
-          </button>
-          <button type="button" class="knopf knopf-klein knopf-gefahr" :title="t('liste.loeschen')"
-                  @click="alarmLoeschen(alarm.id)">
-            <font-awesome-icon icon="fa-solid fa-trash"/>
-          </button>
-          <RouterLink :to="`/alarm/${alarm.id}`" class="knopf knopf-klein">
-            <font-awesome-icon icon="fa-solid fa-pen"/>
+          <UButton size="sm" color="neutral" variant="outline" :title="t('liste.hoch')"
+                   :disabled="index === 0" @click="alarmVerschieben(alarm.id, -1)">
+            <UIcon name="i-lucide-chevron-up"/>
+          </UButton>
+          <UButton size="sm" color="neutral" variant="outline" :title="t('liste.runter')"
+                   :disabled="index === arbeitsmappe.alarme.length - 1"
+                   @click="alarmVerschieben(alarm.id, 1)">
+            <UIcon name="i-lucide-chevron-down"/>
+          </UButton>
+          <UButton size="sm" color="neutral" variant="outline" :title="t('liste.kopieren')"
+                   @click="alarmKopieren(alarm.id)">
+            <UIcon name="i-lucide-copy"/>
+          </UButton>
+          <UButton size="sm" color="signal" variant="outline" :title="t('liste.loeschen')"
+                   @click="alarmLoeschen(alarm.id)">
+            <UIcon name="i-lucide-trash-2"/>
+          </UButton>
+          <UButton size="sm" color="neutral" variant="outline" :to="`/alarm/${alarm.id}`">
+            <UIcon name="i-lucide-pencil"/>
             {{ t('liste.oeffnen') }}
-          </RouterLink>
+          </UButton>
         </div>
       </li>
     </ul>
 
-    <Rueckfrage v-if="anstehend" :frage="t('datei.ersetzen')"
-                @nein="anstehend = null"
-                @ja="anstehend?.(); anstehend = null"/>
   </div>
 </template>

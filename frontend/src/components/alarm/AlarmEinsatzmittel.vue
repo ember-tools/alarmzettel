@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import AuswahlFeld from '../base/AuswahlFeld.vue'
-import TextFeld from '../base/TextFeld.vue'
+import {ComboboxField, TextField} from '@emberbox/ui'
 import {t} from '../../i18n'
 import {
   fahrzeugSichern,
@@ -74,13 +73,13 @@ function alarmFuerWaehlen(gruppe: number, fahrzeug: number) {
 </script>
 
 <template>
-  <section class="abschnitt">
+  <section class="panel">
     <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
-      <h2 class="abschnitt-titel">{{ t('abschnitt.einsatzmittel') }}</h2>
-      <button v-if="!ausPlan" type="button" class="knopf knopf-klein" @click="gruppeHinzufuegen">
-        <font-awesome-icon icon="fa-solid fa-plus"/>
+      <h2 class="section-title">{{ t('abschnitt.einsatzmittel') }}</h2>
+      <UButton size="sm" color="neutral" variant="outline" v-if="!ausPlan" @click="gruppeHinzufuegen">
+        <UIcon name="i-lucide-plus"/>
         {{ t('einsatzmittel.gruppeNeu') }}
-      </button>
+      </UButton>
     </div>
 
     <p v-if="ausPlan" class="text-muted text-sm">{{ t('ausPlan.aufgebot') }}</p>
@@ -91,17 +90,17 @@ function alarmFuerWaehlen(gruppe: number, fahrzeug: number) {
 
       <div class="grid gap-4">
         <div v-for="(gruppe, gruppeIndex) in alarm.einsatzmittel" :key="gruppeIndex"
-             class="border border-rule rounded p-3 bg-page">
+             class="border border-default rounded p-3 bg-muted">
           <div class="grid md:grid-cols-[1fr_auto] gap-3 items-end mb-3">
             <div class="grid md:grid-cols-3 gap-3">
-              <TextFeld v-model="gruppe.gruppe" :label="t('feld.gruppe')"/>
+              <TextField v-model="gruppe.gruppe" :label="t('feld.gruppe')"/>
             </div>
-            <button type="button" class="knopf knopf-klein knopf-gefahr"
-                    :disabled="alarm.einsatzmittel.length === 1"
-                    @click="gruppeEntfernen(gruppeIndex)">
-              <font-awesome-icon icon="fa-solid fa-trash"/>
+            <UButton size="sm" color="signal" variant="outline"
+                     :disabled="alarm.einsatzmittel.length === 1"
+                     @click="gruppeEntfernen(gruppeIndex)">
+              <UIcon name="i-lucide-trash-2"/>
               {{ t('einsatzmittel.gruppeEntfernen') }}
-            </button>
+            </UButton>
           </div>
 
           <p v-if="!gruppe.fahrzeuge.length" class="text-muted text-sm mb-2">
@@ -112,42 +111,42 @@ function alarmFuerWaehlen(gruppe: number, fahrzeug: number) {
             <div v-for="(fahrzeug, fahrzeugIndex) in gruppe.fahrzeuge" :key="fahrzeugIndex"
                  class="grid md:grid-cols-[1fr_auto] gap-2 items-end">
               <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-                <AuswahlFeld v-model="fahrzeug.funkrufname" :label="t('feld.funkrufname')"
-                             :vorschlaege="funkrufnameVorschlaege()"
+                <ComboboxField v-model="fahrzeug.funkrufname" :label="t('feld.funkrufname')"
+                             :suggestions="funkrufnameVorschlaege()"
                              @change="vorlageUebernehmen(fahrzeug)"/>
-                <TextFeld v-model="fahrzeug.ezp" :label="t('feld.ezp')"
-                          :platzhalter="werte(fahrzeug).ezp"/>
-                <AuswahlFeld v-model="fahrzeug.status" :label="t('feld.status')"
-                             :vorschlaege="statusVorschlaege()"
-                             :platzhalter="werte(fahrzeug).status"/>
-                <TextFeld v-model="fahrzeug.staerke" :label="t('feld.staerke')"
-                          :platzhalter="werte(fahrzeug).staerke"/>
-                <AuswahlFeld v-model="fahrzeug.trupp" :label="t('feld.trupp')"
-                             :vorschlaege="truppVorschlaege()"
-                             :platzhalter="werte(fahrzeug).trupp"/>
-                <TextFeld v-model="fahrzeug.hinweis" :label="t('feld.fahrzeugHinweis')"/>
+                <TextField v-model="fahrzeug.ezp" :label="t('feld.ezp')"
+                          :placeholder="werte(fahrzeug).ezp"/>
+                <ComboboxField v-model="fahrzeug.status" :label="t('feld.status')"
+                             :suggestions="statusVorschlaege()"
+                             :placeholder="werte(fahrzeug).status"/>
+                <TextField v-model="fahrzeug.staerke" :label="t('feld.staerke')"
+                          :placeholder="werte(fahrzeug).staerke"/>
+                <ComboboxField v-model="fahrzeug.trupp" :label="t('feld.trupp')"
+                             :suggestions="truppVorschlaege()"
+                             :placeholder="werte(fahrzeug).trupp"/>
+                <TextField v-model="fahrzeug.hinweis" :label="t('feld.fahrzeugHinweis')"/>
               </div>
               <div class="flex gap-2 flex-wrap">
-                <button type="button" class="knopf knopf-klein"
-                        :class="fahrzeug.alarmFuer ? 'knopf-primaer' : ''"
-                        :title="t('einsatzmittel.alarmFuer')"
-                        @click="alarmFuerWaehlen(gruppeIndex, fahrzeugIndex)">
-                  <font-awesome-icon :icon="fahrzeug.alarmFuer ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'"/>
+                <UButton size="sm"
+                         :color="fahrzeug.alarmFuer ? 'primary' : 'neutral'" :variant="fahrzeug.alarmFuer ? 'solid' : 'outline'"
+                         :title="t('einsatzmittel.alarmFuer')"
+                         @click="alarmFuerWaehlen(gruppeIndex, fahrzeugIndex)">
+                  <UIcon :name="fahrzeug.alarmFuer ? 'i-lucide-circle-check' : 'i-lucide-circle'"/>
                   {{ t('einsatzmittel.alarmFuerKurz') }}
-                </button>
-                <button type="button" class="knopf knopf-klein knopf-gefahr"
-                        :title="t('einsatzmittel.fahrzeugEntfernen')"
-                        @click="fahrzeugEntfernen(gruppeIndex, fahrzeugIndex)">
-                  <font-awesome-icon icon="fa-solid fa-xmark"/>
-                </button>
+                </UButton>
+                <UButton size="sm" color="signal" variant="outline"
+                         :title="t('einsatzmittel.fahrzeugEntfernen')"
+                         @click="fahrzeugEntfernen(gruppeIndex, fahrzeugIndex)">
+                  <UIcon name="i-lucide-x"/>
+                </UButton>
               </div>
             </div>
           </div>
 
-          <button type="button" class="knopf knopf-klein mt-3" @click="fahrzeugHinzufuegen(gruppeIndex)">
-            <font-awesome-icon icon="fa-solid fa-plus"/>
+          <UButton size="sm" color="neutral" variant="outline" class="mt-3" @click="fahrzeugHinzufuegen(gruppeIndex)">
+            <UIcon name="i-lucide-plus"/>
             {{ t('einsatzmittel.fahrzeugNeu') }}
-          </button>
+          </UButton>
         </div>
       </div>
     </template>
