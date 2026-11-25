@@ -1,17 +1,40 @@
 services:
-  app:
-    image: ghcr.io/ember-tools/alarmzettel:latest
+  alarmzettel:
+    image: "ghcr.io/ember-tools/alarmzettel:latest"
+    container_name: alarmzettel
     restart: unless-stopped
-    environment:
-      CORS_ORIGINS: https://alarmzettel.emberbox.app
-    volumes:
-      - freigaben:/data
     labels:
-      traefik.enable: "true"
+      traefik.enable: true
       traefik.http.routers.alarmzettel.rule: "Host(`alarmzettel.emberbox.app`)"
-      traefik.http.routers.alarmzettel.entrypoints: websecure
-      traefik.http.routers.alarmzettel.tls.certresolver: letsencrypt
-      traefik.http.services.alarmzettel.loadbalancer.server.port: "8000"
+      traefik.http.routers.alarmzettel.entrypoints: https
+      traefik.http.routers.alarmzettel.tls: true
+      traefik.http.routers.alarmzettel.tls.certresolver: cloudflare
+      traefik.http.routers.alarmzettel.tls.domains[0].main: "emberbox.app"
+      traefik.http.routers.alarmzettel.tls.domains[0].sans: "*.emberbox.app"
+      traefik.http.routers.alarmzettel.service: alarmzettel
+      traefik.http.routers.alarmzettel-old.rule: "Host(`alarmzettel.chojo.dev`)"
+      traefik.http.routers.alarmzettel-old.entrypoints: https
+      traefik.http.routers.alarmzettel-old.tls: true
+      traefik.http.routers.alarmzettel-old.tls.certresolver: hetzner
+      traefik.http.routers.alarmzettel-old.middlewares: alarmzettel-moved
+      traefik.http.routers.alarmzettel-old.service: alarmzettel
+      traefik.http.middlewares.alarmzettel-moved.redirectregex.regex: "^https://alarmzettel\\.chojo\\.dev/(.*)"
+      traefik.http.middlewares.alarmzettel-moved.redirectregex.replacement: "https://alarmzettel.emberbox.app/$${1}"
+      traefik.http.middlewares.alarmzettel-moved.redirectregex.permanent: true
+      traefik.http.services.alarmzettel.loadbalancer.server.port: 8000
+      com.centurylinklabs.watchtower.enable: true
+    environment:
+      SESSION_TTL_MINUTES: 30
+      FREIGABE_TAGE: 30
+      CORS_ORIGINS: "https://alarmzettel.emberbox.app"
+    volumes:
+      - alarmzettel-data:/data
+    networks:
+      - traefik
 
 volumes:
-  freigaben:
+  alarmzettel-data:
+
+networks:
+  traefik:
+    external: true
