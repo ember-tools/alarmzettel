@@ -75,29 +75,29 @@ async function pdf() {
 </script>
 
 <template>
-  <div v-if="!alarm" class="abschnitt text-center py-10">
+  <div v-if="!alarm" class="panel text-center py-10">
     <p>{{ t('nichtGefunden.titel') }}</p>
-    <RouterLink to="/" class="knopf mt-3 inline-flex">{{ t('nichtGefunden.zurueck') }}</RouterLink>
+    <UButton color="neutral" variant="outline" class="mt-3 inline-flex" to="/">{{ t('nichtGefunden.zurueck') }}</UButton>
   </div>
 
   <div v-else class="grid gap-5">
     <div class="flex items-center justify-between gap-3 flex-wrap">
       <div class="flex items-center gap-3">
-        <RouterLink to="/" class="knopf knopf-klein">
-          <font-awesome-icon icon="fa-solid fa-arrow-left"/>
+        <UButton size="sm" color="neutral" variant="outline" to="/">
+          <UIcon name="i-lucide-arrow-left"/>
           {{ t('aktion.zurueck') }}
-        </RouterLink>
+        </UButton>
         <h1 class="headline text-2xl">
           {{ alarm.stichwort || t('liste.ohneStichwort') }}
         </h1>
       </div>
-      <button type="button" class="knopf" @click="pdf">
-        <font-awesome-icon icon="fa-solid fa-file-pdf"/>
+      <UButton color="neutral" variant="outline" @click="pdf">
+        <UIcon name="i-lucide-file-text"/>
         {{ t('datei.pdfEiner') }}
-      </button>
+      </UButton>
     </div>
 
-    <p v-if="fehler" class="text-sm text-signal-ink">{{ fehler }}</p>
+    <p v-if="fehler" class="text-sm text-(--eb-signal-text)">{{ fehler }}</p>
 
     <div class="grid xl:grid-cols-[minmax(0,1fr)_minmax(360px,44%)] gap-5 items-start">
       <div class="grid gap-4 min-w-0">

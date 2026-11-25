@@ -271,10 +271,10 @@ function stichworte(kachel: Kachel): string[] {
 </script>
 
 <template>
-  <section class="abschnitt">
+  <section class="panel">
     <div class="flex items-center gap-3 flex-wrap mb-3">
-      <h2 class="abschnitt-titel">{{ t('ablauf.tagesplan') }}</h2>
-      <select v-model="tag" class="field w-auto">
+      <h2 class="section-title">{{ t('ablauf.tagesplan') }}</h2>
+      <select v-model="tag" class="native-select w-auto">
         <option v-for="wann in tage" :key="wann" :value="wann">{{ wann }}</option>
       </select>
       <span class="text-muted text-[13px]">{{ t('ablauf.tagesplanHinweis') }}</span>
@@ -282,14 +282,14 @@ function stichworte(kachel: Kachel): string[] {
 
     <p v-if="!spalten.length" class="text-muted text-sm">{{ t('ablauf.keineSpalten') }}</p>
 
-    <div v-else class="overflow-auto border border-rule rounded" style="max-height: 70vh">
+    <div v-else class="overflow-auto border border-default rounded" style="max-height: 70vh">
       <div class="grid" :style="{gridTemplateColumns: `4rem repeat(${spalten.length}, minmax(9rem, 1fr))`}">
-        <div class="sticky top-0 z-20 bg-surface border-b border-rule"></div>
+        <div class="sticky top-0 z-20 bg-default border-b border-default"></div>
         <div v-for="spalte in spalten" :key="spalte.schluessel"
-             class="sticky top-0 z-20 bg-surface border-b border-l border-rule px-2 py-2">
-          <span class="label block truncate" :title="spalte.name">
-            <font-awesome-icon
-              :icon="spalte.art === 'fahrzeug' ? 'fa-solid fa-truck' : 'fa-solid fa-users'"
+             class="sticky top-0 z-20 bg-default border-b border-l border-default px-2 py-2">
+          <span class="eyebrow block truncate" :title="spalte.name">
+            <UIcon
+              :name="spalte.art === 'fahrzeug' ? 'i-lucide-truck' : 'i-lucide-users'"
               class="mr-1 text-muted"/>
             {{ spalte.name }}
           </span>
@@ -304,24 +304,24 @@ function stichworte(kachel: Kachel): string[] {
         </div>
 
         <div v-for="spalte in spalten" :key="`spur-${spalte.schluessel}`"
-             class="relative border-l border-rule touch-none"
+             class="relative border-l border-default touch-none"
              :style="{height: `${hoehe}px`}"
              @pointerdown="fassen($event, 'neu', spalte)">
           <div v-for="wann in stunden" :key="wann"
-               class="absolute inset-x-0 border-t border-hairline pointer-events-none"
+               class="absolute inset-x-0 border-t border-muted pointer-events-none"
                :style="{top: `${oben(wann)}px`}"></div>
 
           <div v-for="kachel in spalte.kacheln" :key="kachel.schritt.id"
                class="absolute inset-x-1 rounded border px-1.5 py-1 overflow-hidden text-[12px] leading-tight"
                :class="kachel.fremd
-                 ? 'border-rule bg-raised text-muted cursor-pointer'
-                 : 'border-band bg-surface cursor-grab'"
+                 ? 'border-default bg-elevated text-muted cursor-pointer'
+                 : 'border-inverted bg-default cursor-grab'"
                :style="{top: `${oben(kachel.von)}px`,
                         height: `${Math.max(kachel.bis - kachel.von, RASTER) * PX_JE_MINUTE}px`}"
                @pointerdown.stop="kachel.fremd
                  ? oeffnen(kachel) : fassen($event, 'schieben', spalte, kachel)">
             <div v-if="kachel.da > kachel.von"
-                 class="absolute inset-x-0 top-0 bg-band-track opacity-70 pointer-events-none"
+                 class="absolute inset-x-0 top-0 bg-accented opacity-70 pointer-events-none"
                  :style="{height: `${(kachel.da - kachel.von) * PX_JE_MINUTE}px`}"></div>
             <div class="relative">
               <span class="tabular font-semibold">
@@ -337,7 +337,7 @@ function stichworte(kachel: Kachel): string[] {
           </div>
 
           <div v-if="vorschau && vorschau.spalte.schluessel === spalte.schluessel"
-               class="absolute inset-x-1 rounded border border-dashed border-focus bg-signal-soft pointer-events-none"
+               class="absolute inset-x-1 rounded border border-dashed border-(--eb-focus) bg-signal-50 dark:bg-signal-950 pointer-events-none"
                :style="{top: `${oben(vorschau.von)}px`,
                         height: `${Math.max(vorschau.bis - vorschau.von, RASTER) * PX_JE_MINUTE}px`}"></div>
         </div>

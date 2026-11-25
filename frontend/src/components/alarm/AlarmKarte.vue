@@ -48,7 +48,7 @@ const fahrzeuge = computed(() =>
 </script>
 
 <template>
-  <section class="abschnitt grid gap-4">
+  <section class="panel grid gap-4">
     <div>
       <div class="flex items-baseline gap-3 flex-wrap">
         <h2 class="headline text-xl">{{ alarm.stichwort || t('liste.ohneStichwort') }}</h2>
@@ -61,8 +61,8 @@ const fahrzeuge = computed(() =>
       <p v-if="alarm.kurzinfo" class="text-muted mt-1">{{ alarm.kurzinfo }}</p>
     </div>
 
-    <div v-if="adresszeile(alarm.einsatzadresse)" class="border-t border-rule pt-3">
-      <span class="label block mb-1">{{ t('adresse.einsatz') }}</span>
+    <div v-if="adresszeile(alarm.einsatzadresse)" class="border-t border-default pt-3">
+      <span class="eyebrow block mb-1">{{ t('adresse.einsatz') }}</span>
       <p class="text-lg">{{ adresszeile(alarm.einsatzadresse) }}</p>
       <p v-if="adresszeile(alarm.anfahrtsadresse)
              && adresszeile(alarm.anfahrtsadresse) !== adresszeile(alarm.einsatzadresse)"
@@ -71,14 +71,14 @@ const fahrzeuge = computed(() =>
       </p>
     </div>
 
-    <div v-if="fahrzeuge.length" class="border-t border-rule pt-3">
-      <span class="label block mb-2">{{ t('abschnitt.einsatzmittel') }}</span>
+    <div v-if="fahrzeuge.length" class="border-t border-default pt-3">
+      <span class="eyebrow block mb-2">{{ t('abschnitt.einsatzmittel') }}</span>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
         <tbody>
-          <tr v-for="fahrzeug in fahrzeuge" :key="fahrzeug.id" class="border-t border-hairline">
+          <tr v-for="fahrzeug in fahrzeuge" :key="fahrzeug.id" class="border-t border-muted">
             <td class="py-1 pr-3 font-bold whitespace-nowrap">
-              <span v-if="fahrzeug.alarmFuer" class="label text-signal-ink mr-2">
+              <span v-if="fahrzeug.alarmFuer" class="eyebrow text-(--eb-signal-text) mr-2">
                 {{ t('ansicht.fuerDich') }}
               </span>
               {{ fahrzeug.funkrufname }}
@@ -93,8 +93,8 @@ const fahrzeuge = computed(() =>
       </div>
     </div>
 
-    <div v-if="alarm.hinweise.length" class="border-t border-rule pt-3">
-      <span class="label block mb-2">{{ t('abschnitt.hinweise') }}</span>
+    <div v-if="alarm.hinweise.length" class="border-t border-default pt-3">
+      <span class="eyebrow block mb-2">{{ t('abschnitt.hinweise') }}</span>
       <ul class="grid gap-2 text-sm">
         <li v-for="hinweis in alarm.hinweise" :key="hinweis.id" class="flex gap-2">
           <span class="text-muted">–</span>
@@ -110,15 +110,15 @@ const fahrzeuge = computed(() =>
       </ul>
     </div>
 
-    <div v-if="alarm.wasIstPassiert" class="border-t border-rule pt-3">
-      <span class="label block mb-1">{{ t('feld.wasIstPassiert') }}</span>
+    <div v-if="alarm.wasIstPassiert" class="border-t border-default pt-3">
+      <span class="eyebrow block mb-1">{{ t('feld.wasIstPassiert') }}</span>
       <p class="text-sm">{{ alarm.wasIstPassiert }}</p>
     </div>
 
     <div v-if="meldung.length || kopf.length || karte.length"
-         class="border-t border-rule pt-3 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+         class="border-t border-default pt-3 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
       <div v-for="feld in [...kopf, ...meldung, ...karte]" :key="feld.label">
-        <span class="feld-label">{{ feld.label }}</span>
+        <span class="field-label">{{ feld.label }}</span>
         <p class="text-sm tabular">{{ feld.wert }}</p>
       </div>
     </div>

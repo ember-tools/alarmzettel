@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AdresseFeld from '../base/AdresseFeld.vue'
-import TextFeld from '../base/TextFeld.vue'
+import {TextField} from '@emberbox/ui'
+import AddressField from '../base/AddressField.vue'
 import {t} from '../../i18n'
 import {zuPunkt, type Adresspunkt} from '../../api/adressen'
 import {polarKoordinaten} from '../../scripts/polar'
@@ -32,29 +32,29 @@ async function polarSetzen(ziel: Adresspunkt) {
 </script>
 
 <template>
-  <section class="abschnitt">
-    <h2 class="abschnitt-titel">{{ t('abschnitt.adressen') }}</h2>
+  <section class="panel">
+    <h2 class="section-title">{{ t('abschnitt.adressen') }}</h2>
     <div class="grid md:grid-cols-2 gap-5">
       <div>
-        <AdresseFeld v-model="alarm.anfahrtsadresse" :titel="t('adresse.anfahrt')"/>
+        <AddressField v-model="alarm.anfahrtsadresse" :title="t('adresse.anfahrt')"/>
         <p class="text-muted text-[13px] mt-2">{{ t('adresse.anfahrtLeer') }}</p>
       </div>
-      <AdresseFeld v-if="!ausPlan" v-model="alarm.einsatzadresse" :titel="t('adresse.einsatz')"
-                   @aufgeloest="einsatzadresseGesetzt"/>
+      <AddressField v-if="!ausPlan" v-model="alarm.einsatzadresse" :title="t('adresse.einsatz')"
+                   @resolved="einsatzadresseGesetzt"/>
       <div v-else>
-        <h3 class="label mb-2">{{ t('adresse.einsatz') }}</h3>
+        <h3 class="eyebrow mb-2">{{ t('adresse.einsatz') }}</h3>
         <p class="text-muted text-sm">{{ t('ausPlan.adresse') }}</p>
       </div>
     </div>
   </section>
 
-  <section class="abschnitt">
-    <h2 class="abschnitt-titel">{{ t('abschnitt.karte') }}</h2>
+  <section class="panel">
+    <h2 class="section-title">{{ t('abschnitt.karte') }}</h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <TextFeld v-model="alarm.karte.kab" :label="t('feld.kab')"/>
-      <TextFeld v-model="alarm.karte.fwPlan" :label="t('feld.fwPlan')"/>
-      <TextFeld v-model="alarm.karte.ePlan" :label="t('feld.ePlan')"/>
-      <TextFeld v-model="alarm.karte.polarKoordinaten" :label="t('feld.polarKoordinaten')"/>
+      <TextField v-model="alarm.karte.kab" :label="t('feld.kab')"/>
+      <TextField v-model="alarm.karte.fwPlan" :label="t('feld.fwPlan')"/>
+      <TextField v-model="alarm.karte.ePlan" :label="t('feld.ePlan')"/>
+      <TextField v-model="alarm.karte.polarKoordinaten" :label="t('feld.polarKoordinaten')"/>
     </div>
   </section>
 </template>

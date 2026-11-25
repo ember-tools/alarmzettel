@@ -4,10 +4,9 @@ import * as echarts from 'echarts/core'
 import {CustomChart} from 'echarts/charts'
 import {DataZoomComponent, GridComponent, TooltipComponent} from 'echarts/components'
 import {SVGRenderer} from 'echarts/renderers'
-import {faLocationDot, faPersonWalking, faTruck} from '@fortawesome/free-solid-svg-icons'
-import type {IconDefinition} from '@fortawesome/free-solid-svg-icons'
+import {getIcon} from '@iconify/vue'
+import {useDark} from '@vueuse/core'
 import {t} from '../../i18n'
-import {activeTheme} from '../../theme'
 import type {Balken, Bewegungsbild, Linie} from '../../scripts/bewegungen'
 
 echarts.use([CustomChart, DataZoomComponent, GridComponent, TooltipComponent, SVGRenderer])
@@ -23,14 +22,16 @@ const gewaehlt = defineModel<string | null>('gewaehlt', {default: null})
 const REIHE = 30
 
 /**
- * Die Zeichen aus demselben Satz, den die Oberfläche benutzt. Ein Balken und eine Linie sind
- * zwei verschiedene Dinge, und das soll man sehen, ohne es sich aus der Form zu erschließen.
+ * The symbols come from the same bundled icon set the interface uses. A bar and a line are two
+ * different things, and that should be visible without inferring it from the shape.
  */
-const ZEICHEN = {
-  aufenthalt: faLocationDot.icon,
-  fahrzeug: faTruck.icon,
-  fuss: faPersonWalking.icon,
+const SYMBOLS = {
+  stay: 'i-lucide-map-pin',
+  vehicle: 'i-lucide-truck',
+  onFoot: 'i-lucide-footprints',
 }
+
+const dark = useDark()
 
 interface Koordinatensystem {
     x: number
@@ -58,21 +59,18 @@ function sichtbareMitte(von: [number, number], nach: [number, number],
 }
 
 /**
- * Ein Zeichen als Pfad, in ein Kästchen dieser Größe gelegt.
- *
- * Die Stelle steckt in der Verschiebung des Elements und nicht in `shape.x`: ein Pfad aus
- * `pathData` wird einmal gebaut, und eine geänderte Form rechnet ihn nicht neu — beim Zoomen
- * blieben die Zeichen sonst stehen, während die Balken darunter weiterwandern.
+ * A symbol as an image in a square of the given size, drawn in the given colour. The position
+ * lives in the element's own offset, so the symbols move along with the bars when zooming.
  */
-function zeichen(bild: IconDefinition['icon'], x: number, y: number, groesse: number,
-                 farbe: string) {
-  const [breite, hoehe, , , pfad] = bild
+function symbol(name: string, x: number, y: number, size: number, color: string, opacity: number) {
+  const icon = getIcon(name.replace(/^i-lucide-/, 'lucide:'))
+  const svg = icon
+      ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${icon.left} ${icon.top} ${icon.width} ${icon.height}" color="${color}">${icon.body}</svg>`
+      : '<svg xmlns="http://www.w3.org/2000/svg"/>'
   return {
-    type: 'path' as const,
+    type: 'image' as const,
     x, y,
-    shape: {pathData: String(pfad), x: 0, y: 0,
-            width: groesse * (breite / hoehe), height: groesse},
-    style: {fill: farbe},
+    style: {image: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`, width: size, height: size, opacity},
   }
 }
 const behaelter = ref<HTMLElement>()
@@ -86,8 +84,8 @@ function farbe(name: string): string {
 
 /** Auch die Legende folgt dem Thema — sie hängt am Wechsel, nicht am Zufall des Neuzeichnens. */
 const legendenfarben = computed(() => {
-    activeTheme()
-    return {stehend: farbe('--c-muted'), signal: farbe('--c-signal')}
+    void dark.value
+    return {stehend: farbe('--ui-text-muted'), signal: farbe('--ui-signal')}
 })
 
 /** Jede Reihe eines Bandes ist eine Spur der Kategorieachse; beschriftet wird die mittlere. */
@@ -130,13 +128,13 @@ function blass(spurId: string): number {
 
 function optionen() {
     const {beschriftung, anfang} = spuren()
-    const ink = farbe('--c-ink')
-    const muted = farbe('--c-muted')
-    const rule = farbe('--c-rule')
+    const ink = farbe('--ui-text-highlighted')
+    const muted = farbe('--ui-text-muted')
+    const rule = farbe('--ui-border')
     // Ein Aufenthalt steht ruhig in Tinte, eine Fahrt läuft im Signal — die beiden sollen sich
     // auf den ersten Blick unterscheiden und nicht erst an ihrer Form.
-    const signal = farbe('--c-signal')
-    const stehend = farbe('--c-muted')
+    const signal = farbe('--ui-signal')
+    const stehend = farbe('--ui-text-muted')
     const spur = (ortId: string, reihe: number) => (anfang.get(ortId) ?? 0) + reihe
 
     return {
@@ -206,11 +204,8 @@ function optionen() {
                                 ]},
                                 style: {fill: signal, opacity: deckung},
                             },
-                            ...(mitte ? [{
-                                ...zeichen(mitFahrzeug ? ZEICHEN.fahrzeug : ZEICHEN.fuss,
-                                           mitte[0] - 6, mitte[1] - 12, 11, signal),
-                                style: {fill: signal, opacity: deckung},
-                            }] : []),
+                            ...(mitte ? [symbol(mitFahrzeug ? SYMBOLS.vehicle : SYMBOLS.onFoot,
+                                                mitte[0] - 6, mitte[1] - 12, 11, signal, deckung)] : []),
                         ],
                     }
                 },
@@ -262,11 +257,8 @@ function optionen() {
                                 style: {fill: `${stehend}33`, stroke: stehend, lineWidth: 1,
                                         opacity: deckung},
                             },
-                            ...(platzFuerZeichen ? [{
-                                ...zeichen(ZEICHEN.aufenthalt, kasten.x + 6,
-                                           kasten.y + kasten.height / 2 - 5, 10, ink),
-                                style: {fill: ink, opacity: deckung},
-                            }] : []),
+                            ...(platzFuerZeichen ? [symbol(SYMBOLS.stay, kasten.x + 6,
+                                                           kasten.y + kasten.height / 2 - 5, 10, ink, deckung)] : []),
                             {
                                 type: 'text',
                                 style: {
@@ -318,7 +310,7 @@ onBeforeUnmount(() => {
     diagramm?.dispose()
 })
 
-watch(() => [bild, gewaehlt.value, activeTheme()], () => zeichnen(), {deep: true})
+watch(() => [bild, gewaehlt.value, dark.value], () => zeichnen(), {deep: true})
 </script>
 
 <template>
@@ -327,19 +319,19 @@ watch(() => [bild, gewaehlt.value, activeTheme()], () => zeichnen(), {deep: true
       <span class="flex items-center gap-2">
         <span class="inline-block w-6 h-3 rounded-sm border"
               :style="{background: `${legendenfarben.stehend}33`, borderColor: legendenfarben.stehend}"></span>
-        <font-awesome-icon icon="fa-solid fa-location-dot" class="text-muted"/>
+        <UIcon name="i-lucide-map-pin" class="text-muted"/>
         {{ t('ablauf.legende.aufenthalt') }}
       </span>
       <span class="flex items-center gap-2">
         <span class="inline-block w-6 h-0 border-t-2"
               :style="{borderColor: legendenfarben.signal}"></span>
-        <font-awesome-icon icon="fa-solid fa-truck" :style="{color: legendenfarben.signal}"/>
+        <UIcon name="i-lucide-truck" :style="{color: legendenfarben.signal}"/>
         {{ t('ablauf.legende.fahrt') }}
       </span>
       <span class="flex items-center gap-2">
         <span class="inline-block w-6 h-0 border-t-2 border-dashed"
               :style="{borderColor: legendenfarben.signal}"></span>
-        <font-awesome-icon icon="fa-solid fa-person-walking"
+        <UIcon name="i-lucide-footprints"
                            :style="{color: legendenfarben.signal}"/>
         {{ t('ablauf.legende.fussweg') }}
       </span>

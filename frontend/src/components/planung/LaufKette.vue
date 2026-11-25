@@ -15,45 +15,45 @@ const {lauf} = defineProps<{ lauf: Lauf }>()
 <template>
   <div class="grid gap-2">
     <div v-for="(schritt, stelle) in lauf.schritte" :key="schritt.id"
-         class="border border-rule rounded p-3 bg-page grid gap-2">
+         class="border border-default rounded p-3 bg-muted grid gap-2">
       <div class="flex items-center gap-2 flex-wrap">
-        <span class="label">{{ stelle + 1 }}.</span>
+        <span class="eyebrow">{{ stelle + 1 }}.</span>
         <span class="flex">
-          <button type="button" class="knopf knopf-klein rounded-r-none px-2"
-                  :title="t('ablauf.aufenthaltDavor')"
-                  @click="schrittEinfuegen(lauf, stelle, 'aufenthalt')">
-            <font-awesome-icon icon="fa-solid fa-plus"/>
-          </button>
-          <button type="button" class="knopf knopf-klein rounded-l-none border-l-0 px-2"
-                  :title="t('ablauf.fahrtDavor')"
-                  @click="schrittEinfuegen(lauf, stelle, 'fahrt')">
-            <font-awesome-icon icon="fa-solid fa-angle-right"/>
-          </button>
+          <UButton size="sm" color="neutral" variant="outline" class="rounded-r-none px-2"
+                   :title="t('ablauf.aufenthaltDavor')"
+                   @click="schrittEinfuegen(lauf, stelle, 'aufenthalt')">
+            <UIcon name="i-lucide-plus"/>
+          </UButton>
+          <UButton size="sm" color="neutral" variant="outline" class="rounded-l-none border-l-0 px-2"
+                   :title="t('ablauf.fahrtDavor')"
+                   @click="schrittEinfuegen(lauf, stelle, 'fahrt')">
+            <UIcon name="i-lucide-chevron-right"/>
+          </UButton>
         </span>
         <span class="tabular text-sm">
           <span v-if="mehrereTage()" class="text-muted">{{ tagVon(schritt.von) }}</span>
           {{ uhrzeit(schritt.von) }}–{{ uhrzeit(schritt.bis) }}
         </span>
         <span class="grow"></span>
-        <button type="button" class="knopf knopf-klein knopf-gefahr"
-                @click="entfernen(lauf.schritte, schritt)">
-          <font-awesome-icon icon="fa-solid fa-xmark"/>
-        </button>
+        <UButton size="sm" color="signal" variant="outline"
+                 @click="entfernen(lauf.schritte, schritt)">
+          <UIcon name="i-lucide-x"/>
+        </UButton>
       </div>
 
       <SchrittFelder :lauf="lauf" :schritt="schritt"/>
     </div>
 
     <div class="flex gap-2 flex-wrap">
-      <button type="button" class="knopf knopf-klein"
-              @click="schrittAnhaengen(lauf, 'aufenthalt')">
-        <font-awesome-icon icon="fa-solid fa-plus"/>
+      <UButton size="sm" color="neutral" variant="outline"
+               @click="schrittAnhaengen(lauf, 'aufenthalt')">
+        <UIcon name="i-lucide-plus"/>
         {{ t('ablauf.aufenthalt') }}
-      </button>
-      <button type="button" class="knopf knopf-klein" @click="schrittAnhaengen(lauf, 'fahrt')">
-        <font-awesome-icon icon="fa-solid fa-angle-right"/>
+      </UButton>
+      <UButton size="sm" color="neutral" variant="outline" @click="schrittAnhaengen(lauf, 'fahrt')">
+        <UIcon name="i-lucide-chevron-right"/>
         {{ t('ablauf.fahrt') }}
-      </button>
+      </UButton>
     </div>
   </div>
 </template>

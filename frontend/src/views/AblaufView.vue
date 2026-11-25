@@ -1,8 +1,7 @@
 <script setup lang="ts">
+import {CollapsibleSection} from '@emberbox/ui'
 import {computed, defineAsyncComponent, ref, watch} from 'vue'
-import {RouterLink} from 'vue-router'
 import LagenAnsicht from '../components/planung/LagenAnsicht.vue'
-import KlappAbschnitt from '../components/base/KlappAbschnitt.vue'
 import LaufKette from '../components/planung/LaufKette.vue'
 import TagesPlan from '../components/planung/TagesPlan.vue'
 import OrtsSicht from '../components/planung/OrtsSicht.vue'
@@ -102,33 +101,33 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
         <p class="text-muted text-sm mt-1">{{ t('ablauf.beschreibung') }}</p>
       </div>
       <div class="flex gap-2 flex-wrap">
-        <button type="button" class="knopf knopf-klein"
-                @click="drucken(renderAblaufplan, 'ablaufplan.pdf')">
-          <font-awesome-icon icon="fa-solid fa-file-pdf"/>
+        <UButton size="sm" color="neutral" variant="outline"
+                 @click="drucken(renderAblaufplan, 'ablaufplan.pdf')">
+          <UIcon name="i-lucide-file-text"/>
           {{ t('ablauf.drucken') }}
-        </button>
-        <button type="button" class="knopf knopf-klein" :title="t('ablauf.archivHinweis')"
-                @click="drucken(renderAblaufplanZip, 'ablaufplan.zip')">
-          <font-awesome-icon icon="fa-solid fa-file-zipper"/>
+        </UButton>
+        <UButton size="sm" color="neutral" variant="outline" :title="t('ablauf.archivHinweis')"
+                 @click="drucken(renderAblaufplanZip, 'ablaufplan.zip')">
+          <UIcon name="i-lucide-file-archive"/>
           {{ t('ablauf.archiv') }}
-        </button>
-        <button type="button" class="knopf knopf-klein" :title="t('ablauf.zettelHinweis')"
-                :disabled="!arbeitsmappe.alarme.length"
-                @click="drucken(renderAlle, 'alarmzettel.pdf')">
-          <font-awesome-icon icon="fa-solid fa-file-pdf"/>
+        </UButton>
+        <UButton size="sm" color="neutral" variant="outline" :title="t('ablauf.zettelHinweis')"
+                 :disabled="!arbeitsmappe.alarme.length"
+                 @click="drucken(renderAlle, 'alarmzettel.pdf')">
+          <UIcon name="i-lucide-file-text"/>
           {{ t('ablauf.zettel') }}
-        </button>
-        <RouterLink to="/kataloge" class="knopf knopf-klein">{{ t('ablauf.stammdaten') }}</RouterLink>
+        </UButton>
+        <UButton size="sm" color="neutral" variant="outline" to="/kataloge">{{ t('ablauf.stammdaten') }}</UButton>
       </div>
     </div>
 
-    <p v-if="fehler" class="text-signal-ink text-sm">{{ fehler }}</p>
+    <p v-if="fehler" class="text-(--eb-signal-text) text-sm">{{ fehler }}</p>
 
     <div class="flex flex-wrap gap-2">
-      <button v-for="name in reiter" :key="name" type="button" class="knopf knopf-klein"
-              :class="ansicht === name ? 'knopf-primaer' : ''" @click="ansicht = name">
+      <UButton size="sm" v-for="name in reiter" :key="name"
+               :color="ansicht === name ? 'primary' : 'neutral'" :variant="ansicht === name ? 'solid' : 'outline'" @click="ansicht = name">
         {{ t(`ablauf.ansicht.${name}`) }}
-      </button>
+      </UButton>
     </div>
 
     <TagesPlan v-if="ansicht === 'tag'"/>
@@ -139,25 +138,25 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
     <LagenAnsicht v-else-if="ansicht === 'lagen'"/>
 
     <template v-else>
-    <section v-if="alleOrte().length < 2" class="abschnitt">
+    <section v-if="alleOrte().length < 2" class="panel">
       <p class="text-muted text-sm">{{ t('ablauf.ersteOrte') }}</p>
     </section>
 
-    <section class="abschnitt">
-      <h2 class="abschnitt-titel">{{ t('ablauf.einplanen') }}</h2>
+    <section class="panel">
+      <h2 class="section-title">{{ t('ablauf.einplanen') }}</h2>
       <div class="flex flex-wrap gap-2">
-        <button v-for="fahrzeug in arbeitsmappe.kataloge.fahrzeuge.filter(v => offen({fahrzeugId: v.id}))"
-                :key="fahrzeug.id" type="button" class="knopf knopf-klein"
+        <UButton size="sm" color="neutral" variant="outline" v-for="fahrzeug in arbeitsmappe.kataloge.fahrzeuge.filter(v => offen({fahrzeugId: v.id}))"
+                :key="fahrzeug.id"
                 @click="einplanen({fahrzeugId: fahrzeug.id})">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
+          <UIcon name="i-lucide-plus"/>
           {{ fahrzeug.funkrufname || t('ablauf.ohneName') }}
-        </button>
-        <button v-for="person in arbeitsmappe.kataloge.personen.filter(p => offen({personId: p.id}))"
-                :key="person.id" type="button" class="knopf knopf-klein"
+        </UButton>
+        <UButton size="sm" color="neutral" variant="outline" v-for="person in arbeitsmappe.kataloge.personen.filter(p => offen({personId: p.id}))"
+                :key="person.id"
                 @click="einplanen({personId: person.id})">
-          <font-awesome-icon icon="fa-solid fa-plus"/>
+          <UIcon name="i-lucide-plus"/>
           {{ person.name || t('ablauf.ohneName') }}
-        </button>
+        </UButton>
       </div>
       <p class="text-muted text-[13px] mt-2">{{ t('ablauf.einplanenHinweis') }}</p>
     </section>
@@ -166,19 +165,19 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
       {{ t('ablauf.keineKetten') }}
     </p>
 
-    <KlappAbschnitt v-for="lauf in arbeitsmappe.planung.laeufe" :key="lauf.id"
-                    :name="`kette-${lauf.id}`" :titel="beschriftung(lauf)"
-                    :symbol="lauf.fahrzeugId ? 'fa-solid fa-table' : 'fa-solid fa-users'"
-                    :anzahl="lauf.schritte.length" vorgabe>
-      <template #werkzeug>
-        <button type="button" class="knopf knopf-klein knopf-gefahr"
-                @click="entfernen(arbeitsmappe.planung.laeufe, lauf)">
-          <font-awesome-icon icon="fa-solid fa-trash"/>
+    <CollapsibleSection storage-key="alarmplaner_kataloge" v-for="lauf in arbeitsmappe.planung.laeufe" :key="lauf.id"
+                    :name="`kette-${lauf.id}`" :title="beschriftung(lauf)"
+                    :icon="lauf.fahrzeugId ? 'i-lucide-table' : 'i-lucide-users'"
+                    :count="lauf.schritte.length" default-open>
+      <template #actions>
+        <UButton size="sm" color="signal" variant="outline"
+                 @click="entfernen(arbeitsmappe.planung.laeufe, lauf)">
+          <UIcon name="i-lucide-trash-2"/>
           {{ t('ablauf.ketteEntfernen') }}
-        </button>
+        </UButton>
       </template>
       <LaufKette :lauf="lauf"/>
-    </KlappAbschnitt>
+    </CollapsibleSection>
     </template>
   </div>
 </template>

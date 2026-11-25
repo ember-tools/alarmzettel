@@ -76,7 +76,8 @@ screen are the ones printed on the slip.
   and a strip of what happens next. Whoever is travelling stands proportionally along the
   straight line between the two places, so a day can be driven through before it runs and
   followed while it does. `Jetzt` pins it to the clock. This is the view for the day itself.
-  Map tiles come from openstreetmap.org; the coordinates behind them are the city's own, turned
+  Map tiles come from OpenStreetMap through this server, which caches them under `/tiles`, so the
+  browser never contacts a third party; the coordinates behind them are the city's own, turned
   from ETRS89 / UTM 33N into WGS 84 in the browser.
 - **Slips from the plan** — where a Lage points at an alarm, its times, Einsatzadresse and
   Einsatzmittelaufgebot come from the schedule, and one sheet is printed per vehicle at that
@@ -171,14 +172,19 @@ docker compose up
 ```
 
 That builds the image from this checkout. A prebuilt one is published to GHCR on every push to
-`main`, so `ghcr.io/rainbowdashlabs/alarmzettel:latest` works instead of `build: .` if you would
-rather not build it yourself.
+`main`, so `ghcr.io/ember-tools/alarmzettel:latest` works instead of `build: .` if you would
+rather not build it yourself. `compose.prod.yml` runs that image behind Traefik at
+<https://alarmzettel.emberbox.app>, one of the [Emberbox](https://emberbox.app) tools.
 
-The application is then on <http://localhost:8080>. The `freigaben` volume holds the shared
-working sets; everything else is stateless.
+The application is then on <http://localhost:8080>. The `freigaben` volume, mounted at `/data`, holds
+the shared working sets, the downloaded address list and the map tile cache; everything else is
+stateless. The tile proxy fetches at most four tiles at once and limits cache misses per client
+and overall, answering 429 beyond that, as the OpenStreetMap tile policy asks.
 
 Behind a reverse proxy, pass `X-Forwarded-Proto` and `X-Forwarded-Host` through, or the share link
-it hands out will name the wrong scheme.
+it hands out will name the wrong scheme. The tile limits per client rely on the forwarded client address, so the
+proxy must overwrite `X-Forwarded-For` rather than pass on what a client sent; Traefik does that by
+default.
 
 | Variable | Default | What it does |
 | --- | --- | --- |
@@ -191,6 +197,7 @@ it hands out will name the wrong scheme.
 | `ADRESSEN_DATEI` | `/data/adressen.sqlite` | where the downloaded address list is cached |
 | `ADRESSEN_TAGE` | `30` | how old the address list may get before it is fetched again |
 | `ADRESSEN_LADEN` | `true` | set false to never fetch it |
+| `TILE_DIR` | `/data/tiles` | where map tiles fetched from OpenStreetMap are cached; the browser loads them from here |
 | `CORS_ORIGINS` | `*` | allowed origins, comma separated |
 | `TYPST_BINARY` | `typst` | path to the renderer |
 | `RENDER_TIMEOUT_SECONDS` | `30` | give up when a render hangs |

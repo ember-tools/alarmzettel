@@ -69,31 +69,31 @@ watch(modus, () => alleZeigen())
   <div class="grid gap-5">
     <p v-if="!tage.length" class="text-muted text-sm">{{ t('ablauf.keineBewegung') }}</p>
 
-    <section v-if="spuren.length" class="abschnitt">
+    <section v-if="spuren.length" class="panel">
       <div class="flex items-baseline gap-3 flex-wrap mb-3">
-        <h2 class="abschnitt-titel">{{ t('ablauf.bewegung') }}</h2>
+        <h2 class="section-title">{{ t('ablauf.bewegung') }}</h2>
         <span class="grow"></span>
         <div class="flex gap-2 flex-wrap">
-          <button v-for="name in MODI" :key="name" type="button" class="knopf knopf-klein"
-                  :class="modus === name ? 'knopf-primaer' : ''" @click="umschalten(name)">
+          <UButton size="sm" v-for="name in MODI" :key="name"
+                   :color="modus === name ? 'primary' : 'neutral'" :variant="modus === name ? 'solid' : 'outline'" @click="umschalten(name)">
             {{ t(`ablauf.modus.${name}`) }}
-          </button>
+          </UButton>
         </div>
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
-        <span class="label mr-1">{{ t('ablauf.zeigen') }}</span>
-        <button v-for="spur in spuren" :key="spur.id" type="button" class="knopf knopf-klein"
-                :class="versteckt.has(spur.id) ? 'ist-aus' : 'knopf-primaer'"
-                :title="t('ablauf.nurDiese')"
-                @click="zeigen(spur.id)" @dblclick="nurEine(spur.id)">
-          <font-awesome-icon
-            :icon="versteckt.has(spur.id) ? 'fa-solid fa-xmark' : 'fa-solid fa-check'"/>
+        <span class="eyebrow mr-1">{{ t('ablauf.zeigen') }}</span>
+        <UButton size="sm" v-for="spur in spuren" :key="spur.id"
+                 :color="versteckt.has(spur.id) ? 'neutral' : 'primary'" :variant="versteckt.has(spur.id) ? 'outline' : 'solid'" :class="versteckt.has(spur.id) ? 'is-off' : ''"
+                 :title="t('ablauf.nurDiese')"
+                 @click="zeigen(spur.id)" @dblclick="nurEine(spur.id)">
+          <UIcon
+            :name="versteckt.has(spur.id) ? 'i-lucide-x' : 'i-lucide-check'"/>
           {{ spur.name || t('ablauf.ohneName') }}
-        </button>
-        <button v-if="versteckt.size" type="button" class="knopf knopf-klein" @click="alleZeigen">
+        </UButton>
+        <UButton size="sm" color="neutral" variant="outline" v-if="versteckt.size" @click="alleZeigen">
           {{ t('ablauf.alleZeigen') }}
-        </button>
+        </UButton>
       </div>
       <p class="text-muted text-[13px] mt-2">{{ t('ablauf.zeigenHinweis') }}</p>
     </section>
@@ -102,13 +102,13 @@ watch(modus, () => alleZeigen())
       {{ t('ablauf.nichtsAusgewaehlt') }}
     </p>
 
-    <section v-for="bild in bilder" :key="`${bild.modus}-${bild.datum}`" class="abschnitt">
+    <section v-for="bild in bilder" :key="`${bild.modus}-${bild.datum}`" class="panel">
       <div class="flex items-baseline gap-3 flex-wrap mb-3">
-        <h2 class="abschnitt-titel">{{ bild.datum }}</h2>
+        <h2 class="section-title">{{ bild.datum }}</h2>
         <span class="grow"></span>
-        <button v-if="gewaehlt" type="button" class="knopf knopf-klein" @click="gewaehlt = null">
+        <UButton size="sm" color="neutral" variant="outline" v-if="gewaehlt" @click="gewaehlt = null">
           {{ t('ablauf.alleHervorheben') }}
-        </button>
+        </UButton>
       </div>
 
       <BewegungsTag v-model:gewaehlt="gewaehlt" :bild="bild"/>

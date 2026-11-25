@@ -16,30 +16,28 @@ function wegwerfen() {
 </script>
 
 <template>
-  <div class="fixed inset-0 z-50 bg-black/55 flex items-start justify-center p-4 overflow-auto"
-       @click.self="meldet('schliessen')">
-    <div class="abschnitt w-full max-w-3xl my-6 grid gap-3">
-      <div class="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h2 class="abschnitt-titel">{{ name }}</h2>
-          <p class="tabular text-sm text-muted mt-1">
-            <span v-if="mehrereTage()">{{ tagVon(schritt.von) }} </span>
-            {{ uhrzeit(schritt.von) }}–{{ uhrzeit(schritt.bis) }}
-          </p>
-        </div>
-        <div class="flex gap-2 flex-wrap">
-          <button type="button" class="knopf knopf-klein knopf-gefahr" @click="wegwerfen">
-            <font-awesome-icon icon="fa-solid fa-trash"/>
-            {{ t('ablauf.schrittEntfernen') }}
-          </button>
-          <button type="button" class="knopf knopf-klein" @click="meldet('schliessen')">
-            <font-awesome-icon icon="fa-solid fa-xmark"/>
-            {{ t('aktion.schliessen') }}
-          </button>
-        </div>
-      </div>
-
+  <UModal :open="true" :title="name" :ui="{content: 'sm:max-w-3xl'}"
+          @update:open="(open: boolean) => !open && meldet('schliessen')">
+    <template #description>
+      <span class="tabular">
+        <span v-if="mehrereTage()">{{ tagVon(schritt.von) }} </span>
+        {{ uhrzeit(schritt.von) }}–{{ uhrzeit(schritt.bis) }}
+      </span>
+    </template>
+    <template #body>
       <SchrittFelder :lauf="lauf" :schritt="schritt"/>
-    </div>
-  </div>
+    </template>
+    <template #footer>
+      <div class="flex w-full flex-wrap justify-end gap-2">
+          <UButton size="sm" color="signal" variant="outline" @click="wegwerfen">
+            <UIcon name="i-lucide-trash-2"/>
+            {{ t('ablauf.schrittEntfernen') }}
+          </UButton>
+          <UButton size="sm" color="neutral" variant="outline" @click="meldet('schliessen')">
+            <UIcon name="i-lucide-x"/>
+            {{ t('aktion.schliessen') }}
+          </UButton>
+      </div>
+    </template>
+  </UModal>
 </template>

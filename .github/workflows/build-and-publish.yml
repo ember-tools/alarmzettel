@@ -50,7 +50,7 @@ jobs:
         id: stempel
         run: |
           echo "commit=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
-          echo "gebaut=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+          echo "built_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         uses: docker/build-push-action@v7
@@ -61,7 +61,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             COMMIT=${{ steps.stempel.outputs.commit }}
-            GEBAUT=${{ steps.stempel.outputs.gebaut }}
+            BUILD_TIME=${{ steps.stempel.outputs.built_at }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

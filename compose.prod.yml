@@ -1,0 +1,17 @@
+services:
+  app:
+    image: ghcr.io/ember-tools/alarmzettel:latest
+    restart: unless-stopped
+    environment:
+      CORS_ORIGINS: https://alarmzettel.emberbox.app
+    volumes:
+      - freigaben:/data
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.alarmzettel.rule: "Host(`alarmzettel.emberbox.app`)"
+      traefik.http.routers.alarmzettel.entrypoints: websecure
+      traefik.http.routers.alarmzettel.tls.certresolver: letsencrypt
+      traefik.http.services.alarmzettel.loadbalancer.server.port: "8000"
+
+volumes:
+  freigaben:

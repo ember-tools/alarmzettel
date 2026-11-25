@@ -1,54 +1,13 @@
-import {createApp} from 'vue'
-import './style.css'
+import {createToolApp, emberboxUi} from '@emberbox/ui'
+import {createWebHistory} from 'vue-router'
 import App from './App.vue'
-import router from './router'
 import {i18n} from './i18n'
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {
-    faAngleDown,
-    faAngleUp,
-    faAngleRight,
-    faArrowLeft,
-    faCheck,
-    faCircleCheck,
-    faCopy,
-    faDownload,
-    faFilePdf,
-    faFileZipper,
-    faBox,
-    faListCheck,
-    faMoon,
-    faPen,
-    faPlus,
-    faRotate,
-    faShareNodes,
-    faSun,
-    faTable,
-    faLocationDot,
-    faPersonWalking,
-    faTrash,
-    faTruck,
-    faUpload,
-    faUsers,
-    faXmark,
-} from '@fortawesome/free-solid-svg-icons'
-import {faCircle} from '@fortawesome/free-regular-svg-icons'
-import {faGithub} from '@fortawesome/free-brands-svg-icons'
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
-import {initTheme} from './theme'
+import {createAppRouter} from './router'
 import {sitzungStarten} from './store/sitzung'
+import './style.css'
 
-
-library.add(faAngleDown, faAngleRight, faAngleUp, faArrowLeft, faBox, faCheck, faCircle,
-    faCircleCheck, faCopy, faDownload, faFilePdf, faFileZipper, faListCheck, faLocationDot,
-    faMoon, faPen, faPersonWalking, faPlus, faRotate, faShareNodes, faSun, faTable, faTrash,
-    faTruck, faUpload, faUsers, faXmark, faGithub)
-
-initTheme()
 void sitzungStarten()
 
-createApp(App)
-    .use(router)
-    .use(i18n)
-    .component('font-awesome-icon', FontAwesomeIcon)
-    .mount('#app')
+const router = createAppRouter(createWebHistory())
+const app = createToolApp(App).use(router).use(i18n).use(emberboxUi)
+void router.isReady().then(() => app.mount('#app'))

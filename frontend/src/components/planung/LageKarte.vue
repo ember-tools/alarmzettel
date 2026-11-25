@@ -10,6 +10,7 @@ import type {Standort} from '../../scripts/bewegungen'
 import {mitte, utm33ZuWgs84} from '../../scripts/geo'
 import type {Ortsmarke} from '../../scripts/geo'
 import {alsMinuten, uhrzeit} from '../../scripts/zeit'
+import {MAP_LIMITS, TILE_LAYER_OPTIONS, TILE_URL} from '../../scripts/tiles'
 
 /**
  * Die Karte für den Ausführungstag: alle Orte, und darauf, wo jede Kette gerade ist. Der
@@ -164,10 +165,8 @@ onMounted(async () => {
   if (folgt.value) jetztSetzen()
   await punkteLaden()
   if (!behaelter.value) return
-  karte = L.map(behaelter.value, {attributionControl: true, zoomControl: true})
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, attribution: '© OpenStreetMap',
-  }).addTo(karte)
+  karte = L.map(behaelter.value, {attributionControl: true, zoomControl: true, ...MAP_LIMITS})
+  L.tileLayer(TILE_URL, TILE_LAYER_OPTIONS).addTo(karte)
   ortsschicht = L.layerGroup().addTo(karte)
   bewegungsschicht = L.layerGroup().addTo(karte)
   ortePunkte()
@@ -187,32 +186,32 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
 </script>
 
 <template>
-  <section class="abschnitt">
+  <section class="panel">
     <div class="flex items-baseline gap-3 flex-wrap mb-3">
-      <h2 class="abschnitt-titel">{{ t('ablauf.karte') }}</h2>
-      <select v-if="tage.length > 1" v-model="tag" class="field w-auto">
+      <h2 class="section-title">{{ t('ablauf.karte') }}</h2>
+      <select v-if="tage.length > 1" v-model="tag" class="native-select w-auto">
         <option v-for="eintrag in tage" :key="eintrag" :value="eintrag">{{ eintrag }}</option>
       </select>
       <span v-else class="text-muted text-sm">{{ tag }}</span>
       <span class="grow"></span>
       <span class="tabular text-lg">{{ uhrzeit(zeitpunkt) }}</span>
-      <button type="button" class="knopf knopf-klein" :class="folgt ? 'knopf-primaer' : ''"
-              @click="folgenUmschalten">
+      <UButton size="sm" :color="folgt ? 'primary' : 'neutral'" :variant="folgt ? 'solid' : 'outline'"
+               @click="folgenUmschalten">
         {{ t('ablauf.jetzt') }}
-      </button>
+      </UButton>
     </div>
 
     <input v-model.number="minute" type="range" :min="fenster.von" :max="fenster.bis" step="1"
            class="w-full mb-3" @input="folgenBeenden"/>
 
     <div class="grid lg:grid-cols-[1fr_280px] gap-4 items-start">
-      <div ref="behaelter" class="h-[60vh] min-h-80 rounded border border-rule"></div>
+      <div ref="behaelter" class="h-[60vh] min-h-80 rounded border border-default"></div>
 
       <div class="grid gap-2">
-        <h3 class="label">{{ t('ablauf.naechste') }}</h3>
+        <h3 class="eyebrow">{{ t('ablauf.naechste') }}</h3>
         <p v-if="!naechste.length" class="text-muted text-sm">{{ t('ablauf.nichtsMehr') }}</p>
         <div v-for="(ereignis, nummer) in naechste" :key="nummer"
-             class="border-l-2 border-rule pl-3 py-1">
+             class="border-l-2 border-default pl-3 py-1">
           <div class="flex items-baseline gap-2">
             <span class="tabular text-sm">{{ uhrzeit(ereignis.zeitpunkt) }}</span>
             <span class="text-muted text-[13px]">{{ t('ablauf.inMinuten', {n: ereignis.in}) }}</span>
@@ -228,9 +227,9 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
         </div>
 
         <template v-if="material.length">
-          <h3 class="label mt-3">{{ t('ablauf.material') }}</h3>
+          <h3 class="eyebrow mt-3">{{ t('ablauf.material') }}</h3>
           <div v-for="stand in material" :key="stand.materialId" class="text-sm">
-            <font-awesome-icon icon="fa-solid fa-box" class="text-muted mr-1"/>
+            <UIcon name="i-lucide-package" class="text-muted mr-1"/>
             <span v-if="stand.anzahl > 1" class="tabular">{{ t('ablauf.materialMenge', {n: stand.anzahl}) }}</span>
             {{ stand.name }}
             <span class="text-muted">

@@ -9,6 +9,7 @@ pydantic = "*"
 pydantic-settings = "*"
 python-multipart = "*"
 segno = "*"
+httpx = "*"
 
 [dev-packages]
 

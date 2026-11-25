@@ -215,11 +215,11 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="grid gap-4 max-w-3xl">
-    <p v-if="fehler" class="abschnitt text-signal-ink">{{ fehler }}</p>
+    <p v-if="fehler" class="panel text-(--eb-signal-text)">{{ fehler }}</p>
     <p v-else-if="!mappe" class="text-muted text-sm">{{ t('freigabe.laedt') }}</p>
 
     <template v-else-if="!name">
-      <p class="abschnitt text-signal-ink">{{ t('blatt.unbekannt') }}</p>
+      <p class="panel text-(--eb-signal-text)">{{ t('blatt.unbekannt') }}</p>
     </template>
 
     <template v-else>
@@ -231,19 +231,19 @@ onBeforeUnmount(() => {
           </div>
           <p class="text-muted text-[13px] mt-1">{{ t('blatt.hinweis') }}</p>
         </div>
-        <button v-if="zeilen.length" type="button" class="knopf knopf-klein" @click="pdf">
-          <font-awesome-icon icon="fa-solid fa-file-pdf"/>
+        <UButton size="sm" color="neutral" variant="outline" v-if="zeilen.length" @click="pdf">
+          <UIcon name="i-lucide-file-text"/>
           {{ t('blatt.pdf') }}
-        </button>
+        </UButton>
       </div>
 
-      <p v-if="!zeilen.length" class="abschnitt text-muted text-sm">{{ t('ablauf.ohnePlan') }}</p>
+      <p v-if="!zeilen.length" class="panel text-muted text-sm">{{ t('ablauf.ohnePlan') }}</p>
 
-      <section v-else class="abschnitt">
+      <section v-else class="panel">
         <div v-for="(zeile, nummer) in zeilen" :key="zeile.schluessel"
-             class="border-t border-rule first:border-t-0 py-2 grid gap-0.5">
+             class="border-t border-default first:border-t-0 py-2 grid gap-0.5">
           <div class="flex items-baseline gap-3 flex-wrap">
-            <span v-if="tage[nummer]" class="label text-muted">{{ tage[nummer] }}</span>
+            <span v-if="tage[nummer]" class="eyebrow text-muted">{{ tage[nummer] }}</span>
             <span class="tabular font-bold whitespace-nowrap">
               {{ uhrzeit(zeile.von) }}–{{ uhrzeit(zeile.bis) }}
             </span>
@@ -251,15 +251,15 @@ onBeforeUnmount(() => {
             <span v-if="zeile.womit" class="text-muted text-sm">{{ zeile.womit }}</span>
           </div>
           <div v-if="zeile.lage || zeile.beiwerk" class="flex flex-wrap gap-x-3 text-[13px]">
-            <span v-if="zeile.lage" class="text-signal-ink">{{ zeile.lage }}</span>
+            <span v-if="zeile.lage" class="text-(--eb-signal-text)">{{ zeile.lage }}</span>
             <span v-if="zeile.beiwerk" class="text-muted">{{ zeile.beiwerk }}</span>
           </div>
         </div>
       </section>
 
-      <section v-if="orte.length" class="abschnitt">
-        <h2 class="abschnitt-titel">{{ t('blatt.orte') }}</h2>
-        <div v-for="ort in orte" :key="ort.id" class="border-t border-rule py-2 first:border-t-0">
+      <section v-if="orte.length" class="panel">
+        <h2 class="section-title">{{ t('blatt.orte') }}</h2>
+        <div v-for="ort in orte" :key="ort.id" class="border-t border-default py-2 first:border-t-0">
           <div class="flex items-baseline gap-3 flex-wrap">
             <span class="font-bold">{{ ort.name }}</span>
             <span class="text-muted text-sm grow min-w-0">{{ adresstext(ort) }}</span>

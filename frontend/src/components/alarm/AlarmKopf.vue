@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import AuswahlFeld from '../base/AuswahlFeld.vue'
-import JaNeinFeld from '../base/JaNeinFeld.vue'
-import TextFeld from '../base/TextFeld.vue'
-import ZeitpunktFeld from '../base/ZeitpunktFeld.vue'
-import TextBereich from '../base/TextBereich.vue'
+import {ComboboxField, DateTimeField, TextAreaField, TextField, YesNoField} from '@emberbox/ui'
 import {t} from '../../i18n'
 import {stichwortSichern, stichwortVorschlaege} from '../../store/arbeitsmappe'
 import type {Alarm} from '../../interfaces/Alarm'
 
 const alarm = defineModel<Alarm>({required: true})
+
+/** A yes/no field stores and shows what the slip prints: `J` or `N`. */
+const SLIP_YES_NO = {
+  yesValue: 'J',
+  noValue: 'N',
+  yesLabel: 'J',
+  noLabel: 'N',
+  yesTitle: t('feld.ja'),
+  noTitle: t('feld.nein'),
+}
 
 /**
  * Zeigt eine Lage auf diesen Alarm, kommen die Zeiten aus dem Ablaufplan. Dann stehen hier die
@@ -39,43 +45,43 @@ function stichwortGewaehlt() {
 </script>
 
 <template>
-  <section class="abschnitt">
-    <h2 class="abschnitt-titel">{{ t('abschnitt.kopf') }}</h2>
+  <section class="panel">
+    <h2 class="section-title">{{ t('abschnitt.kopf') }}</h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       <div v-if="zeiten?.einsatzNr">
-        <label class="feld-label">{{ t('feld.einsatzNr') }}</label>
-        <input type="text" class="field" disabled :value="zeiten.einsatzNr"/>
+        <label class="field-label">{{ t('feld.einsatzNr') }}</label>
+        <UInput type="text" disabled :model-value="zeiten.einsatzNr" class="w-full"/>
       </div>
-      <TextFeld v-else v-model="alarm.einsatzNr" :label="t('feld.einsatzNr')"/>
-      <TextFeld v-model="alarm.aPlatz" :label="t('feld.aPlatz')"/>
-      <TextFeld v-model="alarm.behoerde" :label="t('feld.behoerde')"/>
-      <TextFeld v-model="alarm.titel" :label="t('feld.titel')"/>
+      <TextField v-else v-model="alarm.einsatzNr" :label="t('feld.einsatzNr')"/>
+      <TextField v-model="alarm.aPlatz" :label="t('feld.aPlatz')"/>
+      <TextField v-model="alarm.behoerde" :label="t('feld.behoerde')"/>
+      <TextField v-model="alarm.titel" :label="t('feld.titel')"/>
       <template v-if="zeiten">
         <div v-for="name in ZEITPUNKTE" :key="name">
-          <label class="feld-label">{{ t(`feld.${name}`) }}</label>
-          <input type="text" class="field" disabled
-                 :value="`${zeiten[`${name}Datum`]} ${zeiten[`${name}Zeit`]}`.trim()"/>
+          <label class="field-label">{{ t(`feld.${name}`) }}</label>
+          <UInput type="text" disabled
+                  :model-value="`${zeiten[`${name}Datum`]} ${zeiten[`${name}Zeit`]}`.trim()" class="w-full"/>
         </div>
       </template>
       <template v-else>
-        <ZeitpunktFeld v-model:datum="alarm.einsatzDatum" v-model:zeit="alarm.einsatzZeit"
+        <DateTimeField v-model:date="alarm.einsatzDatum" v-model:time="alarm.einsatzZeit"
                        :label="t('feld.einsatz')" @change="meldungFolgt"/>
-        <ZeitpunktFeld v-model:datum="alarm.meldungDatum" v-model:zeit="alarm.meldungZeit"
+        <DateTimeField v-model:date="alarm.meldungDatum" v-model:time="alarm.meldungZeit"
                        :label="t('feld.meldung')"/>
       </template>
-      <JaNeinFeld v-model="alarm.polizei" :label="t('feld.polizei')"/>
-      <JaNeinFeld v-model="alarm.sonderrechte" :label="t('feld.sonderrechte')"/>
-      <TextFeld v-model="alarm.arbeitsgruppe" :label="t('feld.arbeitsgruppe')"/>
-      <TextFeld v-model="alarm.wachalarmNr" :label="t('feld.wachalarmNr')"/>
+      <YesNoField v-model="alarm.polizei" :label="t('feld.polizei')" v-bind="SLIP_YES_NO"/>
+      <YesNoField v-model="alarm.sonderrechte" :label="t('feld.sonderrechte')" v-bind="SLIP_YES_NO"/>
+      <TextField v-model="alarm.arbeitsgruppe" :label="t('feld.arbeitsgruppe')"/>
+      <TextField v-model="alarm.wachalarmNr" :label="t('feld.wachalarmNr')"/>
     </div>
   </section>
 
-  <section class="abschnitt">
-    <h2 class="abschnitt-titel">{{ t('abschnitt.stichwort') }}</h2>
+  <section class="panel">
+    <h2 class="section-title">{{ t('abschnitt.stichwort') }}</h2>
     <div class="grid gap-3">
-      <AuswahlFeld v-model="alarm.stichwort" :label="t('feld.stichwort')"
-                   :vorschlaege="stichwortVorschlaege()" @change="stichwortGewaehlt"/>
-      <TextBereich v-model="alarm.kurzinfo" :label="t('feld.kurzinfo')" :zeilen="2"/>
+      <ComboboxField v-model="alarm.stichwort" :label="t('feld.stichwort')"
+                   :suggestions="stichwortVorschlaege()" @change="stichwortGewaehlt"/>
+      <TextAreaField v-model="alarm.kurzinfo" :label="t('feld.kurzinfo')" :rows="2"/>
     </div>
   </section>
 </template>

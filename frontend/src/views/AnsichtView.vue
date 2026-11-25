@@ -45,19 +45,19 @@ async function pdf() {
         <h1 class="headline text-2xl">{{ t('ansicht.titel') }}</h1>
         <p class="text-muted text-sm mt-1">{{ t('ansicht.beschreibung') }}</p>
       </div>
-      <button type="button" class="knopf" :disabled="!arbeitsmappe.alarme.length" @click="pdf">
-        <font-awesome-icon icon="fa-solid fa-file-pdf"/>
+      <UButton color="neutral" variant="outline" :disabled="!arbeitsmappe.alarme.length" @click="pdf">
+        <UIcon name="i-lucide-file-text"/>
         {{ t('datei.pdfAlle') }}
-      </button>
+      </UButton>
     </div>
 
-    <p v-if="fehler" class="text-sm text-signal-ink">{{ fehler }}</p>
+    <p v-if="fehler" class="text-sm text-(--eb-signal-text)">{{ fehler }}</p>
 
     <div v-if="reiter.length > 1" class="flex flex-wrap gap-2">
-      <button v-for="name in reiter" :key="name" type="button" class="knopf knopf-klein"
-              :class="ansicht === name ? 'knopf-primaer' : ''" @click="ansicht = name">
+      <UButton size="sm" v-for="name in reiter" :key="name"
+               :color="ansicht === name ? 'primary' : 'neutral'" :variant="ansicht === name ? 'solid' : 'outline'" @click="ansicht = name">
         {{ t(`ansicht.reiter.${name}`) }}
-      </button>
+      </UButton>
     </div>
 
     <template v-if="ansicht === 'alarme'">

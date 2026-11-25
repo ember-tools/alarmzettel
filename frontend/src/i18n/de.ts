@@ -8,6 +8,9 @@ export default {
         ansicht: 'Ansicht',
         kataloge: 'Kataloge',
         planung: 'Ablauf',
+        info: 'Was ist das?',
+        hilfe: 'Hilfe',
+        zurApp: 'Zum Alarmplaner',
     },
     routes: {
         alarme: 'Alarme',
@@ -19,15 +22,6 @@ export default {
         planung: 'Stammdaten',
         ablauf: 'Ablauf',
         notFound: 'Nicht gefunden',
-    },
-    fuss: {
-        // Der Fuß bleibt englisch: Urheber-, Lizenz- und Bauhinweis stehen so in jeder
-        // Quelldatei, in der LICENSE und in den übrigen Projekten. Ein übersetzter
-        // Lizenzhinweis ist keiner mehr.
-        urheber: '© 2026 RainbowDashLabs and Contributor',
-        gemacht: 'Made with ❤️ and 🏳️‍🌈',
-        lizenz: 'Licensed under AGPL-3.0',
-        fassung: 'Alarmplaner {commit} · built {gebaut}',
     },
     liste: {
         leer: 'Noch kein Alarm angelegt.',
@@ -204,6 +198,7 @@ export default {
         neu: 'Neu beginnen',
     },
     freigabe: {
+        kopieren: 'Link kopieren',
         ansehen: 'Ansehen',
         ansehenHinweis: 'Dieser Link lässt nur zusehen: du siehst jede Änderung der anderen, deine eigenen bleiben in diesem Browser. Zum Arbeiten nimm eine Kopie.',
         teilenTitel: 'Den Link weitergeben — zum Mitarbeiten oder nur zum Ansehen.',
@@ -445,7 +440,6 @@ export default {
         von: 'Von',
         bis: 'Bis',
     },
-    theme: {umschalten: 'Darstellung umschalten'},
     nichtGefunden: {
         titel: 'Seite nicht gefunden',
         zurueck: 'Zur Alarmliste',

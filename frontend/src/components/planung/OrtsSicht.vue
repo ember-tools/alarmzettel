@@ -32,8 +32,8 @@ function lage(belegung: Ortsbelegung): string {
 
 <template>
   <div class="grid gap-5">
-    <section v-for="sicht in sichten" :key="sicht.ort.id" class="abschnitt">
-      <h2 class="abschnitt-titel">
+    <section v-for="sicht in sichten" :key="sicht.ort.id" class="panel">
+      <h2 class="section-title">
         {{ sicht.ort.name || t('ablauf.ohneName') }}
         <span class="text-muted font-normal">{{ sicht.ort.adresse.strasse }}
           {{ sicht.ort.adresse.hnr }}</span>
@@ -43,7 +43,7 @@ function lage(belegung: Ortsbelegung): string {
         <table class="w-full text-sm">
           <tbody>
           <tr v-for="(belegung, zeile) in sicht.belegungen" :key="belegung.schritt.id"
-              class="border-t border-rule">
+              class="border-t border-default">
             <td v-if="mehrereTage()" class="tabular py-1 pr-3 text-muted whitespace-nowrap">
               {{ sicht.tage[zeile] }}
             </td>
