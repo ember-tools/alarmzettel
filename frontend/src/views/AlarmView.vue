@@ -22,7 +22,8 @@ const abgeleitet = ref<Alarmableitung | null>(null)
 /**
  * Zeigt eine Lage auf diesen Alarm, kommen Zeiten, Einsatzadresse und Aufgebot aus dem Plan.
  * Gerechnet wird das auf dem Server, damit hier nichts anderes steht als auf dem Blatt – und
- * neu gerechnet, sobald sich am Plan etwas ändert, das diesen Alarm angeht.
+ * neu gerechnet, sobald sich am Plan etwas ändert, das diesen Alarm angeht. Vorher wird
+ * abgeglichen, sonst fragte die Ansicht nach einem eben angelegten Alarm, bevor der Server ihn kennt.
  */
 const planstand = computed(() => JSON.stringify([
   route.params.id,
@@ -34,6 +35,7 @@ const planstand = computed(() => JSON.stringify([
 
 watch(planstand, async () => {
   try {
+    await jetztAbgleichen()
     abgeleitet.value = await alarmableitung(String(route.params.id))
     fehler.value = null
   } catch (error) {
@@ -51,18 +53,19 @@ const planzeiten = computed(() => {
   } : undefined
 })
 
-function rendern(): Promise<Blob> {
+/**
+ * Renders the sheet after an exchange, so it shows what everyone has rather than what this browser
+ * happened to see a few seconds ago, and a freshly created alarm is on the server before it is
+ * asked for. Outside a shared session the exchange does nothing.
+ */
+async function rendern(): Promise<Blob> {
+  await jetztAbgleichen()
   return renderEinen(String(route.params.id))
 }
 
-/**
- * Prints the sheet after an exchange, so it shows what everyone has rather than what this browser
- * happened to see a few seconds ago. Outside a shared session the exchange does nothing.
- */
 async function pdf() {
   fehler.value = null
   try {
-    await jetztAbgleichen()
     const blob = await rendern()
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
