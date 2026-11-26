@@ -30,18 +30,21 @@ TARGET = ROOT / "frontend" / "public" / "sna-tree.json"
 CODE, QUALIFIER, KATEGORIE, ANLASS, HAUPT, UNTER, SUFFIX = 0, 3, 4, 5, 6, 7, 8
 
 
-# The workbook carries editing debris that is invisible in a spreadsheet but shows up as
-# highlighted boxes in an editor and breaks plain string matching: zero-width spaces inside
-# words and non-breaking spaces between them.
 UNSICHTBAR = str.maketrans({
-    "\u200b": None,   # zero width space
-    "\u200c": None,   # zero width non-joiner
-    "\u200d": None,   # zero width joiner
-    "\ufeff": None,   # byte order mark
-    "\u00a0": " ",    # no-break space
-    "\u2007": " ",    # figure space
-    "\u202f": " ",    # narrow no-break space
+    "\u200b": None,
+    "\u200c": None,
+    "\u200d": None,
+    "\ufeff": None,
+    "\u00a0": " ",
+    "\u2007": " ",
+    "\u202f": " ",
 })
+"""
+Editing debris the workbook carries, invisible in a spreadsheet but shown as highlighted boxes in
+an editor and breaking plain string matching. Zero-width space, zero-width non-joiner, zero-width
+joiner and byte order mark inside words are dropped; no-break, figure and narrow no-break spaces
+between words become plain spaces.
+"""
 
 
 def saeubern(text):

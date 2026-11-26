@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend" / "src"))
 
-from data.dokument import TRENNER, flach, rund, sortierung_setzen  # noqa: E402
+from data.dokument import TRENNER, flach, rund, sortierung_setzen
 
 if len(sys.argv) < 2:
     sys.exit("Aufruf: python tools/pfade_vergleichen.py <arbeitsmappe.json>")

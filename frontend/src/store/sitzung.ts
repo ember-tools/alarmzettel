@@ -10,6 +10,7 @@ import {laufendeSitzung, sitzungAnlegen, sitzungUebernehmen, type Sitzungskopf} 
 import {arbeitsmappe, ersetzen, uebernehmen} from './arbeitsmappe'
 import {beitreten, verbindung, verlassen} from './sync'
 import type {Arbeitsmappe} from '../interfaces/Alarm'
+import {parsedOr, storeQuietly} from './browserStorage'
 
 const BEKANNT = 'alarmzettel_sitzungen'
 const NAME = 'alarmzettel_name'
@@ -27,28 +28,6 @@ export const sitzung = reactive({
     nurLesen: false,
     bekannt: [] as BekannteSitzung[],
 })
-
-/**
- * A value stored as JSON, or the fallback when there is none or the browser refuses to read it.
- * Each caller names its key, so the browser storage catalogue can be checked against the code.
- */
-function parsedOr<T>(read: () => string | null, fallback: T): T {
-    try {
-        const raw = read()
-        return raw ? JSON.parse(raw) as T : fallback
-    } catch {
-        return fallback
-    }
-}
-
-/** Stores a value; a browser that refuses to store anything simply forgets it. */
-function storeQuietly(write: () => void): void {
-    try {
-        write()
-    } catch {
-        return
-    }
-}
 
 /** Woran man eine Sitzung wiedererkennt: erstes Stichwort und wie viele Alarme darin stehen. */
 function beschriftung(mappe: Arbeitsmappe): string {

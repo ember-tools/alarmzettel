@@ -48,18 +48,17 @@ KATALOGWORTLISTEN = ("status", "trupp", "rollen", "fahrerlaubnisse")
 UMGEZOGEN = ("orte", "tage", "personen", "rollen", "fahrerlaubnisse")
 """Was einmal im Plan stand und heute im Katalog. Der alte Pfad wird beim Lesen umgesetzt."""
 
-# Jede Liste des Plans mit den Feldern, die als Pfad je Eintrag geschrieben werden. Die
-# geschachtelten Teile – Schritte und Besatzung – hängen darunter.
 PLANUNGSEINTRAEGE = {
     "programmpunkte": ("name", "alarmId"),
     "laeufe": ("fahrzeugId", "personId"),
 }
+"""Each list of the plan with the fields written as a path per entry; steps and crew hang below."""
 
-# Die Tage und das Personal stehen im Katalog; die Verfügbarkeiten hängen unter der Person.
 KATALOGEINTRAEGE = {
     "tage": ("datum", "name"),
     "personen": ("name", "anzahl", "blatt"),
 }
+"""Days and personnel live in the catalogue; availabilities hang below the person."""
 
 SCHRITTFELDER = ("art", "mittel", "fahrzeit", "von", "bis", "ortId", "programmpunktId",
                  "aufgebot", "notiz")
@@ -125,7 +124,14 @@ def _planungsfelder(planung: dict) -> dict[str, Any]:
 
 
 def flach(arbeitsmappe: dict) -> dict[str, Any]:
-    """Turns a working set into the flat map the merge operates on."""
+    """
+    Turns a working set into the flat map the merge operates on.
+
+    Status and Trupp are words and nothing else, so the word is its own key. Stichwörter and
+    vehicles are pointed at by the Alarme, so they are keyed by an id that a rename survives. A
+    Stichwort was a bare string before the catalogue had ids; reading one as its own id keeps an old
+    file working, and the browser gives it a real one the next time it saves.
+    """
     werte: dict[str, Any] = {}
 
     for reihe, alarm in enumerate(arbeitsmappe.get("alarme", [])):
@@ -166,14 +172,10 @@ def flach(arbeitsmappe: dict) -> dict[str, Any]:
     werte[_pfad("kataloge", "wacheName")] = kataloge.get("wacheName", "")
     werte[_pfad("kataloge", "alarmeProTag")] = kataloge.get("alarmeProTag", 2200)
     werte.update(_adresse_felder(_pfad("kataloge", "wache"), kataloge.get("wache") or {}))
-    # Status and Trupp are words and nothing else, so the word is its own key. Stichwörter and
-    # vehicles are pointed at by the Alarme, so they are keyed by an id that a rename survives.
     for liste in KATALOGWORTLISTEN:
         for wert in kataloge.get(liste, []):
             werte[_pfad("kataloge", liste, wert)] = True
     for eintrag in kataloge.get("stichwoerter", []):
-        # A Stichwort was a bare string before the catalogue had ids. Reading one as its own id
-        # keeps an old file working; the browser gives it a real one the next time it saves.
         eintrag = {"id": eintrag, "text": eintrag} if isinstance(eintrag, str) else eintrag
         kennung = eintrag.get("id") or eintrag.get("text", "")
         werte[_pfad("kataloge", "stichwoerter", kennung, "text")] = eintrag.get("text", "")
@@ -265,7 +267,14 @@ def _leerer_alarm(kennung: str) -> dict:
 
 
 def rund(werte: dict[str, Any]) -> dict:
-    """Builds the working set back out of the flat map, in sort-key order."""
+    """
+    Builds the working set back out of the flat map, in sort-key order.
+
+    Orte, days, personnel and the word lists once lived in the plan; their old paths keep their
+    meaning, or an existing session would lose them, but they are no longer written. Catalogue
+    entries are sorted by what they read as, not by their ids, so browser and server agree on the
+    order.
+    """
     alarme: dict[str, dict] = {}
     kataloge: dict[str, Any] = {"stichwoerter": {}, "fahrzeuge": {}, "orte": {}, "material": {},
                                 "arbeitsgruppe": "", "wache": {},
@@ -276,9 +285,6 @@ def rund(werte: dict[str, Any]) -> dict:
 
     for pfad, wert in werte.items():
         stueck = teile(pfad)
-        # Orte, Tage, Personal und die Wortlisten standen einmal im Plan. Die alten Pfade
-        # behalten ihre Bedeutung, sonst verlöre eine bestehende Sitzung sie; geschrieben werden
-        # sie nicht mehr.
         if len(stueck) > 1 and stueck[0] == "planung" and stueck[1] in UMGEZOGEN:
             stueck = ["kataloge", *stueck[1:]]
         elif stueck[0] == "planung":
@@ -337,7 +343,6 @@ def rund(werte: dict[str, Any]) -> dict:
         alarm["einsatzmittel"] = gruppen
         fertig.append(alarm)
 
-    # Sorted by what they read as, not by their ids, so both sides agree on the order.
     kataloge["fahrzeuge"] = sorted(kataloge["fahrzeuge"].values(),
                                    key=lambda v: (v.get("funkrufname", ""), v["id"]))
     kataloge["stichwoerter"] = sorted(kataloge["stichwoerter"].values(),
@@ -402,15 +407,16 @@ class Dokument:
         Writes a batch at one new revision. A change is taken unless what is already there was
         written later; a tie is settled by the writer's name, so every replica lands the same
         way. Returns the new revision.
+
+        A field written into something already deleted is dropped rather than stored: the writer
+        had simply not heard about the deletion yet, and keeping the value would send it on to
+        everyone else, who would rebuild the deleted entity from it.
         """
         if not aenderungen:
             return self.stand
         self.stand += 1
         for aenderung in aenderungen:
             pfad = aenderung["pfad"]
-            # A field written into something already deleted is dropped rather than stored. The
-            # writer had simply not heard about the deletion yet; keeping the value would mean
-            # sending it on to everyone else, who would rebuild the deleted entity from it.
             if not aenderung.get("weg") and self._verdeckt(pfad):
                 continue
             vorhanden = self.eintraege.get(pfad)

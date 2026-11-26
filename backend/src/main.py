@@ -48,8 +48,10 @@ async def _adressen_holen():
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
-    # Ein Neustart ist der eine Moment, in dem sich das ganze Verzeichnis zu durchlaufen lohnt:
-    # hier werden auch die Dateien eingesammelt, die ein unsauberes Ende hinterlassen hat.
+    """
+    Starts and stops the background work. A restart is the one moment worth walking the whole
+    session directory, so it also collects the files an unclean shutdown left behind.
+    """
     await asyncio.to_thread(sitzungen.aufraeumen)
     client = tile_client()
     application.state.tile_cache = TileCache(settings.tile_dir, client)

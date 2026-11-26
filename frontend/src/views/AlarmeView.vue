@@ -26,20 +26,23 @@ function anlegen() {
   router.push(`/alarm/${alarmAnlegen().id}`)
 }
 
+/**
+ * Saves the workbook after an exchange, so the file holds what everyone has. Outside a shared
+ * session the exchange does nothing.
+ */
 async function herunterladen() {
-  // Exchanged first, so the saved file holds what everyone has. Outside a shared workspace this
-  // does nothing.
   await jetztAbgleichen()
   speichern(new Blob([JSON.stringify(arbeitsmappe, null, 2)], {type: 'application/json'}),
       'alarmplaner.json')
 }
 
+/**
+ * Prints all sheets after an exchange, so they show what everyone has rather than what this
+ * browser happened to see a few seconds ago. Outside a shared session the exchange does nothing.
+ */
 async function pdf() {
   fehler.value = null
   try {
-    // Exchanged first, so the sheets are printed from what everyone has rather than from what
-    // this browser happened to see a few seconds ago. Outside a shared workspace this does
-    // nothing.
     await jetztAbgleichen()
     speichern(await renderAlle(), 'alarmzettel.pdf')
   } catch (error) {

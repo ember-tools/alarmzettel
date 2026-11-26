@@ -25,12 +25,15 @@ const listen: { schluessel: Wortliste, titel: string }[] = [
 ]
 
 /**
- * Eine Anzeigereihenfolge, die stillsteht, solange jemand im Abschnitt schreibt.
+ * A display order that stands still while someone is typing in the section.
  *
- * Der Aufbau sortiert die Kataloge nach Namen. Täte die Ansicht das bei jedem Tastendruck mit,
- * wanderte die Zeile unter dem Cursor weg und der nächste Buchstabe landete in einem fremden
- * Feld. Neu geordnet wird deshalb erst, wenn der Abschnitt den Fokus verliert – und wenn ein
- * Eintrag dazukommt oder verschwindet.
+ * The catalogues are sorted by name. Sorting on every keystroke would move the row under the
+ * cursor and send the next letter into a different field, so the list is re-sorted only when the
+ * section loses focus, and when an entry is added or removed. What is watched is *which* entries
+ * exist, as a sorted set of ids, not their order: an exchange rebuilds the workbook and may lay it
+ * out the other way round, and if sorting depended on that, the row under the cursor would jump
+ * away mid-word. The result is `reactive` so the template reads `liste` without `.value`, which
+ * Vue does not unwrap in a plain object.
  */
 function geordnet<T extends { id: string }>(quelle: () => T[], lesen: (eintrag: T) => string) {
   const reihenfolge = ref<string[]>([])
@@ -51,12 +54,7 @@ function geordnet<T extends { id: string }>(quelle: () => T[], lesen: (eintrag: 
     return [...bekannt, ...quelle().filter(eintrag => !gesehen.has(eintrag.id))]
   })
 
-  // Beobachtet wird, *welche* Einträge es gibt, nicht in welcher Reihenfolge sie stehen: der
-  // Abgleich baut die Arbeitsmappe neu auf und legt sie dabei anders herum hin. Hinge das
-  // Ordnen daran, spränge die Zeile unter dem Cursor mitten im Wort davon.
   watch(() => [...quelle().map(eintrag => eintrag.id)].sort().join(), ordnen, {immediate: true})
-  // Als `reactive`, damit die Vorlage `liste` ohne `.value` liest – in einem einfachen Objekt
-  // packt Vue eine Referenz nicht aus.
   return reactive({liste, ordnen})
 }
 

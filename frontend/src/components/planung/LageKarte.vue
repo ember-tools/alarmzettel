@@ -11,6 +11,7 @@ import {mitte, utm33ZuWgs84} from '../../scripts/geo'
 import type {Ortsmarke} from '../../scripts/geo'
 import {alsMinuten, uhrzeit} from '../../scripts/zeit'
 import {MAP_LIMITS, TILE_LAYER_OPTIONS, TILE_URL} from '../../scripts/tiles'
+import {storedOr, storeQuietly} from '../../store/browserStorage'
 
 /**
  * Die Karte für den Ausführungstag: alle Orte, und darauf, wo jede Kette gerade ist. Der
@@ -27,7 +28,7 @@ const SPEICHER = 'alarmplaner_karte_folgt'
 const tage = computed(() => bewegungstage(plandaten()))
 const tag = ref('')
 const minute = ref(8 * 60)
-const folgt = ref(localStorage.getItem(SPEICHER) === 'ja')
+const folgt = ref(storedOr(() => localStorage.getItem(SPEICHER), 'nein') === 'ja')
 let uhr: ReturnType<typeof setInterval> | undefined
 
 /** Der heutige Tag, wie die Uhr an der Wand ihn zählt – nicht der, den UTC gerade hat. */
@@ -41,6 +42,10 @@ const zeitpunkt = computed(() =>
     `${tag.value}T${String(Math.floor(minute.value / 60)).padStart(2, '0')}:` +
     String(Math.floor(minute.value % 60)).padStart(2, '0'))
 
+/**
+ * The stretch of the day the slider covers. The time shown always lies inside it, or the slider
+ * would stand at its stop while the map shows the time, and the two would say different things.
+ */
 const fenster = computed(() => {
   const zeiten = arbeitsmappe.planung.laeufe
       .flatMap(lauf => lauf.schritte)
@@ -48,8 +53,6 @@ const fenster = computed(() => {
       .flatMap(schritt => [alsMinuten(schritt.von), alsMinuten(schritt.bis)])
       .filter((wert): wert is number => wert !== null)
   const mitternacht = alsMinuten(`${tag.value}T00:00`) ?? 0
-  // Der gezeigte Zeitpunkt gehört immer ins Fenster: sonst stünde der Schieber am Anschlag,
-  // während die Karte die Uhrzeit zeigt, und beide sagten Verschiedenes.
   const gezeigt = minute.value
   if (!zeiten.length) return {von: Math.min(6 * 60, gezeigt), bis: Math.max(22 * 60, gezeigt)}
   return {
@@ -99,12 +102,12 @@ function jetztSetzen() {
 function folgenBeenden() {
   if (!folgt.value) return
   folgt.value = false
-  localStorage.setItem(SPEICHER, 'nein')
+  storeQuietly(() => localStorage.setItem(SPEICHER, 'nein'))
 }
 
 function folgenUmschalten() {
   folgt.value = !folgt.value
-  localStorage.setItem(SPEICHER, folgt.value ? 'ja' : 'nein')
+  storeQuietly(() => localStorage.setItem(SPEICHER, folgt.value ? 'ja' : 'nein'))
   if (folgt.value) jetztSetzen()
 }
 

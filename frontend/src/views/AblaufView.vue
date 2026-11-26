@@ -11,6 +11,7 @@ import {fehlertext, renderAblaufplan, renderAblaufplanZip, renderAlle} from '../
 import {arbeitsmappe} from '../store/arbeitsmappe'
 import {alleOrte, entfernen, laufAnlegen, laufVon, personName, punkteLaden} from '../store/planung'
 import {jetztAbgleichen} from '../store/sync'
+import {storedOr, storeQuietly} from '../store/browserStorage'
 import {sitzung} from '../store/sitzung'
 
 watch(() => alleOrte().map(ort => Object.values(ort.adresse).join()).join('|'),
@@ -48,12 +49,13 @@ type Ansicht = typeof ANSICHTEN[number]
 const SPEICHER = 'alarmplaner_ablaufansicht'
 
 /**
- * Dieselben Daten von sieben Seiten; keine ist die richtige. Womit jemand arbeitet, merkt sich
- * der Browser – es gehört zu ihm und nicht zur Arbeitsmappe, so wie das Farbthema.
+ * The same data from seven sides; none is the right one. Which one someone works with is
+ * remembered by the browser, since it belongs to the browser and not to the workbook, like the
+ * colour theme. A browser that cannot store it simply starts with the day plan each time.
  */
 function gemerkteAnsicht(): Ansicht {
-  const gemerkt = localStorage.getItem(SPEICHER) as Ansicht | null
-  return gemerkt && ANSICHTEN.includes(gemerkt) ? gemerkt : 'tag'
+  const gemerkt = storedOr(() => localStorage.getItem(SPEICHER), 'tag') as Ansicht
+  return ANSICHTEN.includes(gemerkt) ? gemerkt : 'tag'
 }
 
 const ansicht = ref<Ansicht>(gemerkteAnsicht())
@@ -66,11 +68,8 @@ watch(reiter, liste => {
   if (!liste.includes(ansicht.value)) ansicht.value = liste[0] ?? 'tag'
 }, {immediate: true})
 
-watch(ansicht, gewaehlt => {
-  try {
-    localStorage.setItem(SPEICHER, gewaehlt)
-  } catch { /* ein Browser ohne Speicher fängt eben jedes Mal beim Tagesplan an */ }
-})
+watch(ansicht, gewaehlt => storeQuietly(() => localStorage.setItem(SPEICHER, gewaehlt)))
+
 const fehler = ref<string | null>(null)
 
 /**

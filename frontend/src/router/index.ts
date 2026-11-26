@@ -2,6 +2,11 @@ import type {RouteLocation} from 'vue-router'
 import {createRouter, type RouteRecordRaw, type RouterHistory} from 'vue-router'
 import {sitzung} from '../store/sitzung'
 
+/**
+ * The tool's routes. A sheet (`/blatt/…`) hangs off its own link and reads the session without
+ * switching into it. `/planung` and `/freigabe/…` are old addresses kept as redirects, so links that
+ * were already passed around still land somewhere sensible.
+ */
 const routes: RouteRecordRaw[] = [
     {path: '/info', name: 'Info', component: () => import('../views/InfoView.vue'), meta: {public: true}},
     {path: '/hilfe', name: 'Hilfe', component: () => import('../views/HelpView.vue'), meta: {public: true}},
@@ -13,14 +18,11 @@ const routes: RouteRecordRaw[] = [
         meta: {titleKey: 'routes.ablauf'}},
     {path: '/ansicht', name: 'Ansicht', component: () => import('../views/AnsichtView.vue'),
         meta: {titleKey: 'routes.ansicht'}},
-    // Ein Blatt hängt an seinem eigenen Link und liest die Sitzung, ohne in sie zu wechseln.
     {path: '/blatt/:token/:art(person|fahrzeug)/:id', name: 'Blatt',
         component: () => import('../views/BlattView.vue'), meta: {titleKey: 'routes.blatt'}},
-    // Die Stammdaten stehen im Katalog; alte Links sollen weiter irgendwo landen.
     {path: '/planung', redirect: '/kataloge'},
     {path: '/sitzung/:token', name: 'Sitzung', component: () => import('../views/FreigabeView.vue'),
         meta: {titleKey: 'routes.freigabe'}},
-    // Links, die schon herumgereicht wurden, zeigen auf den alten Pfad und sollen weiter gehen.
     {path: '/freigabe/:token', redirect: (ziel: RouteLocation) => `/sitzung/${ziel.params.token}`},
     {path: '/kataloge', name: 'Kataloge', component: () => import('../views/KatalogeView.vue'),
         meta: {titleKey: 'routes.kataloge'}},

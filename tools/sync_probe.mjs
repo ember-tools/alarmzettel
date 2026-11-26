@@ -8,6 +8,16 @@
  * – gives it the handful of browser globals it touches, and drives two independent instances
  * through the situations two people actually get into.
  *
+ * Some situations need a word on why they matter. The answers of a code Hinweis are one list
+ * under one path; when the editor extends it in place, the comparison still has to see that, and
+ * if the shadow copy held the same list it would grow along and the change would never show.
+ * When the last entry of a list is deleted, the list itself is gone; a tombstone on it would wall
+ * it up, since the server treats everything below a tombstone as deleted. The PDF buttons
+ * exchange before they render, so the sheet is made from what everyone has: Ben writes, Anna
+ * flushes and reads without waiting for the next beat. A session from before the move into the
+ * catalogue carries its Orte under `planung|orte|…`; it can only be made through the paths
+ * themselves, since the model would move them into the catalogue on creation.
+ *
  *     node tools/sync_probe.mjs        (PORT_PROBE setzt den Port, Vorgabe 8131)
  */
 
@@ -22,9 +32,11 @@ const WURZEL = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const holen = createRequire(resolve(WURZEL, 'frontend/package.json'))
 const {build} = holen('esbuild')
 
-// axios reaches for Node builtins through a CommonJS shim, and an ESM bundle has no `require`
-// to give it. This hands it a real one; it resolves against the bundle's own file, which is why
-// each client is written to disk rather than imported from a data: URL.
+/**
+ * A real `require` for the bundles. axios reaches for Node builtins through a CommonJS shim, and
+ * an ESM bundle has none to give it; this one resolves against the bundle's own file, which is
+ * why each client is written to disk rather than imported from a data: URL.
+ */
 const BANNER = {js: "import {createRequire as __cr} from 'node:module';" +
     "const require = __cr(import.meta.url);"}
 
@@ -76,7 +88,9 @@ async function serverStarten() {
         await new Promise((fertig) => setTimeout(fertig, 500))
         try {
             if ((await fetch(`${basis}/api/health`)).ok) return
-        } catch { /* not up yet */ }
+        } catch {
+            continue
+        }
     }
     throw new Error(`Der Prüfserver auf Port ${HAFEN} kam nicht hoch.`)
 }
@@ -96,14 +110,13 @@ function umgebung() {
 
 /**
  * A fresh instance of the module. ES modules are cached per URL, so each client gets its own
- * source text and with it its own shadow copy and its own view of the working set.
+ * source text, bundled to its own file, and with it its own shadow copy and its own view of the
+ * working set.
  */
 async function klient(name) {
     const umfeld = umgebung()
     globalThis.localStorage = umfeld.localStorage
     globalThis.window = umfeld.window
-    // Each client is bundled to its own file, which is what gives it its own module instance
-    // and with it its own shadow copy.
     const quelle = [
         `// ${name}`,
         `export * from ${JSON.stringify(resolve(WURZEL, 'frontend/src/store/sync.ts'))}`,
@@ -269,9 +282,6 @@ pruefe('gleichzeitig geänderter Hinweis überlebt',
     alarmVon(ben).hinweise.find((h) => h.id === 'neuer-hinweis')?.text === 'Von Anna geändert')
 
 console.log('\nEin Abfrageweg, der an Ort und Stelle wächst')
-// Die Antworten eines Code-Hinweises stehen als ganze Liste unter einem Pfad. Wird sie an Ort
-// und Stelle ergänzt – genau das tut der Editor –, muss der Vergleich das trotzdem sehen; hielte
-// das Schattenbild dieselbe Liste, wüchse sie dort mit und die Änderung fiele nie auf.
 alarmVon(anna).hinweise.push({id: 'code-hinweis', sortierung: 50, typ: 'code',
     code: '01A01', meldung: 'Aus der Abfrage', antworten: ['Aus der Abfrage']})
 await abgleichen(anna)
@@ -291,9 +301,6 @@ pruefe('und ein umgeschriebener ebenso',
     JSON.stringify(alarmVon(ben).hinweise.find((h) => h.id === 'code-hinweis')?.antworten))
 
 console.log('\nDie Liste läuft leer und füllt sich wieder')
-// Wird der letzte Eintrag einer Liste gelöscht, ist die Liste selbst vollständig verschwunden.
-// Ein Grabstein darauf würde sie zumauern: der Server hält alles unterhalb eines Grabsteins für
-// gelöscht, und kein späterer Eintrag käme je wieder hinein.
 alarmVon(anna).hinweise = []
 await abgleichen(anna)
 await abgleichen(ben)
@@ -312,9 +319,7 @@ console.log('\nVerbindung weg und wieder da')
 alarmVon(anna).meldender = 'Während der Störung getippt'
 const echtesFetch = globalThis.fetch
 globalThis.fetch = undefined
-try {
-    await abgleichen(anna)
-} catch { /* the module swallows it; this is only in case it does not */ }
+await abgleichen(anna).catch(() => undefined)
 globalThis.fetch = echtesFetch
 pruefe('das Getippte ist noch da', alarmVon(anna).meldender === 'Während der Störung getippt')
 await abgleichen(anna)
@@ -323,8 +328,6 @@ pruefe('und erreicht Ben nach dem Abgleich',
     alarmVon(ben).meldender === 'Während der Störung getippt', alarmVon(ben).meldender)
 
 console.log('\nAbgleich vor dem Drucken')
-// What the PDF buttons rely on: they exchange before they render, so the sheet is made from
-// what everyone has. Ben writes, Anna does not wait for the next beat but flushes and reads.
 alarmVon(ben).stichwort = 'BRAND 4 KURZ VOR DEM DRUCK'
 await abgleichen(ben)
 pruefe('Anna hat die Änderung vor dem Abgleich noch nicht',
@@ -333,8 +336,6 @@ await abgleichen(anna)
 pruefe('nach dem Abgleich steht sie in Annas Arbeitsmappe',
     alarmVon(anna).stichwort === 'BRAND 4 KURZ VOR DEM DRUCK', alarmVon(anna).stichwort)
 
-// Eine Sitzung von vor dem Umzug trägt ihre Orte unter `planung|orte|…`. Sie entsteht nur über
-// die Pfade selbst: über das Modell ginge sie schon beim Anlegen in den Katalog.
 console.log('\nStammdaten einer älteren Sitzung überleben den Umzug in den Katalog')
 {
     const alte = await (await fetch(`${basis}/api/sitzung`, {

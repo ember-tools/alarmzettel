@@ -95,10 +95,10 @@ class CacheTest(unittest.TestCase):
         self.addCleanup(self.ablage.cleanup)
 
     def test_verdraengt_wird_nach_zahl_und_die_sitzung_bleibt_lesbar(self):
+        """The first session is long out of memory and still fully readable."""
         laden = Sitzungen(Path(self.ablage.name), 30, cache_eintraege=2, cache_minuten=30)
         tokens = [laden.anlegen({"version": 1, "alarme": [{"id": f"a{i}"}]})[0] for i in range(4)]
         self.assertEqual(2, laden.im_speicher())
-        # Die zuerst angelegte ist längst aus dem Speicher – und trotzdem vollständig da.
         self.assertEqual("a0", laden.lesen(tokens[0])[0]["alarme"][0]["id"])
 
     def test_verdraengt_wird_nach_zeit(self):

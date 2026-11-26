@@ -55,11 +55,13 @@ function rendern(): Promise<Blob> {
   return renderEinen(String(route.params.id))
 }
 
+/**
+ * Prints the sheet after an exchange, so it shows what everyone has rather than what this browser
+ * happened to see a few seconds ago. Outside a shared session the exchange does nothing.
+ */
 async function pdf() {
   fehler.value = null
   try {
-    // Exchanged first, so the sheet is printed from what everyone has rather than from what this
-    // browser happened to see a few seconds ago. Outside a shared workspace this does nothing.
     await jetztAbgleichen()
     const blob = await rendern()
     const url = URL.createObjectURL(blob)

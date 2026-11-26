@@ -8,6 +8,10 @@
  * `--rund` prints the working set rebuilt from those paths instead. Comparing only the paths
  * leaves the way back untested – a flattener that writes a path its own rebuilder ignores passes
  * the path check and still loses that data on every sync.
+ *
+ * The browser states a list's order by the order of the list, and the server stamps that into the
+ * sort key on the way in; the same happens here before flattening, or the two sides would differ
+ * on that alone.
  */
 import {readFileSync} from 'node:fs'
 import {createRequire} from 'node:module'
@@ -16,8 +20,10 @@ import {fileURLToPath} from 'node:url'
 
 const WURZEL = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
-// Node resolves an import from the importing file's directory, and esbuild is installed for the
-// frontend. Anchoring the lookup at the frontend's package.json finds it from here.
+/**
+ * A `require` anchored at the frontend. Node resolves an import from the importing file's
+ * directory, and esbuild is installed for the frontend, so the lookup starts at its package.json.
+ */
 const holen = createRequire(resolve(WURZEL, 'frontend/package.json'))
 const {build} = holen('esbuild')
 
@@ -36,8 +42,6 @@ const modul = await import(
 
 const mappe = JSON.parse(readFileSync(quelle, 'utf8'))
 
-// The browser states a list's order by the order of the list; the server stamps that into the
-// sort key on the way in, so the same has to happen here or the two sides differ on it alone.
 mappe.alarme.forEach((alarm, stelle) => {
     alarm.sortierung = stelle
     ;(alarm.hinweise ?? []).forEach((hinweis, platz) => (hinweis.sortierung = platz))

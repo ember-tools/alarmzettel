@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {AppFooter, AppHeader, EmberboxApp} from '@emberbox/ui'
+import {AppFooter, AppHeader, copyToClipboard, EmberboxApp} from '@emberbox/ui'
 import {useHead} from '@unhead/vue'
 import {computed, ref} from 'vue'
 import {RouterLink, RouterView, useRoute} from 'vue-router'
@@ -79,11 +79,9 @@ const blaetter = computed(() => {
 const blattliste = computed(() =>
     blaetter.value.map(blatt => `${blatt.name} – ${blatt.link}`).join('\n'))
 
+/** Copies a link; when even the fallback fails, the link stays on screen to be selected by hand. */
 async function kopieren(link: string) {
-  try {
-    await navigator.clipboard.writeText(link)
-    kopiert.value = link
-  } catch { /* ein Browser ohne Zwischenablage zeigt den Link zum Markieren */ }
+  if (await copyToClipboard(link)) kopiert.value = link
 }
 
 /** Der Tag, an dem diese Sitzung verschwindet, wenn sie niemand öffnet. */

@@ -136,6 +136,11 @@ function abgelegt(bild: Flachbild): Flachbild {
     return bild
 }
 
+/**
+ * The workbook as a flat picture: every value under its path. Status and Trupp are words and
+ * nothing else, so the word is its own key. Stichwörter and vehicles are pointed at by the Alarme,
+ * so they are keyed by an id that a rename survives.
+ */
 export function flach(mappe: Arbeitsmappe): Flachbild {
     const werte: Flachbild = {}
 
@@ -178,8 +183,6 @@ export function flach(mappe: Arbeitsmappe): Flachbild {
     werte[pfad('kataloge', 'wacheName')] = mappe.kataloge.wacheName ?? ''
     werte[pfad('kataloge', 'alarmeProTag')] = mappe.kataloge.alarmeProTag ?? 2200
     adresse(pfad('kataloge', 'wache'), werte, mappe.kataloge.wache as never)
-    // Status and Trupp are words and nothing else, so the word is its own key. Stichwörter and
-    // vehicles are pointed at by the Alarme, so they are keyed by an id that a rename survives.
     for (const liste of KATALOGWORTLISTEN) {
         for (const wert of mappe.kataloge[liste] ?? []) werte[pfad('kataloge', liste, wert)] = true
     }
@@ -263,6 +266,12 @@ function planungLesen(planung: Record<string, unknown>, rest: string[], wert: un
     }
 }
 
+/**
+ * The workbook back from a flat picture. Orte, days, personnel and the word lists once lived in
+ * the plan; their old paths keep their meaning, or an existing session would lose them, but they
+ * are no longer written. Catalogue entries are sorted by what they read as, not by their ids, so
+ * browser and server agree on the order.
+ */
 export function rund(bild: Flachbild): unknown {
     const werte = abgelegt({...bild})
     const alarme: Record<string, Record<string, never>> = {}
@@ -283,9 +292,6 @@ export function rund(bild: Flachbild): unknown {
 
     for (const [schluessel, wert] of Object.entries(werte)) {
         let teile = schluessel.split(TRENNER)
-        // Orte, Tage, Personal und die Wortlisten standen einmal im Plan. Die alten Pfade
-        // behalten ihre Bedeutung, sonst verlöre eine bestehende Sitzung sie; geschrieben werden
-        // sie nicht mehr.
         if (teile[0] === 'planung' && UMGEZOGEN.includes(teile[1] ?? '')) {
             teile = ['kataloge', ...teile.slice(1)]
         } else if (teile[0] === 'planung') {
@@ -362,7 +368,6 @@ export function rund(bild: Flachbild): unknown {
         return alarm
     })
 
-    // Sorted by what they read as, not by their ids, so both sides agree on the order.
     const nachText = (feld: string) => (eintraege: Record<string, Record<string, unknown>>) =>
         Object.values(eintraege).sort((a, b) =>
             String(a[feld] ?? '').localeCompare(String(b[feld] ?? '')) ||

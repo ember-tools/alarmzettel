@@ -126,13 +126,18 @@ function blass(spurId: string): number {
     return gewaehlt.value === null || gewaehlt.value === spurId ? 1 : 0.18
 }
 
+/**
+ * The chart's options. A stay stands quietly in ink and a drive runs in the signal colour, so the
+ * two differ at first glance and not only by their shape. `weakFilter` keeps what reaches into the
+ * window, so a bar that begins before it is cut at the edge instead of vanishing. A corner is round
+ * where the stay really begins or ends and square where the window only cuts it off, which shows
+ * that it goes on without adding anything to it.
+ */
 function optionen() {
     const {beschriftung, anfang} = spuren()
     const ink = farbe('--ui-text-highlighted')
     const muted = farbe('--ui-text-muted')
     const rule = farbe('--ui-border')
-    // Ein Aufenthalt steht ruhig in Tinte, eine Fahrt läuft im Signal – die beiden sollen sich
-    // auf den ersten Blick unterscheiden und nicht erst an ihrer Form.
     const signal = farbe('--ui-signal')
     const stehend = farbe('--ui-text-muted')
     const spur = (ortId: string, reihe: number) => (anfang.get(ortId) ?? 0) + reihe
@@ -159,8 +164,6 @@ function optionen() {
             splitLine: {show: false},
             axisLabel: {color: ink, fontWeight: 'bold', width: 120, overflow: 'truncate'},
         },
-        // `weakFilter` hält, was in das Fenster hineinragt: ein Balken, der davor beginnt,
-        // verschwände sonst ganz, statt an der Kante abgeschnitten zu werden.
         dataZoom: [
             {type: 'inside', xAxisIndex: 0, filterMode: 'weakFilter'},
             {type: 'slider', xAxisIndex: 0, height: 20, bottom: 12, filterMode: 'weakFilter',
@@ -241,9 +244,6 @@ function optionen() {
                     const deckung = api.value(4)
                     const platzFuerZeichen = kasten.width > 22
                     const einzug = platzFuerZeichen ? 20 : 5
-                    // Eine Ecke ist rund, wo der Aufenthalt wirklich anfängt oder aufhört, und
-                    // eckig, wo er nur vom Fensterrand abgeschnitten ist – so sieht man, dass er
-                    // weitergeht, ohne dass ihm etwas hinzugefügt würde.
                     const linksAb = kasten.x > anfangs[0] + 0.5
                     const rechtsAb = kasten.x + kasten.width < endes[0] - 0.5
                     const ecken = [linksAb ? 0 : 3, rechtsAb ? 0 : 3,

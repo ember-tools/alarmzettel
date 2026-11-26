@@ -319,13 +319,13 @@ export interface Einsatz {
 }
 
 /**
- * Alle Einsätze des Plans, nach Zeit sortiert.
+ * Every Einsatz of the plan, sorted by time.
  *
- * Eine Lage ist der Anlass, ein Einsatz das eine Mal, das sie läuft: zusammen gehört, wessen
- * Zeiten sich überschneiden. Ist zwischendurch niemand mehr da, ist der Einsatz zu Ende und der
- * nächste fängt an – auch wenn beide auf dieselbe Lage zeigen. Dieselbe Regel entscheidet auf
- * dem Server, wer zusammen auf einem Alarmzettel steht; `tools/plan_vergleichen` hält die beiden
- * aneinander.
+ * A Lage is the occasion, an Einsatz one run of it: whoever's times overlap belongs together. Once
+ * nobody is left in between, the Einsatz ends and the next one begins, even when both point at the
+ * same Lage. The same rule decides on the server who shares an Alarmzettel; `tools/plan_vergleichen`
+ * keeps the two in step. Where an Einsatz takes place is said by a stay; a drive only names its
+ * destination.
  */
 export function einsaetze(daten: Plandaten): Einsatz[] {
     const gefunden: Einsatz[] = []
@@ -369,7 +369,6 @@ export function einsaetze(daten: Plandaten): Einsatz[] {
                 }
             }
             const dazu = gefunden[gefunden.length - 1]!
-            // Wo der Einsatz stattfindet, sagt ein Aufenthalt; eine Fahrt nennt nur ihr Ziel.
             if (!dazu.ortId && eintrag.schritt.art === 'aufenthalt') dazu.ortId = eintrag.schritt.ortId
             ende = Math.max(ende ?? 0, alsMinuten(eintrag.bis) ?? 0)
         }

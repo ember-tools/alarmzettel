@@ -14,24 +14,36 @@ import {
     type Arbeitsmappe,
     type Kataloge,
 } from '../interfaces/Alarm'
+import {parsedOr, storeQuietly} from './browserStorage'
 
 const STORAGE_KEY = 'alarmzettel_arbeitsmappe'
 
+/** The workbook this browser kept; a blocked, corrupt or empty store starts with an empty one. */
 function laden(): Arbeitsmappe {
+    const roh = parsedOr<unknown>(() => localStorage.getItem(STORAGE_KEY), null)
     try {
-        const roh = localStorage.getItem(STORAGE_KEY)
-        if (roh) return uebernehmen(JSON.parse(roh))
-    } catch { /* a blocked or corrupt store simply starts empty */ }
-    return leereArbeitsmappe()
+        return roh ? uebernehmen(roh) : leereArbeitsmappe()
+    } catch {
+        return leereArbeitsmappe()
+    }
 }
 
-/** Fills in whatever an older or hand-edited file leaves out, so the editor never sees holes. */
+/**
+ * Fills in whatever an older or hand-edited file leaves out, so the editor never sees holes.
+ *
+ * A file written before vehicles carried their strength lists bare Funkrufnamen. A file written
+ * before either catalogue had an identity of its own knew Stichwörter as bare strings and vehicles
+ * by their Funkrufname: both get an id here, and the Alarme that use them are pointed at it, so a
+ * later rename reaches the sheets already written. Matching on the text is only safe this once;
+ * from then on the id is the link. Orte once lived in the plan; they belong to the station rather
+ * than to one exercise day, so they move into the catalogue once, and the steps only point at their
+ * id anyway.
+ */
 export function uebernehmen(roh: unknown): Arbeitsmappe {
     const leer = leereArbeitsmappe()
     const quelle = (roh ?? {}) as Partial<Arbeitsmappe> & {kataloge?: {funkrufnamen?: string[]}}
     const kataloge = {...leer.kataloge, ...(quelle.kataloge ?? {})}
 
-    // A file written before vehicles carried their strength lists bare Funkrufnamen.
     const alteNamen = quelle.kataloge?.funkrufnamen
     if (Array.isArray(alteNamen) && !quelle.kataloge?.fahrzeuge?.length) {
         kataloge.fahrzeuge = alteNamen.map(funkrufname => ({
@@ -40,10 +52,6 @@ export function uebernehmen(roh: unknown): Arbeitsmappe {
         }))
     }
 
-    // A file written before either catalogue had an identity of its own: Stichwörter were bare
-    // strings and vehicles were known by their Funkrufname. Both get an id here, and the Alarme
-    // that use them are pointed at it, so a later rename reaches the sheets that were already
-    // written. Matching on the text is only safe this once – from now on the id is the link.
     kataloge.stichwoerter = (kataloge.stichwoerter ?? []).map(eintrag =>
         typeof eintrag === 'string'
             ? {id: crypto.randomUUID(), text: eintrag}
@@ -51,8 +59,6 @@ export function uebernehmen(roh: unknown): Arbeitsmappe {
     kataloge.fahrzeuge = kataloge.fahrzeuge.map(vorlage =>
         ({...vorlage, id: vorlage.id || crypto.randomUUID()}))
 
-    // Orte standen einmal im Plan. Sie gehören der Wache und nicht dem einzelnen Übungstag, also
-    // ziehen sie einmalig in den Katalog um; die Schritte zeigen ohnehin nur auf ihre id.
     const alteOrte = (quelle.planung as {orte?: Ort[]} | undefined)?.orte
     kataloge.orte = (kataloge.orte?.length ? kataloge.orte : alteOrte ?? [])
         .map(ort => ({...ort, adresse: {...leereAdresse(), ...ort.adresse}}))
@@ -189,9 +195,7 @@ function sortierungSetzen(mappe: Arbeitsmappe): Arbeitsmappe {
 export const arbeitsmappe = reactive<Arbeitsmappe>(laden())
 
 watch(arbeitsmappe, (wert) => {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(wert))
-    } catch { /* nothing to do if the browser refuses to store */ }
+    storeQuietly(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(wert)))
 }, {deep: true})
 
 export function ersetzen(neu: Arbeitsmappe) {
@@ -210,6 +214,7 @@ export function alarmAnlegen(): Alarm {
     return alarm
 }
 
+/** A copy of an Alarm whose entries get their own identity, or the merge would treat them as the originals. */
 export function alarmKopieren(id: string): Alarm | undefined {
     const vorlage = alarmFinden(id)
     if (!vorlage) return undefined
@@ -217,7 +222,6 @@ export function alarmKopieren(id: string): Alarm | undefined {
     kopie.id = crypto.randomUUID()
     kopie.sortierung = vorlage.sortierung + 0.5
     kopie.einsatzNr = String(arbeitsmappe.alarme.length)
-    // Copied entries need their own identity, or the merge would treat them as the originals.
     for (const hinweis of kopie.hinweise) hinweis.id = crypto.randomUUID()
     for (const gruppe of kopie.einsatzmittel) {
         gruppe.id = crypto.randomUUID()

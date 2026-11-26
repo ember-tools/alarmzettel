@@ -253,7 +253,7 @@ fall('Material liegt irgendwo oder ist unterwegs – der Plan sagt es von selbst
     ]
 })
 
-// Der Berliner Adressdienst gibt dieselben Punkte in beiden Systemen aus; das sind die Zahlen.
+/** Points the Berlin address service gives in both coordinate systems; these are its numbers. */
 const KOORDINATEN = [
     ['Junker-Jörg-Straße 36', {ostwert: 399598.791, nordwert: 5815944.114}, 52.48439726, 13.52144944],
     ['Archenholdstraße 21', {ostwert: 398470.239, nordwert: 5818552.633}, 52.50763155, 13.50404047],
