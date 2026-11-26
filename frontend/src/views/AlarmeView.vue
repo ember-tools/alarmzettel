@@ -33,7 +33,7 @@ function anlegen() {
 async function herunterladen() {
   await jetztAbgleichen()
   speichern(new Blob([JSON.stringify(arbeitsmappe, null, 2)], {type: 'application/json'}),
-      'alarmplaner.json')
+      'alarmzettel.json')
 }
 
 /**

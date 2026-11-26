@@ -63,7 +63,7 @@ async def lifespan(application: FastAPI):
     await client.aclose()
 
 
-app = FastAPI(title="Alarmplaner", lifespan=lifespan)
+app = FastAPI(title="Alarmzettel", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
