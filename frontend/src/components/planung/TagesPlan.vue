@@ -274,7 +274,7 @@ function stichworte(kachel: Kachel): string[] {
   <section class="panel">
     <div class="flex items-center gap-3 flex-wrap mb-3">
       <h2 class="section-title">{{ t('ablauf.tagesplan') }}</h2>
-      <select v-model="tag" class="native-select w-auto">
+      <select v-model="tag" class="native-select w-auto" :aria-label="t('ablauf.chooseDay')">
         <option v-for="wann in tage" :key="wann" :value="wann">{{ wann }}</option>
       </select>
       <span class="text-muted text-[13px]">{{ t('ablauf.tagesplanHinweis') }}</span>

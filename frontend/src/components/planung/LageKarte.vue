@@ -192,7 +192,7 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
   <section class="panel">
     <div class="flex items-baseline gap-3 flex-wrap mb-3">
       <h2 class="section-title">{{ t('ablauf.karte') }}</h2>
-      <select v-if="tage.length > 1" v-model="tag" class="native-select w-auto">
+      <select v-if="tage.length > 1" v-model="tag" class="native-select w-auto" :aria-label="t('ablauf.chooseDay')">
         <option v-for="eintrag in tage" :key="eintrag" :value="eintrag">{{ eintrag }}</option>
       </select>
       <span v-else class="text-muted text-sm">{{ tag }}</span>
@@ -205,7 +205,7 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
     </div>
 
     <input v-model.number="minute" type="range" :min="fenster.von" :max="fenster.bis" step="1"
-           class="w-full mb-3" @input="folgenBeenden"/>
+           class="w-full mb-3" :aria-label="t('ablauf.mapTime')" @input="folgenBeenden"/>
 
     <div class="grid lg:grid-cols-[1fr_280px] gap-4 items-start">
       <div ref="behaelter" class="h-[60vh] min-h-80 rounded border border-default" />

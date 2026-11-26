@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {CollapsibleSection, TextField} from '@emberbox/ui'
-import {computed, reactive, ref, watch} from 'vue'
+import {computed, reactive, ref, useId, watch} from 'vue'
 import AddressField from '../components/base/AddressField.vue'
 import {t} from '../i18n'
 import {arbeitsmappe} from '../store/arbeitsmappe'
@@ -14,6 +14,9 @@ import type {
   Fahrzeugvorlage, Kataloge, Materialvorlage, Stichwortvorlage,
 } from '../interfaces/Alarm'
 import type {Ort} from '../interfaces/Planung'
+
+/** The prefix of this instance's field ids, so labels find their fields when it appears more than once. */
+const fieldId = useId()
 
 type Wortliste = Extract<keyof Kataloge, 'status' | 'trupp' | 'rollen' | 'fahrerlaubnisse'>
 
@@ -232,8 +235,8 @@ function truppVorschau(staerke: string): string {
         <TextField v-model="arbeitsmappe.kataloge.wacheName" :label="t('kataloge.wacheName')"
                   :placeholder="t('kataloge.wachePlatzhalter')"/>
         <div>
-          <label class="field-label">{{ t('kataloge.alarmeProTag') }}</label>
-          <UInput v-model.number="arbeitsmappe.kataloge.alarmeProTag" type="number" min="0"
+          <label class="field-label" :for="`${fieldId}-calls-per-day`">{{ t('kataloge.alarmeProTag') }}</label>
+          <UInput :id="`${fieldId}-calls-per-day`" v-model.number="arbeitsmappe.kataloge.alarmeProTag" type="number" min="0"
                   step="100" class="w-full" :ui="{base: 'tabular'}"/>
         </div>
       </div>
@@ -397,8 +400,8 @@ function truppVorschau(staerke: string): string {
         <div v-for="tag in arbeitsmappe.kataloge.tage" :key="tag.id"
              class="grid md:grid-cols-[10rem_1fr_auto] gap-2 items-end">
           <div>
-            <label class="field-label">{{ t('planung.datum') }}</label>
-            <UInput v-model="tag.datum" type="date" class="w-full"/>
+            <label class="field-label" :for="`${fieldId}-date-${tag.id}`">{{ t('planung.datum') }}</label>
+            <UInput :id="`${fieldId}-date-${tag.id}`" v-model="tag.datum" type="date" class="w-full"/>
           </div>
           <TextField v-model="tag.name" :label="t('planung.tagName')"
                     :placeholder="t('planung.tagPlatzhalter')"/>
@@ -429,8 +432,8 @@ function truppVorschau(staerke: string): string {
           <div class="grid md:grid-cols-[1fr_6rem_auto_auto] gap-3 items-end">
             <TextField v-model="person.name" :label="t('planung.personName')"/>
             <div>
-              <label class="field-label">{{ t('planung.anzahl') }}</label>
-              <UInput v-model.number="person.anzahl" type="number" min="1" class="w-full"/>
+              <label class="field-label" :for="`${fieldId}-count-${person.id}`">{{ t('planung.anzahl') }}</label>
+              <UInput :id="`${fieldId}-count-${person.id}`" v-model.number="person.anzahl" type="number" min="1" class="w-full"/>
             </div>
             <label class="flex items-center gap-2 text-sm h-9.5"
                    :title="t('planung.blattHinweis')">
@@ -489,12 +492,12 @@ function truppVorschau(staerke: string): string {
               <div v-for="fenster in person.verfuegbar" :key="fenster.id"
                    class="grid md:grid-cols-[1fr_1fr_auto] gap-2 items-end">
                 <div>
-                  <label class="field-label">{{ t('planung.von') }}</label>
-                  <UInput v-model="fenster.von" type="datetime-local" class="w-full"/>
+                  <label class="field-label" :for="`${fieldId}-from-${fenster.id}`">{{ t('planung.von') }}</label>
+                  <UInput :id="`${fieldId}-from-${fenster.id}`" v-model="fenster.von" type="datetime-local" class="w-full"/>
                 </div>
                 <div>
-                  <label class="field-label">{{ t('planung.bis') }}</label>
-                  <UInput v-model="fenster.bis" type="datetime-local" class="w-full"/>
+                  <label class="field-label" :for="`${fieldId}-to-${fenster.id}`">{{ t('planung.bis') }}</label>
+                  <UInput :id="`${fieldId}-to-${fenster.id}`" v-model="fenster.bis" type="datetime-local" class="w-full"/>
                 </div>
                 <UButton size="sm" color="signal" variant="outline"
                          @click="ausListe(person.verfuegbar, fenster)">

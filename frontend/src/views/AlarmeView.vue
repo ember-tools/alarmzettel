@@ -128,8 +128,8 @@ async function laden(event: Event) {
       </div>
     </div>
 
-    <input ref="datei" type="file" accept="application/json" class="hidden" @change="laden"/>
-    <input ref="tabelle" type="file" class="hidden"
+    <input ref="datei" type="file" accept="application/json" class="hidden" :aria-label="t('datei.hochladen')" @change="laden"/>
+    <input ref="tabelle" type="file" class="hidden" :aria-label="t('datei.tabelle')"
            accept=".ods,.xlsx,application/vnd.oasis.opendocument.spreadsheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
            @change="tabelleLaden"/>
 

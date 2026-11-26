@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import {ref, useId} from 'vue'
 import SnaDialog from '../sna/SnaDialog.vue'
 import {t} from '../../i18n'
 import {neuSortieren} from '../../scripts/listen'
@@ -7,6 +7,9 @@ import {codeAnzeige} from '../../scripts/code'
 import {leererHinweisCode, leererHinweisText, naechste} from '../../interfaces/Alarm'
 import type {Alarm, Hinweis} from '../../interfaces/Alarm'
 import type {SnaTreffer} from '../../interfaces/Sna'
+
+/** The prefix of this instance's field ids, so labels find their fields when it appears more than once. */
+const fieldId = useId()
 
 const alarm = defineModel<Alarm>({required: true})
 const abfrage = ref(false)
@@ -95,18 +98,18 @@ function antwortEntfernen(hinweis: Hinweis, index: number) {
             <template v-else>
               <div class="grid md:grid-cols-[160px_1fr] gap-2">
                 <div>
-                  <label class="field-label">{{ t('hinweise.code') }}</label>
-                  <UInput v-model="hinweis.code" type="text"
+                  <label class="field-label" :for="`${fieldId}-code-${index}`">{{ t('hinweise.code') }}</label>
+                  <UInput :id="`${fieldId}-code-${index}`" v-model="hinweis.code" type="text"
                           :placeholder="t('hinweise.platzhalterCode')" class="w-full"/>
                 </div>
                 <div>
-                  <label class="field-label">{{ t('hinweise.meldung') }}</label>
-                  <UInput v-model="hinweis.meldung" type="text" class="w-full"/>
+                  <label class="field-label" :for="`${fieldId}-message-${index}`">{{ t('hinweise.meldung') }}</label>
+                  <UInput :id="`${fieldId}-message-${index}`" v-model="hinweis.meldung" type="text" class="w-full"/>
                 </div>
               </div>
               <div>
-                <label class="field-label">{{ t('hinweise.antworten') }}</label>
-                <ol class="grid gap-2">
+                <p :id="`${fieldId}-answers-${index}`" class="field-label m-0">{{ t('hinweise.antworten') }}</p>
+                <ol class="grid gap-2" :aria-labelledby="`${fieldId}-answers-${index}`">
                   <li v-for="(_, nummer) in hinweis.antworten" :key="nummer" class="flex gap-2 items-center">
                     <span class="tabular text-muted text-[13px] w-6 text-right shrink-0">{{ nummer + 1 }}.</span>
                     <UInput v-model="hinweis.antworten[nummer]" type="text" class="w-full"/>

@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import {useId} from 'vue'
 import {ComboboxField, DateTimeField, TextAreaField, TextField, YesNoField} from '@emberbox/ui'
 import {t} from '../../i18n'
 import {stichwortSichern, stichwortVorschlaege} from '../../store/arbeitsmappe'
 import type {Alarm} from '../../interfaces/Alarm'
+
+/** The prefix of this instance's field ids, so labels find their fields when it appears more than once. */
+const fieldId = useId()
 
 const alarm = defineModel<Alarm>({required: true})
 
@@ -49,8 +53,8 @@ function stichwortGewaehlt() {
     <h2 class="section-title">{{ t('abschnitt.kopf') }}</h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       <div v-if="zeiten?.einsatzNr">
-        <label class="field-label">{{ t('feld.einsatzNr') }}</label>
-        <UInput type="text" disabled :model-value="zeiten.einsatzNr" class="w-full"/>
+        <label class="field-label" :for="`${fieldId}-number`">{{ t('feld.einsatzNr') }}</label>
+        <UInput :id="`${fieldId}-number`" type="text" disabled :model-value="zeiten.einsatzNr" class="w-full"/>
       </div>
       <TextField v-else v-model="alarm.einsatzNr" :label="t('feld.einsatzNr')"/>
       <TextField v-model="alarm.aPlatz" :label="t('feld.aPlatz')"/>
@@ -58,8 +62,8 @@ function stichwortGewaehlt() {
       <TextField v-model="alarm.titel" :label="t('feld.titel')"/>
       <template v-if="zeiten">
         <div v-for="name in ZEITPUNKTE" :key="name">
-          <label class="field-label">{{ t(`feld.${name}`) }}</label>
-          <UInput type="text" disabled
+          <label class="field-label" :for="`${fieldId}-time-${name}`">{{ t(`feld.${name}`) }}</label>
+          <UInput :id="`${fieldId}-time-${name}`" type="text" disabled
                   :model-value="`${zeiten[`${name}Datum`]} ${zeiten[`${name}Zeit`]}`.trim()" class="w-full"/>
         </div>
       </template>
