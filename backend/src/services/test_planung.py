@@ -11,7 +11,7 @@ STAMM = {
                   "verfuegbar": [{"id": "v1", "sortierung": 0.0,
                                   "von": "2026-09-19T10:00", "bis": "2026-09-19T15:00"}]}],
 }
-"""Was die Wache dauerhaft führt, steht im Katalog — nicht im Plan des einzelnen Tages."""
+"""Was die Wache dauerhaft führt, steht im Katalog – nicht im Plan des einzelnen Tages."""
 
 PLAN = {
     "aktiv": True,
@@ -45,7 +45,7 @@ MAPPE = {"version": 1, "alarme": [],
 
 
 class VorgabeTest(unittest.TestCase):
-    """Eine Arbeitsmappe, die ein Feld noch nicht kennt, bekommt seine Vorgabe — nicht ''."""
+    """Eine Arbeitsmappe, die ein Feld noch nicht kennt, bekommt seine Vorgabe – nicht ''."""
 
     def test_orte_aus_dem_plan_landen_im_katalog(self):
         """
@@ -108,7 +108,7 @@ class PlanungRundlaufTest(unittest.TestCase):
     def test_die_stammdaten_stehen_im_katalog(self):
         """
         Orte, Tage, Personal, Rollen und Klassen gehören der Wache und überdauern den einzelnen
-        Übungstag — die Ketten zeigen nur auf ihre Kennungen.
+        Übungstag – die Ketten zeigen nur auf ihre Kennungen.
         """
         kataloge = rund(flach(MAPPE))["kataloge"]
         self.assertEqual(ORTE, kataloge["orte"])

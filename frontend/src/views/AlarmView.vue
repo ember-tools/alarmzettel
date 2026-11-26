@@ -21,7 +21,7 @@ const abgeleitet = ref<Alarmableitung | null>(null)
 
 /**
  * Zeigt eine Lage auf diesen Alarm, kommen Zeiten, Einsatzadresse und Aufgebot aus dem Plan.
- * Gerechnet wird das auf dem Server, damit hier nichts anderes steht als auf dem Blatt — und
+ * Gerechnet wird das auf dem Server, damit hier nichts anderes steht als auf dem Blatt – und
  * neu gerechnet, sobald sich am Plan etwas ändert, das diesen Alarm angeht.
  */
 const planstand = computed(() => JSON.stringify([

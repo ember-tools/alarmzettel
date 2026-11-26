@@ -34,7 +34,7 @@ const plaene = computed(() => {
 })
 
 /**
- * Die Zeilen zu einem Schritt. Fährt jemand die erzeugte Anfahrt mit, bekommt sie eine eigene —
+ * Die Zeilen zu einem Schritt. Fährt jemand die erzeugte Anfahrt mit, bekommt sie eine eigene –
  * sonst stünde da, er sei um 7:50 schon dort, wo er erst hinfährt. Dazu, was am Ort läuft,
  * während er dort steht, ohne dass er selbst dazugehört.
  */

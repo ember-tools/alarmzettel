@@ -60,7 +60,7 @@ def _hinweise(text: str) -> list:
 
         rest = treffer.group("rest").strip()
         # The path is numbered 1., 2., 3. in order, so only the next expected number starts an
-        # answer. Without that, an ordinal inside a sentence — "(Anrufer 4. Hand)" — splits it.
+        # answer. Without that, an ordinal inside a sentence – "(Anrufer 4. Hand)" – splits it.
         stellen = []
         erwartet = 1
         for stelle in ANTWORT.finditer(rest):

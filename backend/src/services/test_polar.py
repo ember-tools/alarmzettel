@@ -11,7 +11,7 @@ WACHE = {"ostwert": 399598.791, "nordwert": 5815944.114}
 
 class PolarTest(unittest.TestCase):
     """
-    Dieselben Fälle, die `tools/polar_pruefen` im Browser prüft — die beiden Rechnungen müssen
+    Dieselben Fälle, die `tools/polar_pruefen` im Browser prüft – die beiden Rechnungen müssen
     dasselbe ergeben, sonst hinge es davon ab, wer den Zettel erzeugt hat.
     """
 
@@ -31,7 +31,7 @@ class PolarTest(unittest.TestCase):
 
 class ImAusdruckTest(unittest.TestCase):
     """
-    Gerechnet wird beim Drucken und nicht nur, während jemand eine Adresse im Editor auflöst —
+    Gerechnet wird beim Drucken und nicht nur, während jemand eine Adresse im Editor auflöst –
     sonst trüge im Stapel allein der Zettel Polar-Koordinaten, den zuletzt jemand offen hatte.
     """
 

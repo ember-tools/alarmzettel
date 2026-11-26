@@ -2,8 +2,8 @@
 Address completion for the editor: street names, house numbers and one exact address.
 
 The whole list would be pointless to send to a browser that needs a dozen rows of it, so the
-queries run here. Every route answers normally when there is no downloaded list — an empty
-result, not an error — because completion is a convenience and the fields work without it.
+queries run here. Every route answers normally when there is no downloaded list – an empty
+result, not an error – because completion is a convenience and the fields work without it.
 """
 
 from fastapi import APIRouter

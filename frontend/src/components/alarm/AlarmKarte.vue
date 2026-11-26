@@ -6,7 +6,7 @@ import type {Adresse, Alarm} from '../../interfaces/Alarm'
 
 /**
  * Ein Alarm zum Lesen: dieselben Angaben wie auf dem Zettel, nur als Seite statt als Formular.
- * Was leer ist, steht nicht da — ein Feld ohne Inhalt sagt nichts und nimmt nur Platz.
+ * Was leer ist, steht nicht da – ein Feld ohne Inhalt sagt nichts und nimmt nur Platz.
  */
 const {alarm} = defineProps<{ alarm: Alarm }>()
 

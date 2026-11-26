@@ -11,7 +11,7 @@ import {jetztAbgleichen} from '../store/sync'
 
 /**
  * Die Arbeitsmappe zum Lesen: dieselben Angaben wie in den Editoren, nur als Seite. Das ist die
- * Ansicht hinter einem Lesen-Link — wer zusieht, will den Stand sehen und nicht in Felder blicken,
+ * Ansicht hinter einem Lesen-Link – wer zusieht, will den Stand sehen und nicht in Felder blicken,
  * in denen er ohnehin nichts ändern kann.
  */
 const ANSICHTEN = ['alarme', 'einsaetze', 'personen', 'orte'] as const

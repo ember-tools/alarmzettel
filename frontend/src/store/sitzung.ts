@@ -1,7 +1,7 @@
 /**
  * Die laufende Sitzung dieses Browsers und die, die er sonst noch kennt.
  *
- * Das Token der laufenden steht im Cookie, das der Server setzt — deshalb steht hier keines. Die
+ * Das Token der laufenden steht im Cookie, das der Server setzt – deshalb steht hier keines. Die
  * Liste der bekannten gehört dem Browser und nicht der Arbeitsmappe, also liegt sie im
  * `localStorage`; eine Sitzung, die der Server nicht mehr kennt, fliegt beim Öffnen heraus.
  */
@@ -92,7 +92,7 @@ function uebernehmenIn(kopf: Sitzungskopf) {
 }
 
 /**
- * Beim Start: die Sitzung aus dem Cookie aufnehmen. Gibt es keine, wird eine angelegt — mit dem,
+ * Beim Start: die Sitzung aus dem Cookie aufnehmen. Gibt es keine, wird eine angelegt – mit dem,
  * was noch im `localStorage` liegt, damit die Umstellung niemandem seine Arbeit nimmt.
  */
 export async function sitzungStarten() {

@@ -22,7 +22,7 @@ configure_logging()
 async def _aufraeumen():
     """
     Sitzungen laufen 30 Tage nach der letzten Benutzung ab. Das prüft niemand beim Zugriff, also
-    geht hier in großem Abstand ein Aufräumer durch — die Frist ist in Tagen gemessen.
+    geht hier in großem Abstand ein Aufräumer durch – die Frist ist in Tagen gemessen.
     """
     while True:
         await asyncio.sleep(settings.sitzung_sweep_seconds)

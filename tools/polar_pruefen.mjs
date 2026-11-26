@@ -1,7 +1,7 @@
 /**
  * Checks the Polar-Koordinaten against the values a real slip carries.
  *
- * The rule was not documented anywhere — it was recovered from two printed slips by solving for
+ * The rule was not documented anywhere – it was recovered from two printed slips by solving for
  * the point both bearings and distances agree on, which turned out to be the station itself. That
  * makes these numbers the only specification there is, so they are worth a test.
  *

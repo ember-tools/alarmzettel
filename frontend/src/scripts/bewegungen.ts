@@ -7,7 +7,7 @@
  * selbst das Bild und nicht bloß eine Zeile in einer Tabelle.
  *
  * Erzählt wird der Tag wahlweise je Fahrzeug oder je Person. Beides ist dieselbe Rechnung über
- * **Spuren** — eine Spur ist eine Folge von Schritten mit einem Namen. Im Fahrzeugbild ist das
+ * **Spuren** – eine Spur ist eine Folge von Schritten mit einem Namen. Im Fahrzeugbild ist das
  * eine Kette, im Personenbild der Plan einer Person, der ohnehin aus denselben Ketten entsteht.
  *
  * Gerechnet wird hier nur die Anordnung, nicht das Aussehen: Bänder, Reihen darin, Zeitfenster.
@@ -29,7 +29,7 @@ export interface Band {
     reihen: number
 }
 
-/** Ein Aufenthalt: jemand steht von — bis in diesem Band. */
+/** Ein Aufenthalt: jemand steht von – bis in diesem Band. */
 export interface Balken {
     spurId: string
     schrittId: string
@@ -83,14 +83,14 @@ interface Spurschritt {
     vonOrtId: string
     /** Die erzeugte Anfahrt, sofern diese Spur sie mitfährt. */
     anfahrt: Anfahrt | null
-    /** Wann diese Spur an ihrem Ort steht — nach der Anfahrt, sonst mit dem Beginn. */
+    /** Wann diese Spur an ihrem Ort steht – nach der Anfahrt, sonst mit dem Beginn. */
     ankunft: string
     /** Wann sie wieder weg ist. Eine Person, die abgeholt wird, geht vor dem Fahrzeug. */
     bis: string
     begleitung: string[]
 }
 
-/** Die Menge steht davor, wo es mehr als eines ist — sonst nur der Name. */
+/** Die Menge steht davor, wo es mehr als eines ist – sonst nur der Name. */
 function materialnamen(daten: Plandaten, schritt: Schritt): string[] {
     return schritt.material
         .map(posten => {
@@ -143,7 +143,7 @@ function besatzung(daten: Plandaten, schritt: Schritt): string[] {
     return schritt.besatzung.map(platz => personName(daten, platz.personId))
 }
 
-/** Im Fahrzeugbild ist jede Kette eine Spur — die eines Fahrzeugs wie die einer Person. */
+/** Im Fahrzeugbild ist jede Kette eine Spur – die eines Fahrzeugs wie die einer Person. */
 function fahrzeugspuren(daten: Plandaten): Spur[] {
     return daten.planung.laeufe.map(lauf => ({
         id: lauf.id, name: laufName(daten, lauf),
@@ -160,7 +160,7 @@ function fahrzeugspuren(daten: Plandaten): Spur[] {
 
 /**
  * Im Personenbild ist jede Person eine Spur. Ihr Plan wird nirgends gepflegt, sondern aus
- * denselben Ketten gerechnet — deshalb kann das Personenbild dem Fahrzeugbild nicht
+ * denselben Ketten gerechnet – deshalb kann das Personenbild dem Fahrzeugbild nicht
  * widersprechen.
  */
 function personenspuren(daten: Plandaten): Spur[] {
@@ -206,7 +206,7 @@ interface Anwesenheit {
     bis: number
 }
 
-/** Wer an diesem Tag überhaupt vorkommt — die Auswahl, die der Bildschirm anbietet. */
+/** Wer an diesem Tag überhaupt vorkommt – die Auswahl, die der Bildschirm anbietet. */
 export function bewegungsspuren(daten: Plandaten, datum: string,
                                 modus: Modus = 'fahrzeuge'): {id: string, name: string}[] {
     const spuren = modus === 'personen' ? personenspuren(daten) : fahrzeugspuren(daten)
@@ -219,11 +219,11 @@ export function bewegungsspuren(daten: Plandaten, datum: string,
  * Das Bild eines Tages. Ein Ort bekommt ein Band, sobald jemand dort steht oder dorthin fährt;
  * Orte, an denen an diesem Tag nichts geschieht, tauchen nicht auf.
  *
- * `nur` blendet Spuren aus, bevor angeordnet wird — sonst blieben leere Bänder stehen. Der
+ * `nur` blendet Spuren aus, bevor angeordnet wird – sonst blieben leere Bänder stehen. Der
  * Ausdruck kennt es nicht: auf Papier steht immer der ganze Tag.
  *
  * Gefahren wird auf zweierlei Weise: als eingetragene Fahrt und als die Anfahrt, die zwischen
- * zwei Aufenthalten von selbst entsteht. Für das Bild ist beides dieselbe Linie — die
+ * zwei Aufenthalten von selbst entsteht. Für das Bild ist beides dieselbe Linie – die
  * eingetragene endet im nächsten Schritt, die erzeugte in ihrem eigenen, denn sie gehört zu dem
  * Aufenthalt, zu dem sie führt.
  */
@@ -357,7 +357,7 @@ function unterwegsIn(daten: Plandaten, lauf: Lauf, schritt: Schritt,
 }
 
 /**
- * Der Stand zu einem Zeitpunkt — das, was am Ausführungstag zählt: wer steht wo, wer ist
+ * Der Stand zu einem Zeitpunkt – das, was am Ausführungstag zählt: wer steht wo, wer ist
  * unterwegs und wie weit. Wer zu dieser Zeit nichts geplant hat, taucht nicht auf.
  *
  * Auf der erzeugten Anfahrt sitzt nur, wer sie mitfährt: wer am Ziel wartet, steht dort und
@@ -403,7 +403,7 @@ export interface Materialstand {
 
 /**
  * Wo das Material gerade ist. Es hängt an den Schritten wie die Besatzung, also sagt der Plan es
- * von selbst — und wenn es fährt, sagt er auch, womit und wohin.
+ * von selbst – und wenn es fährt, sagt er auch, womit und wohin.
  */
 export function materialstand(daten: Plandaten, zeitpunkt: string): Materialstand[] {
     const jetzt = alsMinuten(zeitpunkt)
@@ -442,7 +442,7 @@ export interface Ereignis {
 
 /**
  * Die nächsten Ereignisse ab einem Zeitpunkt: jede Abfahrt und jede Ankunft, in der Reihenfolge,
- * in der sie eintreten. Am Ausführungstag ist das die eigentliche Frage — was kommt als
+ * in der sie eintreten. Am Ausführungstag ist das die eigentliche Frage – was kommt als
  * Nächstes, und wie lange noch.
  */
 export function ereignisse(daten: Plandaten, zeitpunkt: string, anzahl = 8): Ereignis[] {

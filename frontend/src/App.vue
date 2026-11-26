@@ -39,7 +39,7 @@ function linkAuf(token: string | null): string {
 /**
  * Teilen heißt hier: den Link weitergeben. Vorher wird abgeglichen, damit der andere den Stand
  * sieht, den alle haben. Der Lesen-Link entsteht beim ersten Öffnen dieses Menüs und bleibt
- * danach derselbe — wer eine Sitzung nur ansieht, kann keinen erzeugen und braucht auch keinen.
+ * danach derselbe – wer eine Sitzung nur ansieht, kann keinen erzeugen und braucht auch keinen.
  */
 async function teilen() {
   teiler.value = !teiler.value
@@ -55,7 +55,7 @@ async function teilen() {
 
 /**
  * Ein Link je Zettel: wer ihn bekommt, sieht seinen Tag und sonst nichts. Aufgeführt wird, wer
- * auch ein Blatt bekäme — jede Person mit einem Plan und jedes Fahrzeug mit einer Kette.
+ * auch ein Blatt bekäme – jede Person mit einem Plan und jedes Fahrzeug mit einer Kette.
  */
 const blaetter = computed(() => {
   const token = nurLesenToken.value ?? (sitzung.nurLesen ? sitzung.token : null)
@@ -77,7 +77,7 @@ const blaetter = computed(() => {
 })
 
 const blattliste = computed(() =>
-    blaetter.value.map(blatt => `${blatt.name} — ${blatt.link}`).join('\n'))
+    blaetter.value.map(blatt => `${blatt.name} – ${blatt.link}`).join('\n'))
 
 async function kopieren(link: string) {
   try {

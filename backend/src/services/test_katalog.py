@@ -62,7 +62,7 @@ class KatalogTest(unittest.TestCase):
 
 class AnfahrtsadresseTest(unittest.TestCase):
     """
-    Wohin gefahren wird, ist die Einsatzadresse — außer jemand hat ausdrücklich eine andere
+    Wohin gefahren wird, ist die Einsatzadresse – außer jemand hat ausdrücklich eine andere
     eingetragen.
     """
 

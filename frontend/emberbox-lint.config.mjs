@@ -27,6 +27,8 @@ export default {
         {path: 'toolchain.sh', extensions: null},
         {path: 'shell.nix', extensions: null},
         {path: '.dockerignore', extensions: null},
+        {path: '.gitignore', extensions: null},
+        {path: 'backend/.gitignore', extensions: null},
         {path: 'backend/src/render/fonts/README.md', extensions: null},
         {path: 'README.md', extensions: null},
     ],

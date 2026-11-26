@@ -40,7 +40,7 @@ class Eintrag(Modell):
     Anything that sits in a list carries an id and a sort key.
 
     Two people editing one Alarm touch different entries far more often than the same one, so the
-    merge works per entry rather than per list — which needs an identity that survives a reorder.
+    merge works per entry rather than per list – which needs an identity that survives a reorder.
     The sort key is fractional: an entry moved between two others takes the value between theirs,
     so moving one thing never rewrites the rest.
     """
@@ -53,7 +53,7 @@ class Adresse(BaseModel):
     """
     Eine Anschrift, und wahlweise der Punkt dazu: `koordinaten` hält „52.486300, 13.521500“ in
     WGS 84, gesetzt auf der Karte. Steht dort etwas, gilt es und die Straße wird nicht
-    nachgeschlagen — für den Hof hinter dem Haus, die Wiese ohne Hausnummer, den Treffpunkt im
+    nachgeschlagen – für den Hof hinter dem Haus, die Wiese ohne Hausnummer, den Treffpunkt im
     Wald.
     """
 

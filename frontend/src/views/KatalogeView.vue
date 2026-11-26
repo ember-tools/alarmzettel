@@ -29,7 +29,7 @@ const listen: { schluessel: Wortliste, titel: string }[] = [
  *
  * Der Aufbau sortiert die Kataloge nach Namen. Täte die Ansicht das bei jedem Tastendruck mit,
  * wanderte die Zeile unter dem Cursor weg und der nächste Buchstabe landete in einem fremden
- * Feld. Neu geordnet wird deshalb erst, wenn der Abschnitt den Fokus verliert — und wenn ein
+ * Feld. Neu geordnet wird deshalb erst, wenn der Abschnitt den Fokus verliert – und wenn ein
  * Eintrag dazukommt oder verschwindet.
  */
 function geordnet<T extends { id: string }>(quelle: () => T[], lesen: (eintrag: T) => string) {
@@ -41,7 +41,7 @@ function geordnet<T extends { id: string }>(quelle: () => T[], lesen: (eintrag: 
         .map(eintrag => eintrag.id)
   }
 
-  /** Was neu ist, hängt hinten an, bis neu geordnet wird — dort sieht man es auch. */
+  /** Was neu ist, hängt hinten an, bis neu geordnet wird – dort sieht man es auch. */
   const liste = computed(() => {
     const nachId = new Map(quelle().map(eintrag => [eintrag.id, eintrag]))
     const bekannt = reihenfolge.value
@@ -55,7 +55,7 @@ function geordnet<T extends { id: string }>(quelle: () => T[], lesen: (eintrag: 
   // Abgleich baut die Arbeitsmappe neu auf und legt sie dabei anders herum hin. Hinge das
   // Ordnen daran, spränge die Zeile unter dem Cursor mitten im Wort davon.
   watch(() => [...quelle().map(eintrag => eintrag.id)].sort().join(), ordnen, {immediate: true})
-  // Als `reactive`, damit die Vorlage `liste` ohne `.value` liest — in einem einfachen Objekt
+  // Als `reactive`, damit die Vorlage `liste` ohne `.value` liest – in einem einfachen Objekt
   // packt Vue eine Referenz nicht aus.
   return reactive({liste, ordnen})
 }
@@ -95,7 +95,7 @@ function materialEntfernen(stueck: Materialvorlage) {
 }
 
 /**
- * Ein Wort an einer Person: was der Katalog noch nicht kennt, kommt dort dazu — so wie ein neu
+ * Ein Wort an einer Person: was der Katalog noch nicht kennt, kommt dort dazu – so wie ein neu
  * geschriebenes Stichwort oder ein neues Materialstück. Die Knöpfe daneben bleiben der schnelle
  * Weg für alles, was schon geführt wird.
  */
@@ -176,7 +176,7 @@ function fahrzeugEntfernen(index: number) {
 }
 
 /**
- * Renaming an entry reaches every Alarm pointing at it — which is the whole reason the catalogue
+ * Renaming an entry reaches every Alarm pointing at it – which is the whole reason the catalogue
  * has ids. An Alarm that merely happens to read the same, because someone typed the word rather
  * than picking it, is left alone: it was never linked to this entry.
  */

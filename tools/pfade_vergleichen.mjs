@@ -6,7 +6,7 @@
  *     node tools/pfade_vergleichen.mjs <arbeitsmappe.json> [--rund]
  *
  * `--rund` prints the working set rebuilt from those paths instead. Comparing only the paths
- * leaves the way back untested — a flattener that writes a path its own rebuilder ignores passes
+ * leaves the way back untested – a flattener that writes a path its own rebuilder ignores passes
  * the path check and still loses that data on every sync.
  */
 import {readFileSync} from 'node:fs'

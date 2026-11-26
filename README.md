@@ -6,82 +6,82 @@ slips that go with it.
 The slip used to come out of a Word mail merge fed by a spreadsheet with one row per alarm. That
 row holds exactly one vehicle; the printed slip holds as many as you like, in several groups at
 several addresses. This gives that flexibility back, and makes entering a batch of alarms in one
-sitting bearable. The day around those alarms — who is where, in which vehicle, and who drives —
+sitting bearable. The day around those alarms – who is where, in which vehicle, and who drives –
 used to be a second spreadsheet, and is now planned here as well.
 
-The interface is German throughout — it is a German fire service document, and the field names on
+The interface is German throughout – it is a German fire service document, and the field names on
 screen are the ones printed on the slip.
 
 ## What it does
 
-- **Enter alarms** — a list with add, duplicate, delete and reorder; the editor is split into
+- **Enter alarms** – a list with add, duplicate, delete and reorder; the editor is split into
   Einsatz, Stichwort, addresses, map, people involved, Hinweise and Einsatzmittelaufgebot.
-- **Einsatzmittelaufgebot** — any number of groups, each with any number of vehicles; the HA line
+- **Einsatzmittelaufgebot** – any number of groups, each with any number of vehicles; the HA line
   above a group prints the Alarm's Einsatzadresse. Exactly one vehicle is the one the slip is
   addressed to; it prints on grey.
-- **Interrogation dialog** — instead of looking a code up, you click through the questions. The
+- **Interrogation dialog** – instead of looking a code up, you click through the questions. The
   path you took becomes the Hinweis, because that is precisely what the numbered sentences after
   the code on the slip are.
-- **Preview** — the same Typst output as the download, 400 ms after the last keystroke.
-- **PDF** — one sheet per alarm, all of them in one file or singly.
-- **JSON** — the working set downloads and uploads again. Old ODS or XLSX spreadsheets are
+- **Preview** – the same Typst output as the download, 400 ms after the last keystroke.
+- **PDF** – one sheet per alarm, all of them in one file or singly.
+- **JSON** – the working set downloads and uploads again. Old ODS or XLSX spreadsheets are
   imported.
-- **Catalogues** — one page for everything the station keeps: Stichwörter, vehicles, places,
+- **Catalogues** – one page for everything the station keeps: Stichwörter, vehicles, places,
   material, status and Trupp, the days of the event, the people with their roles and licence
   classes, plus the Arbeitsgruppe every new alarm starts with and the station itself. A place
   belongs to the station rather than to a single exercise day, so it lives here beside the
   vehicles; the station itself is always a place and is never created or deleted. An
   Einsatzadresse entered on an alarm joins the list by itself, the way a new Stichwort does. An alarm
   points at a Stichwort and a vehicle rather than copying them, so correcting either once corrects
-  every sheet that uses it — rename included. A vehicle also lends its crew strength, EZP and
+  every sheet that uses it – rename included. A vehicle also lends its crew strength, EZP and
   status; anything typed on the alarm overrides that one field. A Stichwort or Funkrufname written
   for the first time joins the catalogue by itself.
-- **Addresses** — type `Archenholdstr 21` into the street field and pick the suggestion; street,
+- **Addresses** – type `Archenholdstr 21` into the street field and pick the suggestion; street,
   house number, postcode and Ortsteil all land at once, and the Polar-Koordinaten are measured
   from the station to the Einsatzadresse.
-- **Share and edit together** — a working set gets a link, and a second one that only reads.
+- **Share and edit together** – a working set gets a link, and a second one that only reads.
   Whoever opens the first either works on their own copy or joins everyone else on the same one;
   whoever opens the second watches along without being able to change anything.
-- **Ablaufplanung** — optional and off by default. What the station keeps lives in the
+- **Ablaufplanung** – optional and off by default. What the station keeps lives in the
   catalogue; the plan itself holds only the Lagen and the chains. An exercise day is planned as a
   chain per vehicle and per person: each step starts where the previous one ended, so a jump from A to B
   without a journey between them cannot be entered at all. Crew belongs to the step, which is
   what makes a driver change a step like any other. Journey times are proposed from the straight
-  line between two places — 3 minutes per kilometre by vehicle, 15 on foot — and can be
+  line between two places – 3 minutes per kilometre by vehicle, 15 on foot – and can be
   overwritten. It stays visible next to the planned duration, on screen and on the printed
   sheets, so a journey that was cut short shows it.
-- **What the plan checks** — seats against heads, journeys
+- **What the plan checks** – seats against heads, journeys
   without a driver, someone boarding where they are not, one person in two chains at once,
   people scheduled outside their availability, journeys planned far shorter than the estimate,
   and a Lage nothing points at. None of it blocks entry; a plan may be unfinished. The wheel is
   the exception: only someone holding the vehicle's licence class can take it. Handing it over
-  is always allowed, so a driver from an older plan is never stuck — and the check still reports
+  is always allowed, so a driver from an older plan is never stuck – and the check still reports
   one.
-- **Material and notes** — every step carries what is being taken along, in what number, and
+- **Material and notes** – every step carries what is being taken along, in what number, and
   whatever else needs saying. The catalogue holds how much of a thing exists, and planning more of
   it at one time than there is gets reported. Material lives in the catalogue like the vehicles, and a name written while planning
   joins it by itself. Because it hangs on the step, the plan answers where a thing is lying and
   what is carrying it where, without a second list to keep.
-- **Plan output** — the person plan, the view of a place and the view of a Lage on screen, and a
+- **Plan output** – the person plan, the view of a place and the view of a Lage on screen, and a
   PDF with one sheet per person, one per vehicle and a landscape overall plan. A sheet stands on
   its own: the schedule, the material and notes for every row, and the addresses of the places it
   visits, each with a QR code for Apple Maps and Google Maps, so nobody has to type an address in
   the rain.
-- **The movement picture** — the whole plan in one image: every place is a horizontal band, time
+- **The movement picture** – the whole plan in one image: every place is a horizontal band, time
   runs to the right, a stay is a bar in its band and a journey a line crossing from one band to
-  the next. It tells the day either per vehicle or per person — the same computation over
+  the next. It tells the day either per vehicle or per person – the same computation over
   *tracks*, since a person's plan comes out of the same chains. On screen (ECharts, with zoom and
   tooltips) and in the PDF, from one computed layout that both languages produce and CI diffs.
-- **The situation map** — the places on OpenStreetMap, with a slider that moves the shown moment
+- **The situation map** – the places on OpenStreetMap, with a slider that moves the shown moment
   and a strip of what happens next. Whoever is travelling stands proportionally along the
   straight line between the two places, so a day can be driven through before it runs and
   followed while it does. `Jetzt` pins it to the clock. This is the view for the day itself.
   Map tiles come from OpenStreetMap through this server, which caches them under `/tiles`, so the
   browser never contacts a third party; the coordinates behind them are the city's own, turned
   from ETRS89 / UTM 33N into WGS 84 in the browser.
-- **Slips from the plan** — where a Lage points at an alarm, its times, Einsatzadresse and
+- **Slips from the plan** – where a Lage points at an alarm, its times, Einsatzadresse and
   Einsatzmittelaufgebot come from the schedule, and one sheet is printed per vehicle at that
-  Lage. A vehicle can stand at the Lage without belonging to it — the one that only brings the
+  Lage. A vehicle can stand at the Lage without belonging to it – the one that only brings the
   mimes gets neither a sheet nor a line on anyone else's. Setting up beforehand is a step of its
   own without a Lage, so arriving early does not become the time of the alarm; and two Lagen one
   after another at the same place each keep their own time and crew. Those fields show in the editor as what will be printed, rather than being editable
@@ -89,7 +89,7 @@ screen are the ones printed on the slip.
 
 The page carries a footer with the source, the licence and the build it is running: the short
 commit and the time it was built. Outside a container the version comes from the working copy, in
-the image it is handed in as a build argument — an invented number would be worse than none.
+the image it is handed in as a build argument – an invented number would be worse than none.
 
 ## Where the data lives
 
@@ -97,14 +97,14 @@ On the server, in a session. A working set is a JSON file in a volume, managed t
 SQLite file beside it, and the browser remembers which one it is working in through a cookie. A
 reload, a new tab or a browser restart therefore costs nothing.
 
-**Sharing is handing the session's link on.** There is no separate mechanism for it — "my working
+**Sharing is handing the session's link on.** There is no separate mechanism for it – "my working
 set" and "a shared working set" were always the same thing, and now they are the same code.
 Whoever opens the link either takes a copy into a session of their own or switches into this one
 and works on the same state as everyone else.
 
 Every session also has a **read-only link**: a second token on the same file that may read and
 fetch changes but never write one. It is for the people who should see the plan without standing
-in it — a group leader, an observer, the watch next door. Whoever opens it follows the session
+in it – a group leader, an observer, the watch next door. Whoever opens it follows the session
 live, and anything they type stays in their own browser; the way out is the copy. The boundary
 sits on the server, which answers a write from a read token with 403, rather than in the
 interface, which is the only place it would hold. **Teilen** in the header hands out both links.
@@ -113,7 +113,7 @@ Retention runs from the **last use**, not from creation: a session in use stays 
 opens disappears after 30 days along with its file. Cleanup runs at startup and hourly; it also
 removes files with no index entry, of the kind an unclean shutdown leaves behind.
 
-Two buttons in the header: **Neue Sitzung** starts an empty one — the old one stays where it is —
+Two buttons in the header: **Neue Sitzung** starts an empty one – the old one stays where it is –
 and **Sitzung** lists the ones this browser knows, labelled by what is in them, with the date the
 current one expires. That list belongs to the browser rather than to any working set, so it lives
 in `localStorage`.
@@ -141,14 +141,14 @@ alarme / <id> / einsatzmittel / <group> / fahrzeuge / <vehicle> / funkrufname
 ```
 
 Change the Stichwort while somebody else fills in the Anrufer of the same alarm and you do not
-disturb them — different paths. Only writing the very same field at the very same moment lets the
+disturb them – different paths. Only writing the very same field at the very same moment lets the
 later writer win. List entries carry ids and a fractional sort key, so moving one entry between
 two others rewrites that entry rather than the list. Deleting leaves a tombstone, or a browser
 that has not yet heard about the deletion would send the entry back on its next exchange and
 resurrect it.
 
-Anything that produces something from the working set — printing a PDF, saving the JSON, opening a
-further share — exchanges first, so it is made from what everyone has rather than from what this
+Anything that produces something from the working set – printing a PDF, saving the JSON, opening a
+further share – exchanges first, so it is made from what everyone has rather than from what this
 browser saw a few seconds ago. The preview deliberately does not: it shows your own state and
 picks up other people's changes on the next beat by itself.
 
@@ -156,10 +156,10 @@ Browser and server each have their own implementation of the path flattening
 (`frontend/src/scripts/flach.ts`, `backend/src/data/dokument.py`) and they have to agree exactly.
 `./toolchain.sh sync-pfade` diffs them line by line. `./toolchain.sh sync-probe` goes further: it
 loads the browser's real sync module twice outside a browser, brings up its own server and puts
-two participants against each other — concurrent edits on one alarm, a deletion reaching someone
+two participants against each other – concurrent edits on one alarm, a deletion reaching someone
 still typing into it, a dropped connection. Both run in CI.
 
-**The link is the password**, and so is the cookie. There is no other authentication — whoever
+**The link is the password**, and so is the cookie. There is no other authentication – whoever
 has either can read the working set, change it, and delete it; whoever has the read-only link can
 read it and nothing else. The token is long and random, but a
 forwarded link is a forwarded working set. The slips are exercise material with invented personal details; nothing else belongs
@@ -212,7 +212,7 @@ default.
 ```
 
 `./toolchain.sh help` lists the rest; `./toolchain.sh verify` is what CI runs. Every command goes
-through `direnv exec` into the nix environment so that Typst is really there — without it the
+through `direnv exec` into the nix environment so that Typst is really there – without it the
 render tests skip themselves in silence, and a broken template passes.
 
 Or with Docker:
@@ -265,22 +265,22 @@ Three things worth knowing before touching the code:
 The interrogation graph for the medical branch comes from the Berlin fire brigade's open data
 ([BF-Open-Data](https://github.com/Berliner-Feuerwehr/BF-Open-Data),
 `Datasets/Dispatchcodes/dispatchcode_to_resource_requirement.xlsx`, as of 21.05.2026) and covers
-the AMPDS codes — 35 protocols, 2234 codes. Spreadsheets are not kept in this repository, so
+the AMPDS codes – 35 protocols, 2234 codes. Spreadsheets are not kept in this repository, so
 `tools/build_sna_tree.py` downloads the workbook when it is missing; only the generated JSON is
 committed.
 
 **Fire and technical rescue are invented.** The Berlin fire brigade's Alarm- und Ausrückeordnung is
 classified *Nur für den Dienstgebrauch*, and the FPDS determinants are licensed IAED material;
-neither is publicly available. The two branches in `tools/sna_authored.py` — nine fire protocols,
-ten technical ones, 291 determinants — are built to be plausible, but they are made up. They are
+neither is publicly available. The two branches in `tools/sna_authored.py` – nine fire protocols,
+ten technical ones, 291 determinants – are built to be plausible, but they are made up. They are
 marked as such in the dialog and should be replaced with the real AAO before anyone relies on them.
 
 Some questions cut across every protocol and are asked before the situation itself, because what
 the caller can still see decides how much of the rest is worth believing. **Which hand the report
-comes from** and **whether the caller is still on scene** are two separate facts — a second-hand
-report from someone who has since walked away is not the same as one from someone standing there —
+comes from** and **whether the caller is still on scene** are two separate facts – a second-hand
+report from someone who has since walked away is not the same as one from someone standing there –
 and on a medical call **how many are affected**, the **age** and **sex** of the person concerned,
-and whether that person **responds normally** and **breathes normally** — the two things a
+and whether that person **responds normally** and **breathes normally** – the two things a
 first-aid instruction turns on. Every call ends its opening with the **floor and the name on the
 bell** and any **hazard on scene**, both of which print as Hinweise of their own.
 
@@ -293,8 +293,8 @@ as the opening Hinweise.
 
 Two of them are answered by typing rather than by choosing, because no list of bands is the number
 the caller said: the **age**, which may perfectly well be `ungefähr 60`, and the **floor and the
-name on the bell**. The floor is not part of the path to a determinant — it says where to go, not
-what for — so it prints as a Hinweis of its own, above the code, and is skipped without a trace
+name on the bell**. The floor is not part of the path to a determinant – it says where to go, not
+what for – so it prints as a Hinweis of its own, above the code, and is skipped without a trace
 when there is no floor to give.
 
 **Whether people are in danger** is asked last on every fire, because that answer is what sets the
@@ -302,7 +302,7 @@ Stichwort: the situation fixes a base level and this raises it, so the same Wohn
 BRAND 2, 3 or 4 depending on who is still inside.
 
 Addresses come from the city's [address
-WFS](https://daten.berlin.de/datensaetze/adressen-berlin-wfs-634ab8ba) — 402 756 points with
+WFS](https://daten.berlin.de/datensaetze/adressen-berlin-wfs-634ab8ba) – 402 756 points with
 street, house number, postcode, Ortsteil and official coordinates. It is not committed and not in
 the image: the server fetches it into a SQLite cache on the volume the first time it comes up, in
 the background, and refetches when the copy ages out. Everything works without it; completion is
@@ -310,7 +310,7 @@ the only thing missing until it lands. `./toolchain.sh adressen-laden` does it o
 `adressen-stand` says what is there.
 
 The Polar-Koordinaten are a bearing from grid north and a straight-line distance from the station
-to the Einsatzadresse. Nothing documents that — it was recovered from two printed slips by solving
+to the Einsatzadresse. Nothing documents that – it was recovered from two printed slips by solving
 for the point both agree on, which turned out to be the station itself, to within seven metres.
 The station is set once in the catalogue. `./toolchain.sh adressen-polar` checks the formula
 against those printed values, and runs in CI.
@@ -319,7 +319,7 @@ Callers, phone numbers and callback numbers are generated rather than typed: the
 as exercise material, and that way no real personal data ends up on a sheet that gets printed and
 passed around.
 
-The names are meant to look like the people who actually ring the Berlin fire brigade — a slip
+The names are meant to look like the people who actually ring the Berlin fire brigade – a slip
 full of storybook German names trains the eye for the wrong thing. Around a quarter of Berlin
 holds a non-German passport and about a third of the city has a migration background; the largest
 groups are Turkish, Ukrainian, Indian, Polish and Syrian, with a Vietnamese population
@@ -327,12 +327,12 @@ concentrated in the eastern districts. `frontend/src/scripts/generator.ts` draws
 name from the same pool, so the pairing is one a real person could have, and inflects the Polish
 surnames that take a feminine form. German surnames come from the national frequency list, and
 the given names span every decade a caller might have been born in. It is a plausible mix rather
-than a distribution derived from the registry — nobody publishes surname frequencies per city.
+than a distribution derived from the registry – nobody publishes surname frequencies per city.
 
 ## Fonts
 
 The sheet is set in Times New Roman throughout, which cannot be redistributed. Instead
-`backend/src/render/fonts/` holds **Liberation Serif** — metrically identical to it, so the sheet
+`backend/src/render/fonts/` holds **Liberation Serif** – metrically identical to it, so the sheet
 keeps its widths and its line breaks. It travels inside the image, so a render never depends on
 what happens to be installed on the machine.
 
@@ -341,7 +341,7 @@ repository. The licence text sits beside it, along with a note on what it stands
 
 ## Licence
 
-GNU Affero General Public License, version 3 or later (`AGPL-3.0-or-later`) — see `LICENSE`.
+GNU Affero General Public License, version 3 or later (`AGPL-3.0-or-later`) – see `LICENSE`.
 
 The Affero clause is the point: anyone who runs a modified copy of this as a network service owes
 its users the source. The bundled fonts are the exception noted above, and the dispatch code data

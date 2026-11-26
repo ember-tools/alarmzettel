@@ -43,7 +43,7 @@ export function uebernehmen(roh: unknown): Arbeitsmappe {
     // A file written before either catalogue had an identity of its own: Stichwörter were bare
     // strings and vehicles were known by their Funkrufname. Both get an id here, and the Alarme
     // that use them are pointed at it, so a later rename reaches the sheets that were already
-    // written. Matching on the text is only safe this once — from now on the id is the link.
+    // written. Matching on the text is only safe this once – from now on the id is the link.
     kataloge.stichwoerter = (kataloge.stichwoerter ?? []).map(eintrag =>
         typeof eintrag === 'string'
             ? {id: crypto.randomUUID(), text: eintrag}
@@ -95,7 +95,7 @@ function katalogFuellen(kataloge: Kataloge, quelle?: Partial<Planung>) {
 /**
  * Füllt den Plan auf, was eine Datei oder ein Abgleich weggelassen hat.
  *
- * Eine Menge, die leer ist, hat keinen einzigen Pfad — eine Person ohne Rollen kommt deshalb ganz
+ * Eine Menge, die leer ist, hat keinen einzigen Pfad – eine Person ohne Rollen kommt deshalb ganz
  * ohne `rollen` zurück. Der Editor darf darauf nicht stoßen, also wird hier jeder Eintrag auf
  * seine volle Form gebracht, so wie es die Alarme längst tun.
  *
@@ -145,7 +145,7 @@ function verweiseHerstellen(mappe: Arbeitsmappe): Arbeitsmappe {
 /**
  * A working set written before vehicles referred to the catalogue carries its values copied into
  * every Alarm. Clearing the ones that still match turns those copies back into references
- * without changing a single printed sheet — the value is the same either way, it just starts
+ * without changing a single printed sheet – the value is the same either way, it just starts
  * following the catalogue again. Anything that differs was meant as an override and stays.
  */
 function katalogVerknuepfen(mappe: Arbeitsmappe): Arbeitsmappe {
@@ -280,7 +280,7 @@ export function stichwortIdFuer(text: string): string {
 
 /**
  * The catalogue entry for this Stichwort, adding it if it is new. A word typed for the first
- * time joins the catalogue, so it is offered next time and can be corrected in one place later —
+ * time joins the catalogue, so it is offered next time and can be corrected in one place later –
  * which only works if the Alarm points at an entry rather than merely spelling the same word.
  */
 export function stichwortSichern(text: string): string {
@@ -294,7 +294,7 @@ export function stichwortSichern(text: string): string {
 }
 
 /**
- * Eine Adresse, die in einem Alarm entsteht, wird ein Ort im Katalog — so, wie ein neu
+ * Eine Adresse, die in einem Alarm entsteht, wird ein Ort im Katalog – so, wie ein neu
  * geschriebenes Stichwort und ein neuer Funkrufname dort landen. Damit steht der Einsatzort für
  * die Ablaufplanung bereit, ohne ihn ein zweites Mal einzutippen.
  *
@@ -328,7 +328,7 @@ export function funkrufnameVorschlaege(): string[] {
 
 /**
  * The catalogue entry a vehicle stands for: the one it points at, or failing that the one whose
- * Funkrufname it reads like — a vehicle typed by hand or imported from a spreadsheet has no id.
+ * Funkrufname it reads like – a vehicle typed by hand or imported from a spreadsheet has no id.
  */
 export function fahrzeugvorlage(fahrzeug: {vorlageId?: string, funkrufname: string}) {
     if (fahrzeug.vorlageId) {

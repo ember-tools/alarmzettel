@@ -44,14 +44,14 @@
 #let zeitspanne(zeile) = [#zeile.von–#zeile.bis]
 
 /// Wie lange die Luftlinie dauern würde, wo sie sich rechnen lässt. Sie steht klein unter der
-/// geplanten Zeit — ein Vorschlag, an dem man ablesen kann, ob die geplante knapp ist.
+/// geplanten Zeit – ein Vorschlag, an dem man ablesen kann, ob die geplante knapp ist.
 #let geschaetzt(zeile) = {
   if zeile.at("geschaetzt", default: none) == none { return [] }
   linebreak()
   text(size: 7pt, weight: "regular", fill: luma(110))[≈ #str(zeile.geschaetzt) min]
 }
 
-/// Ein Tag steht nur dort, wo er wechselt — sonst wiederholt er sich in jeder Zeile.
+/// Ein Tag steht nur dort, wo er wechselt – sonst wiederholt er sich in jeder Zeile.
 #let mit_tagen(zeilen) = {
   let bisher = ""
   let ergebnis = ()
@@ -115,7 +115,7 @@
   }
 }
 
-/// Material und Notiz einer Zeile, untereinander — beides gehört auf den Zettel, sonst weiß es
+/// Material und Notiz einer Zeile, untereinander – beides gehört auf den Zettel, sonst weiß es
 /// nur der, der geplant hat.
 #let beiwerk(zeile) = {
   let teile = ()
@@ -124,7 +124,7 @@
   teile.join(linebreak())
 }
 
-/// Ein Blatt je Person — der Zettel, den man morgens in die Hand gedrückt bekommt.
+/// Ein Blatt je Person – der Zettel, den man morgens in die Hand gedrückt bekommt.
 #let personenblatt(person) = {
   let neben = (
     if person.anzahl > 1 { str(person.anzahl) + " Köpfe" } else { "" },
@@ -153,7 +153,7 @@
   }
 }
 
-/// Ein Blatt je Fahrzeug — der Zettel fürs Armaturenbrett.
+/// Ein Blatt je Fahrzeug – der Zettel fürs Armaturenbrett.
 #let fahrzeugblatt(fahrzeug) = {
   kopf(if fahrzeug.name != "" { fahrzeug.name } else { "Ohne Namen" }, "",
        ziel: fahrzeug.at("link", default: ""))
@@ -179,7 +179,7 @@
   }
 }
 
-/// Was eine Zelle des Bogens für eine ist — daran hängt ihre Farbe.
+/// Was eine Zelle des Bogens für eine ist – daran hängt ihre Farbe.
 #let FLAECHE = (
   einsatz: rgb("#f3cfcb"),
   fahrt: rgb("#e6e6e6"),
@@ -189,7 +189,7 @@
 /// Der Bogen für die Wand: Zeit nach unten, je eine Spalte pro Kette.
 ///
 /// Die Farbe sagt, was läuft: ein Einsatz steht im Signalton, eine Fahrt schraffiert dazwischen,
-/// ein Aufenthalt ohne Lage blass. Wo ein Block endet, trennt ein kräftiger Strich — so sieht
+/// ein Aufenthalt ohne Lage blass. Wo ein Block endet, trennt ein kräftiger Strich – so sieht
 /// man den Wechsel, ohne jede Zelle zu lesen.
 #let gesamtblock(block_) = {
   kopf("Gesamtplan", block_.datum)

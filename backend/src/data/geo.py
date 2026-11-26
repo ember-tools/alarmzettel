@@ -2,7 +2,7 @@
 Von den Koordinaten einer Karte zu den amtlichen.
 
 Der Adressdienst liefert ETRS89 / UTM 33N, und darauf rechnen Entfernung und Polar-Koordinaten.
-Wer einen Punkt selbst auf der Karte setzt, gibt ihn dagegen in WGS 84 an — also wird er einmal
+Wer einen Punkt selbst auf der Karte setzt, gibt ihn dagegen in WGS 84 an – also wird er einmal
 projiziert. Die Reihenentwicklung ist die übliche für die transversale Mercator-Projektion; auf
 der Fläche einer Stadt liegt sie im Millimeterbereich.
 

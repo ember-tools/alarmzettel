@@ -1,7 +1,7 @@
 import client from './http'
 
 /**
- * Die Arbeitsmappe liegt auf dem Server, also wird sie nicht mitgeschickt — gedruckt wird, was
+ * Die Arbeitsmappe liegt auf dem Server, also wird sie nicht mitgeschickt – gedruckt wird, was
  * die laufende Sitzung hält.
  */
 async function datei(pfad: string): Promise<Blob> {
@@ -29,7 +29,7 @@ export function renderAblaufplanZip(): Promise<Blob> {
 
 /**
  * Das eine Blatt hinter seinem Lese-Link. Es hängt nicht an der laufenden Sitzung, sondern am
- * Token im Link — wer den Zettel angezeigt bekommt, kann ihn auch mitnehmen.
+ * Token im Link – wer den Zettel angezeigt bekommt, kann ihn auch mitnehmen.
  */
 export async function renderBlatt(token: string, art: string, kennung: string): Promise<Blob> {
     const {data} = await client.get(`/api/render/blatt/${token}/${art}/${kennung}`,
@@ -37,7 +37,7 @@ export async function renderBlatt(token: string, art: string, kennung: string): 
     return data as Blob
 }
 
-/** Turns the error body a failed render returns — a Blob — back into readable text. */
+/** Turns the error body a failed render returns – a Blob – back into readable text. */
 export async function fehlertext(error: unknown): Promise<string> {
     const body = (error as {response?: {data?: unknown}})?.response?.data
     if (body instanceof Blob) {

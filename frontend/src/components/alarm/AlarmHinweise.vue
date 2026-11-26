@@ -13,12 +13,12 @@ const abfrage = ref(false)
 
 /**
  * The path through the interrogation is the Hinweis: its answers print as the numbered
- * sentences after the code. Kurzinfo and Stichwort come along, but only where they are empty —
+ * sentences after the code. Kurzinfo and Stichwort come along, but only where they are empty –
  * an answer already given by hand is never overwritten.
  */
 function uebernehmen(treffer: SnaTreffer, meldung: string) {
   // Where the crew has to go is not part of the path to a determinant, so it stands as its own
-  // Hinweis — and before the code, because it is read first.
+  // Hinweis – and before the code, because it is read first.
   for (const schritt of treffer.pfad.filter(s => s.eigen && s.aussage.trim())) {
     alarm.value.hinweise.push({
       ...leererHinweisText(naechste(alarm.value.hinweise)),

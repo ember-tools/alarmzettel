@@ -8,7 +8,7 @@ const props = defineProps<{ rendern: () => Promise<Blob>, ausloeser: unknown }>(
 /**
  * Zwei Rahmen übereinander. Der sichtbare bleibt stehen, während der andere die neue Fassung
  * lädt; erst wenn die fertig ist, wird umgeblendet. Ein einzelner Rahmen, dessen Quelle sich
- * ändert, reißt den PDF-Betrachter jedes Mal ab — das ist das Flackern beim Tippen.
+ * ändert, reißt den PDF-Betrachter jedes Mal ab – das ist das Flackern beim Tippen.
  */
 type Rahmen = 'a' | 'b'
 

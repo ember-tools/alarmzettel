@@ -8,7 +8,7 @@ import type {Modus} from '../../scripts/bewegungen'
 
 /**
  * Die Gesamtansicht: der Tag, wahlweise je Fahrzeug oder je Person erzählt. Beides ist dieselbe
- * Rechnung — der Personenplan entsteht aus denselben Ketten wie das Fahrzeugbild und kann ihm
+ * Rechnung – der Personenplan entsteht aus denselben Ketten wie das Fahrzeugbild und kann ihm
  * deshalb nicht widersprechen.
  *
  * Wer viel eingeplant hat, sieht bald mehr Bänder als Bild. Deshalb lässt sich die Auswahl
@@ -21,7 +21,7 @@ const versteckt = ref(new Set<string>())
 
 const tage = computed(() => bewegungstage(plandaten()))
 
-/** Wer an diesem Tag vorkommt, in dieser Erzählweise — die Knöpfe des Filters. */
+/** Wer an diesem Tag vorkommt, in dieser Erzählweise – die Knöpfe des Filters. */
 const spuren = computed(() => {
   const gesehen = new Map<string, string>()
   for (const tag of tage.value) {

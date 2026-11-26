@@ -17,7 +17,7 @@ class SitzungTest(unittest.TestCase):
     def setUpClass(cls):
         """
         Die Tests bekommen ihren eigenen Sitzungsspeicher. Sonst räumten sie das Verzeichnis der
-        laufenden Installation ab — und wer nebenher im Browser arbeitet, verlöre seine Sitzung.
+        laufenden Installation ab – und wer nebenher im Browser arbeitet, verlöre seine Sitzung.
         """
         cls.ablage = tempfile.TemporaryDirectory()
         cls.vorher = sitzungsdienst.sitzungen
@@ -49,7 +49,7 @@ class SitzungTest(unittest.TestCase):
         self.assertEqual(404, self.client.get("/api/sitzung").status_code)
 
     def test_eine_leere_sitzung_ist_erlaubt(self):
-        """Eine neue Sitzung fängt bei nichts an — das war bei den Freigaben noch ein Fehler."""
+        """Eine neue Sitzung fängt bei nichts an – das war bei den Freigaben noch ein Fehler."""
         self.assertEqual(200, self.client.post("/api/sitzung", json={"alarme": []}).status_code)
 
     def test_wechseln_setzt_das_cookie_auf_die_andere_sitzung(self):
@@ -98,7 +98,7 @@ class CacheTest(unittest.TestCase):
         laden = Sitzungen(Path(self.ablage.name), 30, cache_eintraege=2, cache_minuten=30)
         tokens = [laden.anlegen({"version": 1, "alarme": [{"id": f"a{i}"}]})[0] for i in range(4)]
         self.assertEqual(2, laden.im_speicher())
-        # Die zuerst angelegte ist längst aus dem Speicher — und trotzdem vollständig da.
+        # Die zuerst angelegte ist längst aus dem Speicher – und trotzdem vollständig da.
         self.assertEqual("a0", laden.lesen(tokens[0])[0]["alarme"][0]["id"])
 
     def test_verdraengt_wird_nach_zeit(self):

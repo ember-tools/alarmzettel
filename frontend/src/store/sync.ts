@@ -93,15 +93,15 @@ const LISTEN = new Set([
 ])
 
 /**
- * The shortest prefix of a removed path that is gone entirely — the entity itself rather than
+ * The shortest prefix of a removed path that is gone entirely – the entity itself rather than
  * one of its fields.
  *
  * Deleting an Alarm removes its fields, and marking only those as gone is not enough: the entity
- * has no tombstone of its own, so the next person to edit it — not yet knowing it was deleted —
+ * has no tombstone of its own, so the next person to edit it – not yet knowing it was deleted –
  * writes one field back and the whole thing returns. Burying the entity stops that.
  *
  * Es muss aber ein *Eintrag* sein, nie die Liste, in der er steht. Wird der letzte Tag gelöscht,
- * ist auch `planung / tage` vollständig verschwunden — ein Grabstein darauf würde die Liste für
+ * ist auch `planung / tage` vollständig verschwunden – ein Grabstein darauf würde die Liste für
  * immer zumauern, denn der Server hält alles unter einem Grabstein für gelöscht. Ein Eintrag
  * erkennt sich daran, dass der Abschnitt über ihm eine Liste ist.
  */
@@ -166,7 +166,7 @@ function anlegen(bild: Flachbild, aenderungen: Aenderung[]): Flachbild {
  * comes from the shadow, which is the merged truth.
  *
  * Gebaut wird nur, wenn der Server etwas mitgeschickt hat. Der Aufbau ersetzt jedes Objekt der
- * Arbeitsmappe durch ein neues, und alles, was daran hängt, hält das für eine Änderung — die
+ * Arbeitsmappe durch ein neues, und alles, was daran hängt, hält das für eine Änderung – die
  * Vorschau etwa renderte den Zettel danach im Sekundentakt neu, obwohl niemand etwas getippt
  * hatte. Ohne eingehende Änderung steht ohnehin schon alles im Dokument, was hier stünde.
  */
@@ -212,7 +212,7 @@ async function austauschen() {
 
 /**
  * Exchanges now instead of waiting for the next beat. Wanted before something is produced from
- * the working set — a PDF, a download — so it is made from what everyone has, not from what this
+ * the working set – a PDF, a download – so it is made from what everyone has, not from what this
  * browser happened to have a moment ago.
  */
 export async function jetztAbgleichen() {
@@ -231,7 +231,7 @@ watch(arbeitsmappe, beiAenderung, {deep: true})
 
 /**
  * Verbindet mit einer Sitzung. Was auf dem Bildschirm steht, wird durch das ersetzt, was die
- * Sitzung hält — sie wird nicht mit dem zusammengeführt, was zufällig in diesem Browser lag,
+ * Sitzung hält – sie wird nicht mit dem zusammengeführt, was zufällig in diesem Browser lag,
  * sonst landen die Reste des einen bei allen anderen.
  */
 export async function beitreten(token: string, wer: string, nurLesen = false) {

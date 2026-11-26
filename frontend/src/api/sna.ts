@@ -2,7 +2,7 @@ import type {SnaBaum, SnaTreffer} from '../interfaces/Sna'
 
 let geladen: Promise<SnaBaum> | null = null
 
-/** Reference data, not user data — fetched once on first use and kept for the tab's lifetime. */
+/** Reference data, not user data – fetched once on first use and kept for the tab's lifetime. */
 export function ladeBaum(): Promise<SnaBaum> {
     if (!geladen) {
         geladen = fetch('/sna-tree.json')

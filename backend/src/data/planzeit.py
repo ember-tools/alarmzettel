@@ -1,5 +1,5 @@
 """
-Zeitpunkte im Ablaufplan sind ISO-Zeichenketten ohne Zone — `2026-09-19T08:15`.
+Zeitpunkte im Ablaufplan sind ISO-Zeichenketten ohne Zone – `2026-09-19T08:15`.
 
 Gerechnet wird auf einer durchgehenden Minutenachse, damit sich zwei Zeitpunkte über Tages- und
 Monatsgrenzen hinweg vergleichen und voneinander abziehen lassen.
@@ -29,7 +29,7 @@ def uhrzeit(zeitpunkt: str) -> str:
 
 
 def verschieben(zeitpunkt: str, dazu: int) -> str:
-    """Denselben Zeitpunkt um Minuten versetzt — auch über Mitternacht hinweg."""
+    """Denselben Zeitpunkt um Minuten versetzt – auch über Mitternacht hinweg."""
     wert = minuten(zeitpunkt)
     if wert is None:
         return zeitpunkt

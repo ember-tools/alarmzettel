@@ -68,7 +68,7 @@ function antworten(label: string, aussage: string, ziel: string) {
 }
 
 /**
- * Takes a typed answer. Left empty the question is passed over — recorded where the gap itself
+ * Takes a typed answer. Left empty the question is passed over – recorded where the gap itself
  * says something, as an age asked for and not known does, and silently where it does not: not
  * every call happens on a floor.
  */
@@ -87,7 +87,7 @@ function eintragen() {
 
 /**
  * Steps back to the state before the given answer, so a wrong turn costs one click. Every step
- * carries the question it answered, so this is a lookup rather than a walk back down the graph —
+ * carries the question it answered, so this is a lookup rather than a walk back down the graph –
  * which also holds for a path that came out of the search and never passed some questions.
  */
 function zurueckZu(index: number) {
@@ -115,13 +115,13 @@ function ausSuche(gewaehlt: SnaTreffer) {
 /**
  * The numbered answers, as they will be written into the Hinweis. Choosing a discipline or a
  * protocol is a turn in the graph rather than something the caller said, so those steps carry no
- * statement and are not numbered — the Hinweis drops them too, and the two have to agree or the
+ * statement and are not numbered – the Hinweis drops them too, and the two have to agree or the
  * preview would promise a line the slip does not print.
  */
 const abfrageweg = computed(() => treffer.value?.pfad
     .filter(schritt => schritt.aussage.trim() && !schritt.eigen) ?? [])
 
-/** Answers that print as Hinweise of their own, above the code — where to go, before what for. */
+/** Answers that print as Hinweise of their own, above the code – where to go, before what for. */
 const eigeneHinweise = computed(() => treffer.value?.pfad
     .filter(schritt => schritt.eigen && schritt.aussage.trim()) ?? [])
 

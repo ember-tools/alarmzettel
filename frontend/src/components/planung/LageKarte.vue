@@ -14,7 +14,7 @@ import {MAP_LIMITS, TILE_LAYER_OPTIONS, TILE_URL} from '../../scripts/tiles'
 
 /**
  * Die Karte für den Ausführungstag: alle Orte, und darauf, wo jede Kette gerade ist. Der
- * Schieber verschiebt den dargestellten Zeitpunkt minutenweise, „Jetzt“ hängt ihn an die Uhr —
+ * Schieber verschiebt den dargestellten Zeitpunkt minutenweise, „Jetzt“ hängt ihn an die Uhr –
  * damit lässt sich der Tag durchfahren, bevor er läuft, und mitverfolgen, während er läuft.
  *
  * Ob die Karte der Uhr folgt, merkt sich der Browser: am Ausführungstag will man sie aufschlagen
@@ -30,7 +30,7 @@ const minute = ref(8 * 60)
 const folgt = ref(localStorage.getItem(SPEICHER) === 'ja')
 let uhr: ReturnType<typeof setInterval> | undefined
 
-/** Der heutige Tag, wie die Uhr an der Wand ihn zählt — nicht der, den UTC gerade hat. */
+/** Der heutige Tag, wie die Uhr an der Wand ihn zählt – nicht der, den UTC gerade hat. */
 function heutigerTag(): string {
   const jetzt = new Date()
   return `${jetzt.getFullYear()}-${String(jetzt.getMonth() + 1).padStart(2, '0')}-` +

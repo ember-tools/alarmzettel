@@ -1,7 +1,7 @@
 /**
  * Von den amtlichen Koordinaten zu denen, die eine Karte versteht.
  *
- * Der Adressdienst liefert ETRS89 / UTM 33N — darauf rechnen die Polar-Koordinaten des
+ * Der Adressdienst liefert ETRS89 / UTM 33N – darauf rechnen die Polar-Koordinaten des
  * Alarmzettels, weil Berlin darin eben liegt. Kartenkacheln stehen dagegen in WGS 84, also muss
  * die Projektion für die Karte einmal rückwärts gerechnet werden.
  *
@@ -117,7 +117,7 @@ export function markeAlsText(marke: Ortsmarke): string {
     return `${marke.breite.toFixed(6)}, ${marke.laenge.toFixed(6)}`
 }
 
-/** Der Mittelpunkt mehrerer Marken — worauf die Karte zeigt, wenn sie sich öffnet. */
+/** Der Mittelpunkt mehrerer Marken – worauf die Karte zeigt, wenn sie sich öffnet. */
 export function mitte(marken: Ortsmarke[]): Ortsmarke {
     if (!marken.length) return {breite: 52.52, laenge: 13.405}
     const summe = marken.reduce((bisher, marke) => ({

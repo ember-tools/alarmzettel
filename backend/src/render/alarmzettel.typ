@@ -28,7 +28,7 @@
 #set page(paper: "a4", margin: 10mm)
 // A row is as tall as the paragraph it sits in, and the original's paragraphs are taller than
 // the label spans inside them. Both boxes are set explicitly to the ratios measured off the
-// reference render — 1.36em for a paragraph, 1.33em for a label — rather than to the vendored
+// reference render – 1.36em for a paragraph, 1.33em for a label – rather than to the vendored
 // font's own ascender and descender, which are tighter than what the original was laid out with.
 #set text(font: SCHRIFT, size: WERT, lang: "de", top-edge: 1.09em, bottom-edge: -0.27em)
 #set par(leading: 0pt, spacing: 0pt, justify: false)
@@ -79,7 +79,7 @@
   text(size: WERT, weight: "regular")[#lines.map(l => par(l)).join()]
 }
 
-/// The Trupp field holds strength and Trupps in one string — "Stärke=6: SF, AT, WT" — because
+/// The Trupp field holds strength and Trupps in one string – "Stärke=6: SF, AT, WT" – because
 /// that is how the dispatch system writes it. It stays one column on the sheet and prints on two
 /// lines, broken after the colon. A value carrying none stands on a line of its own.
 #let trupp-zeilen(wert) = {
@@ -150,7 +150,7 @@
     stroke: none,
     align: left + top,
 
-    // 1 — Kopfzeile. Repeated on a continuation page so an Alarm that outgrows one sheet still
+    // 1 – Kopfzeile. Repeated on a continuation page so an Alarm that outgrows one sheet still
     // says which sheet it is; the page counter is reset per Alarm, the total read off the
     // marker placed after the last row.
     table.header(
@@ -165,7 +165,7 @@
         }, size: 16pt))),
     ),
 
-    // 2/3 — Einsatz- und Meldungszeitpunkt
+    // 2/3 – Einsatz- und Meldungszeitpunkt
     cell[#L("Einsatz", weight: "regular")], cell(colspan: 4)[#L("Einsatz Datum", weight: "regular")],
     cell(colspan: 3)[#L("Einsatz Uhrzeit", weight: "regular")], cell(colspan: 3)[#L("Meldung Datum", weight: "regular")],
     cell(colspan: 5)[#L("Meldung Uhrzeit", weight: "regular")], cell(colspan: 3)[#L("A-Platz", weight: "regular")],
@@ -174,7 +174,7 @@
     cell(colspan: 3)[#V(get(a, "einsatzZeit"))], cell(colspan: 3)[#V(get(a, "meldungDatum"))],
     cell(colspan: 5)[#V(get(a, "meldungZeit"))], cell(colspan: 3)[#V(get(a, "aPlatz"))],
 
-    // 4/5 — Polizei, Sonderrechte, Arbeitsgruppe
+    // 4/5 – Polizei, Sonderrechte, Arbeitsgruppe
     cell[#L("Polizei", weight: "regular")], cell(colspan: 4)[#L("Sonderrechte", weight: "regular")],
     cell(colspan: 3)[#L("Arbeitsgruppe", weight: "regular")], cell(colspan: 3)[], cell(colspan: 5)[],
     cell(colspan: 3)[#L("Wachalarm-Nr.", weight: "regular")],
@@ -183,10 +183,10 @@
     cell(colspan: 3)[#V(get(a, "arbeitsgruppe"))], cell(colspan: 3)[], cell(colspan: 5)[],
     cell(colspan: 3)[#V(get(a, "wachalarmNr"))],
 
-    // 6 — obere Kante des Kastens
+    // 6 – obere Kante des Kastens
     ..((1, 4, 3, 3, 5, 3).map(n => cell(colspan: n, stroke: (bottom: THICK))[#spacer(2pt)])),
 
-    // 7-10 — Stichwort und Kurzinfo, mit Luft um beide
+    // 7-10 – Stichwort und Kurzinfo, mit Luft um beide
     cell(colspan: 19, stroke: (top: THICK, left: THICK, right: THICK))[#spacer(2pt)],
     cell(colspan: 19, stroke: boxed-lr)[#strut#L("Alarmierungsstichwort", size: 9pt)],
     cell(colspan: 19, stroke: boxed-lr)[#V(get(a, "stichwort"), size: STICHWORT)],
@@ -195,7 +195,7 @@
     cell(colspan: 19, stroke: boxed-lr)[#V(get(a, "kurzinfo"), size: KURZINFO)],
     cell(colspan: 19, stroke: boxed-lr)[#spacer(2pt)],
 
-    // 11-18 — Anfahrts- und Einsatzadresse
+    // 11-18 – Anfahrts- und Einsatzadresse
     cell(colspan: 9, fill: GREY, stroke: boxed-l, align(center, L("Anfahrtsadresse", size: 9pt))),
     cell(colspan: 10, stroke: boxed-r, align(center, L("Einsatzadresse", size: 9pt))),
 
@@ -226,7 +226,7 @@
     cell(colspan: 9, fill: GREY, stroke: boxed-l)[#V(get(adr-an, "ort"), size: ADRESSE)],
     cell(colspan: 10, stroke: boxed-r)[#V(get(adr-ein, "ort"), size: ADRESSE, weight: "regular")],
 
-    // 19/20 — Karte und Koordinaten, untere Kante des Kastens
+    // 19/20 – Karte und Koordinaten, untere Kante des Kastens
     cell(colspan: 2, stroke: boxed-l)[#L("Karte", size: 9pt, weight: "regular")],
     cell(colspan: 5)[#L("KaB!", size: 9pt, weight: "regular")],
     cell(colspan: 3)[#L("FW-Plan", size: 9pt, weight: "regular")],
@@ -239,10 +239,10 @@
     cell(colspan: 5, stroke: (bottom: THICK))[#V(get(karte, "ePlan"))],
     cell(colspan: 4, stroke: (bottom: THICK, right: THICK))[#V(get(karte, "polarKoordinaten"))],
 
-    // 21 — Abstand
+    // 21 – Abstand
     cell(colspan: 4)[#strut], cell(colspan: 4)[], cell(colspan: 6)[], cell(colspan: 5)[],
 
-    // 22-26 — Meldung und Beteiligte
+    // 22-26 – Meldung und Beteiligte
     cell(colspan: 4)[#L("Meldungsquelle")],
     cell(colspan: 4)[#V(get(a, "meldungsquelle"), weight: "regular")],
     cell(colspan: 4)[#L("Rückrufnummer")],
@@ -257,11 +257,11 @@
     cell(colspan: 4)[#strut#L("Was ist passiert")],
     cell(colspan: 15)[#VM(get(a, "wasIstPassiert"), weight: "regular")],
 
-    // 27/28 — Hinweise
+    // 27/28 – Hinweise
     cell(colspan: 19)[#strut#L("Hinweise")],
     cell(colspan: 19)[#hinweise-block(get(a, "hinweise", fallback: ()))],
 
-    // 29-31 — Einsatzmittelaufgebot
+    // 29-31 – Einsatzmittelaufgebot
     cell(colspan: 19, align(center, L("Einsatzmittelaufgebot", size: 12pt))),
     cell(colspan: 19, legend),
     cell(colspan: 19)[#spacer(7pt)],
@@ -269,7 +269,7 @@
     // Gruppen und Fahrzeuge
     ..vehicle-rows,
 
-    // 36-38 — Abschluss
+    // 36-38 – Abschluss
     cell(colspan: 18)[#align(center)[#strut#L("(Funkrufname / EZP / Status / Trupp / Hinweis)", size: 7pt, weight: "regular")]], cell[],
     cell(colspan: 18)[#spacer(7pt)], cell[],
     cell(colspan: 18, align(center, L("*** Ende des Drucks ***", size: 14pt))), cell[],

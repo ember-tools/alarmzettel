@@ -45,7 +45,7 @@ def _mappe(request: Request) -> Arbeitsmappe:
 def _lesebasis(request: Request, echt: str) -> str:
     """
     Der Anfang der Lese-Links, mit denen jedes Blatt sein Kennmuster bekommt. Das Lesetoken
-    entsteht dabei, falls es noch keines gibt — es ist dasselbe, das der Teilen-Knopf ausgibt.
+    entsteht dabei, falls es noch keines gibt – es ist dasselbe, das der Teilen-Knopf ausgibt.
 
     Ohne Sitzung bleibt die Basis leer und das Blatt ohne Kennmuster: ein Zettel darf nicht
     ungedruckt bleiben, weil ein Link fehlt.
@@ -72,7 +72,7 @@ def _blattbasis(request: Request) -> str:
 def _punkt_zu(adresse) -> dict | None:
     """
     Der Punkt einer Adresse: der an ihr gesetzte, sonst der des Adressdienstes. Ein gesetzter gilt
-    vor der Straße — jemand hat ihn auf die Karte gesetzt, weil sie ihn nicht trifft.
+    vor der Straße – jemand hat ihn auf die Karte gesetzt, weil sie ihn nicht trifft.
     """
     gesetzt = punkt_aus_text(adresse.koordinaten)
     if gesetzt is not None:
@@ -86,7 +86,7 @@ def _punkt_zu(adresse) -> dict | None:
 def _mit_polar(mappe: Arbeitsmappe) -> Arbeitsmappe:
     """
     Die Polar-Koordinaten, wo keine stehen. Bisher entstanden sie nur, während jemand eine
-    Adresse im Editor auflöste — ein Alarm, dessen Einsatzadresse aus dem Plan kommt oder der
+    Adresse im Editor auflöste – ein Alarm, dessen Einsatzadresse aus dem Plan kommt oder der
     importiert wurde, ging ohne sie in den Druck. Ein eingetragener Wert bleibt stehen.
     """
     wache = _punkt_zu(mappe.kataloge.wache)
@@ -120,7 +120,7 @@ def render_sitzung(request: Request) -> Response:
 
 @router.post("/{alarm_id}")
 def render_alarm(alarm_id: str, request: Request) -> Response:
-    """Ein einzelner Alarm — das, was die Vorschau beim Bearbeiten anfragt."""
+    """Ein einzelner Alarm – das, was die Vorschau beim Bearbeiten anfragt."""
     mappe = _mappe(request)
     treffer = [alarm for alarm in mappe.alarme if alarm.id == alarm_id]
     if not treffer:
@@ -134,7 +134,7 @@ def _ortspunkte(mappe: Arbeitsmappe) -> dict:
     """
     Die Koordinaten der Orte, soweit sie bekannt sind. Sie tragen die geschätzten Fahrzeiten auf
     den Blättern; ohne Liste fehlt allein die Schätzung. Ein an der Adresse gesetzter Punkt gilt
-    vor dem Adressdienst — jemand hat ihn auf die Karte gesetzt, weil die Straße ihn nicht trifft.
+    vor dem Adressdienst – jemand hat ihn auf die Karte gesetzt, weil die Straße ihn nicht trifft.
     """
     punkte = {}
     for ort in mappe.kataloge.alle_orte():
@@ -179,7 +179,7 @@ def render_ablaufplan_zip(request: Request) -> Response:
 def render_blatt(token: str, art: str, kennung: str, request: Request) -> Response:
     """
     Das eine Blatt hinter seinem Lese-Link, als PDF zum Mitnehmen. Wer den Link hat, hat den
-    Zettel — auch ohne Sitzung im Browser und ohne den Stapel aller anderen.
+    Zettel – auch ohne Sitzung im Browser und ohne den Stapel aller anderen.
     """
     if art not in ("person", "fahrzeug"):
         raise HTTPException(status_code=404, detail="Diese Art von Blatt gibt es nicht.")
@@ -208,7 +208,7 @@ def render_blatt(token: str, art: str, kennung: str, request: Request) -> Respon
 def alarm_ableitung(alarm_id: str, request: Request) -> dict:
     """
     Was der Ablaufplan zu diesem Alarm beisteuert. Der Editor zeigt es an, statt es noch einmal
-    zu rechnen — gedruckt wird, was hier steht.
+    zu rechnen – gedruckt wird, was hier steht.
     """
     mappe = _mappe(request)
     alarm = next((eintrag for eintrag in mappe.alarme if eintrag.id == alarm_id), None)

@@ -6,15 +6,15 @@ das Einzige, was zur Datei führt, deshalb ist es lang und zufällig; wer es hat
 schreiben. Eine Anmeldung gibt es nicht.
 
 Die Datei hält das Dokument als Merge-Fakten, nicht als fertige Arbeitsmappe, damit zwei
-gleichzeitige Schreiber beide Änderungen behalten — siehe data/dokument.py. Schreibvorgänge sind
+gleichzeitige Schreiber beide Änderungen behalten – siehe data/dokument.py. Schreibvorgänge sind
 je Sitzung durch das Schloss serialisiert, was die Revisionsnummern zu einer totalen Ordnung
 macht.
 
-Eine Sitzung läuft 30 Tage nach der letzten Benutzung ab, nicht nach dem Anlegen — was in
+Eine Sitzung läuft 30 Tage nach der letzten Benutzung ab, nicht nach dem Anlegen – was in
 Gebrauch ist, bleibt; was niemand öffnet, geht. Der Aufräumer löscht Zeile und Datei zusammen.
 
 **Der Speicher ist ein Cache, keine Ablage.** Die Platte ist die Wahrheit; geöffnete Sitzungen
-liegen zusätzlich im Speicher, weil sonst jede Abgleichsabfrage — alle drei Sekunden je Browser —
+liegen zusätzlich im Speicher, weil sonst jede Abgleichsabfrage – alle drei Sekunden je Browser –
 die Datei liest und parst. Wer eine Weile nicht angefasst wurde, fliegt raus und wird beim
 nächsten Zugriff wieder von der Platte gelesen. Verdrängung kann deshalb nie Daten kosten.
 
@@ -74,8 +74,8 @@ class Sitzungen:
 
     def _spalte_lesetoken(self, db) -> None:
         """
-        Das Lesetoken kam später dazu. Eine Tabelle, die es noch nicht kennt — eine bestehende
-        Installation, oder die aus `freigaben` umbenannte —, bekommt die Spalte hier;
+        Das Lesetoken kam später dazu. Eine Tabelle, die es noch nicht kennt – eine bestehende
+        Installation, oder die aus `freigaben` umbenannte –, bekommt die Spalte hier;
         `CREATE TABLE IF NOT EXISTS` ergänzt eine vorhandene nicht. Der Index folgt danach,
         sonst zeigte er auf eine Spalte, die es in diesem Moment noch nicht gibt.
         """
@@ -207,7 +207,7 @@ class Sitzungen:
     def aufloesen(self, token: str) -> tuple[str, bool]:
         """
         Zu welcher Sitzung dieses Token gehört und ob es nur lesen darf. Ein unbekanntes Token
-        fliegt hier auf und nicht erst an der Datei — beides ist für den Aufrufer dasselbe: 404.
+        fliegt hier auf und nicht erst an der Datei – beides ist für den Aufrufer dasselbe: 404.
         """
         with self._verbindung() as db:
             zeile = db.execute(
@@ -220,7 +220,7 @@ class Sitzungen:
     def lesetoken(self, token: str) -> str:
         """
         Das Token, das nur lesen darf. Es entsteht, wenn es zum ersten Mal gebraucht wird, und
-        bleibt dann — ein Link, den man weitergegeben hat, soll nicht unter der Hand sterben.
+        bleibt dann – ein Link, den man weitergegeben hat, soll nicht unter der Hand sterben.
         """
         with self._sperre(token):
             with self._verbindung() as db:
@@ -254,7 +254,7 @@ class Sitzungen:
 
     def schreiben(self, token: str, aenderungen: list[dict], wer: str, seit: int) -> dict:
         """
-        Applies one client's batch and answers with everything it has not seen — including what
+        Applies one client's batch and answers with everything it has not seen – including what
         just arrived from someone else. Held under the share's lock, so two writers landing at
         the same moment are ordered rather than interleaved.
         """
@@ -301,7 +301,7 @@ class Sitzungen:
         return len(abgelaufen)
 
     def im_speicher(self) -> int:
-        """Wie viele Sitzungen gerade im Cache liegen — für die Gesundheitsanzeige."""
+        """Wie viele Sitzungen gerade im Cache liegen – für die Gesundheitsanzeige."""
         with self._cache_lock:
             return len(self._cache)
 

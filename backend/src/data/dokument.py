@@ -2,7 +2,7 @@
 The shared working set as a set of facts that merge without losing anything.
 
 A document is held as a flat map of path to value, each carrying the revision it was written at.
-Merging two versions means taking, for every path, the value written later — so two people
+Merging two versions means taking, for every path, the value written later – so two people
 editing different fields of the same Alarm both keep their change, and only writing the very same
 field at the very same moment lets one win.
 
@@ -15,7 +15,7 @@ Paths carry the identity of what they describe:
     kataloge / stichwoerter / <wert>
 
 The separator is the unit separator rather than a dot or a slash, because catalogue entries are
-themselves part of the path and contain both — "Allergie / Kontakt mit giftigen Tieren" is a
+themselves part of the path and contain both – "Allergie / Kontakt mit giftigen Tieren" is a
 Stichwort, not two path segments.
 
 Deleting writes a tombstone rather than dropping the path, because a client that has not heard
@@ -49,7 +49,7 @@ UMGEZOGEN = ("orte", "tage", "personen", "rollen", "fahrerlaubnisse")
 """Was einmal im Plan stand und heute im Katalog. Der alte Pfad wird beim Lesen umgesetzt."""
 
 # Jede Liste des Plans mit den Feldern, die als Pfad je Eintrag geschrieben werden. Die
-# geschachtelten Teile — Schritte und Besatzung — hängen darunter.
+# geschachtelten Teile – Schritte und Besatzung – hängen darunter.
 PLANUNGSEINTRAEGE = {
     "programmpunkte": ("name", "alarmId"),
     "laeufe": ("fahrzeugId", "personId"),
@@ -82,7 +82,7 @@ def _eintragsfelder(basis: str, eintrag: dict, felder, stelle: int) -> dict[str,
 
 
 def _katalogeintraege(kataloge: dict) -> dict[str, Any]:
-    """Tage und Personal — die Verfügbarkeiten und die Wortmengen hängen unter der Person."""
+    """Tage und Personal – die Verfügbarkeiten und die Wortmengen hängen unter der Person."""
     werte: dict[str, Any] = {}
     for liste, felder in KATALOGEINTRAEGE.items():
         for stelle, eintrag in enumerate(kataloge.get(liste, [])):
@@ -101,7 +101,7 @@ def _katalogeintraege(kataloge: dict) -> dict[str, Any]:
 
 def _planungsfelder(planung: dict) -> dict[str, Any]:
     """
-    Den Plan flach machen. Die Ketten sind das Tiefste im Dokument — Lauf, Schritt, Besatzung —
+    Den Plan flach machen. Die Ketten sind das Tiefste im Dokument – Lauf, Schritt, Besatzung –
     und jede Ebene trägt ihre eigene id, damit zwei Leute an verschiedenen Schritten desselben
     Laufs arbeiten können, ohne sich zu überschreiben.
     """
@@ -200,7 +200,7 @@ def sortierung_setzen(arbeitsmappe: dict) -> dict:
     Numbers every list by its current position.
 
     A working set arriving from a file or an import carries its order in the order of its lists,
-    not in a sort key — the key is zero everywhere. Left alone, the entries would come back out
+    not in a sort key – the key is zero everywhere. Left alone, the entries would come back out
     ordered by their random ids, which is how a set of Hinweise silently changes places.
     """
     for stelle, alarm in enumerate(arbeitsmappe.get("alarme", [])):
@@ -385,7 +385,7 @@ class Dokument:
 
     def _verdeckt(self, pfad: str) -> bool:
         """
-        True when something this path hangs below has been deleted — the entity, not the field.
+        True when something this path hangs below has been deleted – the entity, not the field.
 
         Checked on the ancestors only, so a tombstone does not hide itself: it still has to reach
         the clients, or they would never learn about the deletion at all.

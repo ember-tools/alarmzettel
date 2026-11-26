@@ -1,7 +1,7 @@
 """
 Druckt den Personenplan, wie der Server ihn rechnet, zum Vergleich mit dem Browser.
 
-Beides wird nirgends gepflegt, sondern aus den Ketten gerechnet — einmal im Browser für die
+Beides wird nirgends gepflegt, sondern aus den Ketten gerechnet – einmal im Browser für die
 Ansicht, einmal hier für das Blatt in der Hand. Laufen die beiden auseinander, widerspricht der
 Ausdruck dem Bildschirm, und genau das soll die Ableitung ja unmöglich machen.
 

@@ -5,7 +5,7 @@ Prints the paths the server's flattener produces, for comparison with the browse
 
 The two implementations have to agree exactly: a path only one side knows would look to the other
 like an entry that was never there. `--rund` prints the working set rebuilt from those paths
-instead, because comparing only the paths leaves the way back untested — a flattener that writes
+instead, because comparing only the paths leaves the way back untested – a flattener that writes
 a path its own rebuilder ignores passes the path check and still loses that data on every sync.
 `./toolchain.sh sync-pfade` runs both directions and diffs them.
 """

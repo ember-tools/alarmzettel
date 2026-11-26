@@ -4,8 +4,8 @@
  * The merge was verified on the server side by unit tests, and the two flatteners were shown to
  * agree by tools/pfade_vergleichen. What neither covers is the client half: the shadow copy, the
  * difference it sends and the way an incoming change is folded back in. That is also where the
- * bugs were. So this bundles `frontend/src/store/sync.ts` — the real one, not a reimplementation
- * — gives it the handful of browser globals it touches, and drives two independent instances
+ * bugs were. So this bundles `frontend/src/store/sync.ts` – the real one, not a reimplementation
+ * – gives it the handful of browser globals it touches, and drives two independent instances
  * through the situations two people actually get into.
  *
  *     node tools/sync_probe.mjs        (PORT_PROBE setzt den Port, Vorgabe 8131)
@@ -47,7 +47,7 @@ for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => process.exi
 
 /**
  * Der Probe bringt seinen eigenen Server mit. Antwortet der Port schon, gehört er jemand
- * anderem — dann liefe die Prüfung gegen fremde Daten und meldete Fehler, die keine sind.
+ * anderem – dann liefe die Prüfung gegen fremde Daten und meldete Fehler, die keine sind.
  */
 async function portFrei() {
     try {
@@ -60,7 +60,7 @@ async function portFrei() {
 
 async function serverStarten() {
     if (!await portFrei()) {
-        throw new Error(`Auf Port ${HAFEN} antwortet schon etwas. Erst beenden, dann prüfen — ` +
+        throw new Error(`Auf Port ${HAFEN} antwortet schon etwas. Erst beenden, dann prüfen – ` +
                         'sonst prüft der Probe gegen fremde Daten.')
     }
     dienst = spawn('uvicorn',
@@ -137,7 +137,7 @@ function pruefe(behauptung, bedingung, gefunden) {
         console.log(`  ok    ${behauptung}`)
     } else {
         fehlgeschlagen += 1
-        console.log(`  FEHLT ${behauptung}${gefunden === undefined ? '' : ` — ${gefunden}`}`)
+        console.log(`  FEHLT ${behauptung}${gefunden === undefined ? '' : ` – ${gefunden}`}`)
     }
 }
 
@@ -270,7 +270,7 @@ pruefe('gleichzeitig geänderter Hinweis überlebt',
 
 console.log('\nEin Abfrageweg, der an Ort und Stelle wächst')
 // Die Antworten eines Code-Hinweises stehen als ganze Liste unter einem Pfad. Wird sie an Ort
-// und Stelle ergänzt — genau das tut der Editor —, muss der Vergleich das trotzdem sehen; hielte
+// und Stelle ergänzt – genau das tut der Editor –, muss der Vergleich das trotzdem sehen; hielte
 // das Schattenbild dieselbe Liste, wüchse sie dort mit und die Änderung fiele nie auf.
 alarmVon(anna).hinweise.push({id: 'code-hinweis', sortierung: 50, typ: 'code',
     code: '01A01', meldung: 'Aus der Abfrage', antworten: ['Aus der Abfrage']})

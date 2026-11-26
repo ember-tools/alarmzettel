@@ -1,5 +1,5 @@
 /**
- * Zeitpunkte im Ablaufplan sind ISO-Zeichenketten ohne Zone — `2026-09-19T08:15` — genau das,
+ * Zeitpunkte im Ablaufplan sind ISO-Zeichenketten ohne Zone – `2026-09-19T08:15` – genau das,
  * was ein `datetime-local`-Feld liefert.
  *
  * Gerechnet wird auf den Zahlen selbst und nicht über `Date`, weil ein Übungstag in einer Zone
@@ -53,7 +53,7 @@ export function zeitpunkt(tag: string, uhr: string): string {
 }
 
 /**
- * Zu jedem Zeitpunkt der Tag, aber nur dort, wo er wechselt — sonst steht dasselbe Datum in
+ * Zu jedem Zeitpunkt der Tag, aber nur dort, wo er wechselt – sonst steht dasselbe Datum in
  * jeder Zeile und verdeckt die eine, in der es sich ändert.
  */
 export function tagwechsel(zeitpunkte: string[]): string[] {

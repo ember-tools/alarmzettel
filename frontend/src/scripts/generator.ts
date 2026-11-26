@@ -10,7 +10,7 @@
  * Berlin holds a non-German passport and about a third of the city has a migration background;
  * the largest groups are Turkish, Ukrainian, Indian, Polish and Syrian, with a Vietnamese
  * population concentrated in the eastern districts. The weights below reflect that shape. They
- * are a plausible mix, not a distribution derived from the registry — nobody publishes surname
+ * are a plausible mix, not a distribution derived from the registry – nobody publishes surname
  * frequencies per city.
  *
  * First names span the ages, since callers do: the names common among people born in the GDR sit
@@ -19,7 +19,7 @@
 
 interface Vorname {
     name: string
-    /** Only needed where the surname inflects — Polish and Ukrainian ones do. */
+    /** Only needed where the surname inflects – Polish and Ukrainian ones do. */
     weiblich: boolean
 }
 
@@ -38,7 +38,7 @@ const w = (name: string): Vorname => ({name, weiblich: true})
 const HERKUENFTE: Herkunft[] = [
     {
         // The top of the national surname list, and given names from every decade a caller might
-        // have been born in — Manfred and Renate as readily as Leon and Mia.
+        // have been born in – Manfred and Renate as readily as Leon and Mia.
         gewicht: 68,
         vornamen: [
             m('Michael'), m('Thomas'), m('Andreas'), m('Frank'), m('Peter'), m('Uwe'),

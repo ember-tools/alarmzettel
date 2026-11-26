@@ -36,7 +36,7 @@ function offen(fuer: {fahrzeugId?: string, personId?: string}): boolean {
 /** Geplant wird in den Ketten; die drei anderen Ansichten sind dieselben Daten von anderer Seite. */
 /**
  * Bild und Karte bringen ihre Zeichenbibliotheken mit und werden deshalb erst geladen, wenn
- * jemand sie auch aufschlägt — der Rest der Seite soll davon nichts merken.
+ * jemand sie auch aufschlägt – der Rest der Seite soll davon nichts merken.
  */
 const BewegungsBild = defineAsyncComponent(
     () => import('../components/planung/BewegungsBild.vue'))
@@ -49,7 +49,7 @@ const SPEICHER = 'alarmplaner_ablaufansicht'
 
 /**
  * Dieselben Daten von sieben Seiten; keine ist die richtige. Womit jemand arbeitet, merkt sich
- * der Browser — es gehört zu ihm und nicht zur Arbeitsmappe, so wie das Farbthema.
+ * der Browser – es gehört zu ihm und nicht zur Arbeitsmappe, so wie das Farbthema.
  */
 function gemerkteAnsicht(): Ansicht {
   const gemerkt = localStorage.getItem(SPEICHER) as Ansicht | null
@@ -58,7 +58,7 @@ function gemerkteAnsicht(): Ansicht {
 
 const ansicht = ref<Ansicht>(gemerkteAnsicht())
 
-/** Wer nur zusieht, bekommt die Ketten nicht — dort wird gearbeitet, nicht gelesen. */
+/** Wer nur zusieht, bekommt die Ketten nicht – dort wird gearbeitet, nicht gelesen. */
 const reiter = computed<readonly Ansicht[]>(() =>
     sitzung.nurLesen ? ANSICHTEN.filter(name => name !== 'ketten') : ANSICHTEN)
 

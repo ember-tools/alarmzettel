@@ -3,7 +3,7 @@ Der Ablaufplan eines Übungstages.
 
 Geplant wird als Kette: ein Fahrzeug oder eine Person hat eine Folge von Schritten, und jeder
 fängt an, wo der vorige aufgehört hat. Der Startort einer Fahrt wird deshalb nirgends gespeichert
-— er steht schon fest, und ein Sprung von A nach B ohne Weg dazwischen ist nicht darstellbar
+– er steht schon fest, und ein Sprung von A nach B ohne Weg dazwischen ist nicht darstellbar
 statt nur falsch.
 
 Der Personenplan wird aus denselben Daten gerechnet und nirgends gepflegt: alle Schritte, in
@@ -31,7 +31,7 @@ DIENSTSTELLE = "wache"
 
 class Ort(Eintrag):
     """
-    Ein eingetragener Ort mit einer Identität — kein Text in einer Zelle. Nur dadurch ist „am
+    Ein eingetragener Ort mit einer Identität – kein Text in einer Zelle. Nur dadurch ist „am
     selben Ort zur selben Zeit“ entscheidbar, woran Fahrerwechsel, Zustieg und Übergabe hängen.
 
     Orte stehen im Katalog: sie gehören der Wache und überdauern den einzelnen Übungstag.
@@ -51,14 +51,14 @@ class Verfuegbarkeit(Eintrag):
 class Person(Eintrag):
     name: str = ""
     """
-    Ob diese Person ein eigenes Blatt bekommt. Wer nur mitfährt — die vier Mimen etwa — steht im
+    Ob diese Person ein eigenes Blatt bekommt. Wer nur mitfährt – die vier Mimen etwa – steht im
     Plan und in jeder Besatzung, braucht aber keinen Zettel in die Hand.
     """
     blatt: bool = True
     rollen: list[str] = []
     """Führerscheinklassen, gegen `Fahrzeugvorlage.fuehrerschein` geprüft."""
     fahrerlaubnis: list[str] = []
-    """Wie viele Köpfe diese Zeile bedeutet — „Mimen (4)“ belegt vier Plätze."""
+    """Wie viele Köpfe diese Zeile bedeutet – „Mimen (4)“ belegt vier Plätze."""
     anzahl: int = 1
     verfuegbar: list[Verfuegbarkeit] = []
 
@@ -81,7 +81,7 @@ class Besatzung(Eintrag):
 
 class Materialposten(Eintrag):
     """
-    Ein Stück Material, das in diesem Schritt dabei ist. Es hängt am Schritt wie die Besatzung —
+    Ein Stück Material, das in diesem Schritt dabei ist. Es hängt am Schritt wie die Besatzung –
     dadurch sagt der Plan von selbst, wo etwas liegt und womit es wohin gefahren wird.
     """
 
@@ -93,12 +93,12 @@ class Materialposten(Eintrag):
 class Schritt(Eintrag):
     """
     Entweder an einem Ort sein oder zu einem fahren. Die Besatzung ist die vollständige Liste für
-    diesen Schritt, nicht die Änderung gegenüber dem vorigen — dadurch ist jeder Schritt für sich
+    diesen Schritt, nicht die Änderung gegenüber dem vorigen – dadurch ist jeder Schritt für sich
     lesbar und jede Prüfung eine Frage an einen einzelnen Schritt.
     """
 
     art: Literal["aufenthalt", "fahrt"] = "aufenthalt"
-    """Womit es hergeht — bei einem Aufenthalt für die erzeugte Anfahrt, bei einer Fahrt für sie
+    """Womit es hergeht – bei einem Aufenthalt für die erzeugte Anfahrt, bei einer Fahrt für sie
     selbst."""
     mittel: Literal["fahrzeug", "fuss", "eigen"] = "fahrzeug"
     """Minuten für die erzeugte Anfahrt. Null heißt: die Schätzung gilt."""
@@ -108,11 +108,11 @@ class Schritt(Eintrag):
     """Wo man ist, beziehungsweise wohin es geht. Woher, sagt der vorige Schritt."""
     ortId: str = ""
     programmpunktId: str = ""
-    """Was sonst zu diesem Schritt zu sagen ist — für alles, wofür es kein Feld gibt."""
+    """Was sonst zu diesem Schritt zu sagen ist – für alles, wofür es kein Feld gibt."""
     notiz: str = ""
     """
     Ob dieses Fahrzeug zum Einsatzmittelaufgebot der Lage gehört. Wer nur Mimen hinbringt, steht
-    am Ort, ohne alarmiert zu sein — und bekommt weder einen Zettel noch eine Zeile darauf.
+    am Ort, ohne alarmiert zu sein – und bekommt weder einen Zettel noch eine Zeile darauf.
     """
     aufgebot: bool = True
     besatzung: list[Besatzung] = []
@@ -131,8 +131,8 @@ class Planung(Eintrag):
     """
     Der Plan eines Übungstages: die Lagen und die Ketten.
 
-    Was die Wache dauerhaft führt — Tage, Personal, Rollen, Fahrerlaubnisklassen, Orte und
-    Material — steht im Katalog und nicht hier. Aus: kein Navigationspunkt, keine Daten, der
+    Was die Wache dauerhaft führt – Tage, Personal, Rollen, Fahrerlaubnisklassen, Orte und
+    Material – steht im Katalog und nicht hier. Aus: kein Navigationspunkt, keine Daten, der
     Alarmzettel-Teil unverändert.
     """
 

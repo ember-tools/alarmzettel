@@ -148,7 +148,7 @@ fall('Jeder Tag bekommt sein eigenes Bild', () => {
     const gesetzt = daten({fahrzeuge: [fahrzeug('f-lhf', 'LHF')], laeufe: [kette]})
     return [
         ['zwei Tage', bewegungstage(gesetzt).join(','), '2026-09-19,2026-09-20'],
-        ['und je Tag, was an ihm geschieht — auch die Wache, von der die Anfahrt herführt',
+        ['und je Tag, was an ihm geschieht – auch die Wache, von der die Anfahrt herführt',
             bewegungsbild(gesetzt, '2026-09-20').baender.map(b => b.name).join(','),
             'Wache Nord,Kindergarten'],
     ]
@@ -227,7 +227,7 @@ fall('Die nächsten Ereignisse stehen in der Reihenfolge, in der sie eintreten',
     ]
 })
 
-fall('Material liegt irgendwo oder ist unterwegs — der Plan sagt es von selbst', () => {
+fall('Material liegt irgendwo oder ist unterwegs – der Plan sagt es von selbst', () => {
     const kette = lauf({fahrzeugId: 'f-lhf'}, [
         schritt('aufenthalt', '08:00', '08:30', 'o-nord', {material: [posten('m-puppe', 4)]}),
         schritt('fahrt', '08:30', '08:50', 'o-sued', {material: [posten('m-puppe', 4)]}),

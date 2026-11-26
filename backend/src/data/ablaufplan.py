@@ -2,7 +2,7 @@
 Der Ablaufplan als Druckvorlage.
 
 Gepflegt wird nur die Kette je Fahrzeug und je Person; das Personenblatt entsteht daraus. Hier
-wird dieselbe Rechnung für den Druck gemacht wie im Browser für den Bildschirm — gerechnet wird
+wird dieselbe Rechnung für den Druck gemacht wie im Browser für den Bildschirm – gerechnet wird
 sie einmal, damit das Blatt in der Hand und die Ansicht am Schirm nicht auseinanderlaufen
 können, und das Typst-Template legt nur noch aus, was hier steht.
 """
@@ -49,8 +49,8 @@ class Plan:
 
     def blattlink(self, art: str, kennung: str) -> str:
         """
-        Der Weg vom Papier zurück in den Plan: die Lese-Ansicht dieses Blattes. Ohne Basis — dann
-        weiß niemand, unter welchem Namen der Server erreichbar ist — bleibt sie leer.
+        Der Weg vom Papier zurück in den Plan: die Lese-Ansicht dieses Blattes. Ohne Basis – dann
+        weiß niemand, unter welchem Namen der Server erreichbar ist – bleibt sie leer.
         """
         if not self._blattbasis or not kennung:
             return ""
@@ -75,7 +75,7 @@ class Plan:
         return person.name if person else ""
 
     def material(self, schritt: Schritt) -> list[str]:
-        """Die Menge steht davor, wo es mehr als eines ist — sonst nur der Name."""
+        """Die Menge steht davor, wo es mehr als eines ist – sonst nur der Name."""
         namen = []
         for stueck in schritt.material:
             name = self._material.get(stueck.materialId, "")
@@ -94,7 +94,7 @@ class Plan:
         return self._punkte
 
     def fahrzeit(self, lauf: Lauf, schritt: Schritt) -> int | None:
-        """Wie lange die Luftlinie dauern würde — neben der geplanten Zeit auf dem Blatt."""
+        """Wie lange die Luftlinie dauern würde – neben der geplanten Zeit auf dem Blatt."""
         return _fahrzeit(lauf, schritt, self._punkte)
 
     def wohin(self, schritt: Schritt) -> str:
@@ -126,7 +126,7 @@ def _anfahrtszeile(plan: Plan, lauf: Lauf, schritt: Schritt,
 
 def _zeile(plan: Plan, lauf: Lauf, schritt: Schritt, ankunft: str = "", bis: str = "") -> dict:
     """
-    Die Zeile trägt das Datum der Zeit, die auf ihr steht — das der Ankunft, nicht des Aufbruchs.
+    Die Zeile trägt das Datum der Zeit, die auf ihr steht – das der Ankunft, nicht des Aufbruchs.
     Auf einem Personenblatt steht ihre eigene Zeit: wer abgeholt wird, ist vorher fort.
     """
     da = ankunft or _ankunft(plan, lauf, schritt)
@@ -145,7 +145,7 @@ def _zeile(plan: Plan, lauf: Lauf, schritt: Schritt, ankunft: str = "", bis: str
 
 
 def _ankunft(plan: Plan, lauf: Lauf, schritt: Schritt) -> str:
-    """Auf dem Blatt beginnt ein Aufenthalt, wenn man da ist — nicht, wenn man losfährt."""
+    """Auf dem Blatt beginnt ein Aufenthalt, wenn man da ist – nicht, wenn man losfährt."""
     weg = anfahrt(lauf, schritt, plan.punkte)
     return weg.bis if weg else schritt.von
 
@@ -155,7 +155,7 @@ def _einsatzzeilen(plan: Plan, eintrag) -> list[dict]:
     Was am Ort läuft, während die Person dort steht, ohne dass sie selbst dazugehört.
 
     Wer mit einem Fahrzeug an einen Ort gefahren wird, das mit dem Szenario nichts zu tun hat,
-    soll trotzdem auf seinem Zettel lesen, was dort geschieht — sonst steht er da und weiß nur,
+    soll trotzdem auf seinem Zettel lesen, was dort geschieht – sonst steht er da und weiß nur,
     dass er da ist.
     """
     schritt = eintrag.schritt
@@ -240,7 +240,7 @@ def _besatzung(plan: Plan, schritt: Schritt, nur: set[str] | None = None) -> lis
 def _fahrzeugblatt(plan: Plan, lauf: Lauf) -> dict:
     """
     Der Zettel fürs Armaturenbrett: die Kette, wie sie geplant wurde, samt Besatzung. In der
-    Anfahrt steht nur, wer sie mitfährt — wer am Ziel wartet, sitzt nicht im Fahrzeug.
+    Anfahrt steht nur, wer sie mitfährt – wer am Ziel wartet, sitzt nicht im Fahrzeug.
     """
     zeilen = []
     for schritt in lauf.schritte:
@@ -256,7 +256,7 @@ def _fahrzeugblatt(plan: Plan, lauf: Lauf) -> dict:
 
 def _orte_des_blattes(plan: Plan, zeilen: list[dict]) -> list[dict]:
     """
-    Die Orte, die auf diesem Blatt vorkommen — mit Adresse, damit der Zettel für sich allein
+    Die Orte, die auf diesem Blatt vorkommen – mit Adresse, damit der Zettel für sich allein
     genügt. Wer ihn in die Hand gedrückt bekommt, hat keine zweite Liste dabei.
     """
     gesehen: list[str] = []
@@ -269,13 +269,13 @@ def _orte_des_blattes(plan: Plan, zeilen: list[dict]) -> list[dict]:
 
 
 def _spalte(plan: Plan, lauf: Lauf) -> dict:
-    return {"name": plan.name(lauf) or "—",
+    return {"name": plan.name(lauf) or "–",
             "art": "fahrzeug" if lauf.fahrzeugId else "person"}
 
 
 def _zelle(plan: Plan, lauf: Lauf, schritt: Schritt) -> dict:
     """
-    Im Raster steht die Lage, wenn es eine gibt — sonst der Ort. So war die Tabelle gefüllt.
+    Im Raster steht die Lage, wenn es eine gibt – sonst der Ort. So war die Tabelle gefüllt.
 
     Die Art sagt dem Bogen, wie er die Zelle einfärbt: eine Fahrt sieht anders aus als ein
     Aufenthalt, und ein Einsatz anders als das Warten dazwischen. Sonst müsste man jede Zelle
@@ -344,7 +344,7 @@ def _als_uhrzeit(minute: int) -> str:
 def _zelle_zur_zeit(plan: Plan, lauf: Lauf, datum: str, minute: int) -> dict:
     """
     Was in dieser Viertelstunde in dieser Spalte steht. Es zählt, was in das Fenster hineinragt,
-    nicht nur was seinen Anfang überdeckt — sonst verschwände eine Fahrt von zehn Minuten, die
+    nicht nur was seinen Anfang überdeckt – sonst verschwände eine Fahrt von zehn Minuten, die
     zwischen zwei Rasterpunkten liegt, spurlos vom Bogen. Überlappen mehrere, gewinnt der
     längste Anteil.
     """
@@ -362,7 +362,7 @@ def _zelle_zur_zeit(plan: Plan, lauf: Lauf, datum: str, minute: int) -> dict:
 def _abschnitte(plan: Plan, lauf: Lauf, schritt: Schritt) -> list[tuple[int, int, dict]]:
     """
     Ein Schritt auf der Zeitachse. Ein Aufenthalt mit erzeugter Anfahrt zerfällt in zwei Stücke:
-    erst die Fahrt, dann das Dasein — sonst stünde die Lage schon im Raster, während man noch
+    erst die Fahrt, dann das Dasein – sonst stünde die Lage schon im Raster, während man noch
     unterwegs ist.
     """
     von, bis = _minuten(schritt.von), _minuten(schritt.bis)

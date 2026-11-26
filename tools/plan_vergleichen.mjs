@@ -2,7 +2,7 @@
  * Druckt Personenplan und Bewegungsbild, wie der Browser sie rechnet, zum Vergleich mit dem
  * Server.
  *
- * Die Ableitung steht zweimal da — in TypeScript für die Ansicht, in Python für das PDF. Solange
+ * Die Ableitung steht zweimal da – in TypeScript für die Ansicht, in Python für das PDF. Solange
  * beide dieselben Zeilen in derselben Reihenfolge liefern, kann der Ausdruck dem Bildschirm nicht
  * widersprechen; das ist der ganze Grund, aus dem beides überhaupt gerechnet und nicht gepflegt
  * wird.

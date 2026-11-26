@@ -159,7 +159,7 @@ class AdressenApiTest(unittest.TestCase):
 class GeodatenTest(unittest.TestCase):
     """
     Ein an der Adresse gesetzter Punkt gilt vor dem Adressdienst. Gerechnet wird er in dieselben
-    amtlichen Koordinaten, die der Dienst liefert — sonst stimmte die Entfernung nicht.
+    amtlichen Koordinaten, die der Dienst liefert – sonst stimmte die Entfernung nicht.
     """
 
     PUNKTE = [
@@ -170,7 +170,7 @@ class GeodatenTest(unittest.TestCase):
     """Was der Berliner Dienst zu diesen drei Adressen in beiden Systemen ausgibt."""
 
     def test_vorwaerts_auf_die_amtlichen_werte(self):
-        """Unter einem Zentimeter — dieselbe Schranke, die der Browser einhalten muss."""
+        """Unter einem Zentimeter – dieselbe Schranke, die der Browser einhalten muss."""
         for was, breite, laenge, ostwert, nordwert in self.PUNKTE:
             with self.subTest(was=was):
                 punkt = wgs84_zu_utm33(breite, laenge)

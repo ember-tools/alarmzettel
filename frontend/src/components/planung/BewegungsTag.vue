@@ -13,7 +13,7 @@ echarts.use([CustomChart, DataZoomComponent, GridComponent, TooltipComponent, SV
 
 /**
  * Ein Tag als Bild: die Bänder sind die Orte, die Zeit läuft nach rechts. Gezeichnet wird nur,
- * was `bewegungsbild` schon angeordnet hat — Reihen, Bänder und Fenster stehen fest, damit der
+ * was `bewegungsbild` schon angeordnet hat – Reihen, Bänder und Fenster stehen fest, damit der
  * Bildschirm und das PDF dasselbe zeigen.
  */
 const {bild} = defineProps<{ bild: Bewegungsbild }>()
@@ -42,7 +42,7 @@ interface Koordinatensystem {
 
 /**
  * Die Mitte des Stücks, das von einer Fahrt im Fenster liegt. Beim Hineinzoomen liegt die Mitte
- * der ganzen Strecke oft weit außerhalb — das Zeichen wäre dann weg, obwohl die Linie zu sehen
+ * der ganzen Strecke oft weit außerhalb – das Zeichen wäre dann weg, obwohl die Linie zu sehen
  * ist. Liegt gar nichts im Fenster, gibt es auch kein Zeichen.
  */
 function sichtbareMitte(von: [number, number], nach: [number, number],
@@ -82,7 +82,7 @@ function farbe(name: string): string {
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#888'
 }
 
-/** Auch die Legende folgt dem Thema — sie hängt am Wechsel, nicht am Zufall des Neuzeichnens. */
+/** Auch die Legende folgt dem Thema – sie hängt am Wechsel, nicht am Zufall des Neuzeichnens. */
 const legendenfarben = computed(() => {
     void dark.value
     return {stehend: farbe('--ui-text-muted'), signal: farbe('--ui-signal')}
@@ -131,7 +131,7 @@ function optionen() {
     const ink = farbe('--ui-text-highlighted')
     const muted = farbe('--ui-text-muted')
     const rule = farbe('--ui-border')
-    // Ein Aufenthalt steht ruhig in Tinte, eine Fahrt läuft im Signal — die beiden sollen sich
+    // Ein Aufenthalt steht ruhig in Tinte, eine Fahrt läuft im Signal – die beiden sollen sich
     // auf den ersten Blick unterscheiden und nicht erst an ihrer Form.
     const signal = farbe('--ui-signal')
     const stehend = farbe('--ui-text-muted')
@@ -242,7 +242,7 @@ function optionen() {
                     const platzFuerZeichen = kasten.width > 22
                     const einzug = platzFuerZeichen ? 20 : 5
                     // Eine Ecke ist rund, wo der Aufenthalt wirklich anfängt oder aufhört, und
-                    // eckig, wo er nur vom Fensterrand abgeschnitten ist — so sieht man, dass er
+                    // eckig, wo er nur vom Fensterrand abgeschnitten ist – so sieht man, dass er
                     // weitergeht, ohne dass ihm etwas hinzugefügt würde.
                     const linksAb = kasten.x > anfangs[0] + 0.5
                     const rechtsAb = kasten.x + kasten.width < endes[0] - 0.5

@@ -15,7 +15,7 @@ import type {Lauf, Schritt} from '../../interfaces/Planung'
 /**
  * Der Tag als Kalender: senkrecht die Zeit, je Fahrzeug und Person eine Spalte. Ein Aufenthalt
  * wird aufgezogen wie ein Termin, verschoben wie einer, und was in ihm steckt, steht auf der
- * Kachel — geändert wird er im Fenster.
+ * Kachel – geändert wird er im Fenster.
  *
  * Die Kette bleibt dabei eine Folge: ein verschobener Block rückt auch in ihr an seine Stelle,
  * sonst zeigte die erzeugte Anfahrt auf den falschen Vorgänger.
@@ -30,7 +30,7 @@ const tag = ref('')
 const auswahl = ref<{ lauf: Lauf, schritt: Schritt, name: string } | null>(null)
 const gitter = ref<HTMLElement | null>(null)
 
-/** Alle Tage, an denen etwas steht, dazu die des Katalogs — der leere Tag will bepflanzt werden. */
+/** Alle Tage, an denen etwas steht, dazu die des Katalogs – der leere Tag will bepflanzt werden. */
 const tage = computed(() => {
   const gefunden = new Set(arbeitsmappe.kataloge.tage.map(eintrag => eintrag.datum))
   for (const lauf of arbeitsmappe.planung.laeufe) {
@@ -173,7 +173,7 @@ const vorschau = computed(() => zug.value?.art === 'neu' ? zug.value : null)
  * Gezogen wird am Fenster und nicht am Element: die Unterkante ist ein eigener Griff, und wer
  * über die Spalte hinausfährt, soll den Block trotzdem weiterschieben.
  *
- * Wer nur zusieht, fasst nichts an — was auf der Kachel steht, ist ohnehin alles, was er ändern
+ * Wer nur zusieht, fasst nichts an – was auf der Kachel steht, ist ohnehin alles, was er ändern
  * könnte.
  */
 function fassen(ereignis: PointerEvent, art: Griff, spalte: Spalte, kachel?: Kachel) {
@@ -238,7 +238,7 @@ function loslassen() {
 }
 
 /**
- * Der Schritt gehört der Kette, in der er steht — auch wenn er in der Spalte einer Person liegt,
+ * Der Schritt gehört der Kette, in der er steht – auch wenn er in der Spalte einer Person liegt,
  * die in ihr mitfährt. Das Fenster nennt deshalb die Kette und nicht die Spalte. Wer nur zusieht,
  * bekommt keins: was auf der Kachel steht, ist alles, was er darin ändern könnte.
  */

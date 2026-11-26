@@ -16,7 +16,7 @@ import type {Lauf, Ort} from '../interfaces/Planung'
  * Ein Blatt für eine Person oder ein Fahrzeug, hinter einem eigenen Link.
  *
  * Es liest die Sitzung, ohne in sie zu wechseln: wer den Link bekommt, sieht seinen Tag und
- * sonst nichts — kein Editor, keine fremden Ketten, kein Cookie. Dieselben Zeilen wie auf dem
+ * sonst nichts – kein Editor, keine fremden Ketten, kein Cookie. Dieselben Zeilen wie auf dem
  * gedruckten Zettel, nur dass sie sich von selbst auffrischen.
  */
 const TAKT = 30000
@@ -161,7 +161,7 @@ function fahrzeugzeilen(): Zeile[] {
 const zeilen = computed(() => art.value === 'person' ? personenzeilen() : fahrzeugzeilen())
 const tage = computed(() => tagwechsel(zeilen.value.map(zeile => zeile.von)))
 
-/** Die Orte des Blattes mit Adresse und Weg dorthin — der Zettel soll für sich genügen. */
+/** Die Orte des Blattes mit Adresse und Weg dorthin – der Zettel soll für sich genügen. */
 const orte = computed(() => {
   const gesehen: string[] = []
   for (const zeile of zeilen.value) {

@@ -3,7 +3,7 @@ Was sich aus einer Kette ergibt, ohne dass es jemand pflegt: die Anfahrt zwische
 Aufenthalten und der Plan einer Person.
 
 Folgt ein Aufenthalt direkt auf einen anderen an einem anderen Ort, entsteht die Fahrt dazwischen
-von selbst. Sie beginnt, wenn der Aufenthalt beginnt — wer um 7:50 aufbricht und fünf Minuten
+von selbst. Sie beginnt, wenn der Aufenthalt beginnt – wer um 7:50 aufbricht und fünf Minuten
 braucht, ist um 7:55 da; deshalb ist 7:50 auch die Einsatzzeit des Alarms, der an der Lage hängt.
 Eine eingetragene Fahrt bleibt möglich und hat Vorrang: sie ist der Weg über mehrere Punkte, an
 denen niemand bleibt.
@@ -33,7 +33,7 @@ class Anfahrt:
 
 @dataclass
 class Personenschritt:
-    """Ein Schritt, wie er im Plan einer Person steht — mit dem Lauf, aus dem er stammt."""
+    """Ein Schritt, wie er im Plan einer Person steht – mit dem Lauf, aus dem er stammt."""
 
     lauf: Lauf
     schritt: Schritt
@@ -60,7 +60,7 @@ def mittel_von(lauf: Lauf, schritt: Schritt) -> str:
 def aufbruch(lauf: Lauf, schritt: Schritt) -> str:
     """
     Wann für diesen Schritt aufgebrochen wird. Steht eine eingetragene Fahrt davor, die hierher
-    führt, ist es deren Beginn — sie ist die Anfahrt, und mit ihr fängt der Einsatz an.
+    führt, ist es deren Beginn – sie ist die Anfahrt, und mit ihr fängt der Einsatz an.
     """
     stelle = lauf.schritte.index(schritt)
     vorher = lauf.schritte[stelle - 1] if stelle > 0 else None
@@ -133,10 +133,10 @@ def personenplan(planung: Planung, person_id: str, punkte: dict) -> list[Persone
     Alle Schritte, in deren Besatzung die Person steht, plus die ihrer eigenen Kette, nach Zeit
     sortiert. Er wird nirgends gepflegt, sondern hieraus gelesen.
 
-    Die erzeugte Anfahrt fährt nur mit, wer vorher am Startort stand. Wer schon am Ziel wartet —
-    der Mime, der auf das Fahrzeug wartet — steigt dort zu und fährt nicht mit.
+    Die erzeugte Anfahrt fährt nur mit, wer vorher am Startort stand. Wer schon am Ziel wartet –
+    der Mime, der auf das Fahrzeug wartet – steigt dort zu und fährt nicht mit.
 
-    Wer abgeholt wird, ist ab da fort — auch mitten aus einem Einsatz heraus. Das Fahrzeug bleibt
+    Wer abgeholt wird, ist ab da fort – auch mitten aus einem Einsatz heraus. Das Fahrzeug bleibt
     stehen, seine Zeit gilt weiter; die der Person endet mit dem Aufbruch des nächsten.
     """
     eintraege: list[tuple[int, Personenschritt]] = []

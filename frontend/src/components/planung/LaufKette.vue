@@ -6,7 +6,7 @@ import {tagVon, uhrzeit} from '../../scripts/zeit'
 import type {Lauf} from '../../interfaces/Planung'
 
 /**
- * Die Kette als Folge von Karten. Was an einem Schritt hängt, steht in `SchrittFelder` — dieselben
+ * Die Kette als Folge von Karten. Was an einem Schritt hängt, steht in `SchrittFelder` – dieselben
  * Felder benutzt der Tagesplan in seinem Fenster.
  */
 const {lauf} = defineProps<{ lauf: Lauf }>()

@@ -14,7 +14,7 @@ import type {Lauf, Schritt} from '../../interfaces/Planung'
 
 /**
  * Alles, was an einem Schritt hängt. Die Kette zeigt es untereinander, der Tagesplan in einem
- * Fenster — geschrieben ist es einmal, damit an beiden Stellen dasselbe steht.
+ * Fenster – geschrieben ist es einmal, damit an beiden Stellen dasselbe steht.
  */
 const {lauf, schritt} = defineProps<{ lauf: Lauf, schritt: Schritt }>()
 
@@ -29,7 +29,7 @@ function meldung(befund: Befund): string {
 /** Die Fahrt, die vor diesem Aufenthalt von selbst entsteht. */
 const weg = computed(() => anfahrt(plandaten(), lauf, schritt))
 
-/** Das Stichwort des Alarms — es steht als Platzhalter dort, wo die Bezeichnung leer bleibt. */
+/** Das Stichwort des Alarms – es steht als Platzhalter dort, wo die Bezeichnung leer bleibt. */
 const stichwortDerLage = computed(() => {
   const punkt = programmpunkt(schritt.programmpunktId)
   return arbeitsmappe.alarme.find(alarm => alarm.id === punkt?.alarmId)?.stichwort ?? ''
@@ -37,7 +37,7 @@ const stichwortDerLage = computed(() => {
 
 const schaetzung = computed(() => fahrzeitSchaetzung(plandaten(), lauf, schritt))
 
-/** Wie viele Köpfe an Bord sind — „Mimen (4)“ zählt vier. */
+/** Wie viele Köpfe an Bord sind – „Mimen (4)“ zählt vier. */
 const koepfe = computed(() => schritt.besatzung.reduce((summe, sitzt) => {
   const person = arbeitsmappe.kataloge.personen.find(p => p.id === sitzt.personId)
   return summe + (person?.anzahl || 1)
@@ -46,7 +46,7 @@ const koepfe = computed(() => schritt.besatzung.reduce((summe, sitzt) => {
 /**
  * Was zuletzt als Fahrzeit vorgeschlagen wurde. Eine Dauer, die noch genau so dasteht, darf ein
  * neuer Vorschlag ersetzen; eine von Hand gesetzte bleibt stehen, auch wenn sich das Ziel noch
- * einmal ändert — die Schätzung wird vorgeschlagen und nicht gesetzt.
+ * einmal ändert – die Schätzung wird vorgeschlagen und nicht gesetzt.
  */
 const vorgeschlagen = new Map<string, number>()
 
@@ -66,7 +66,7 @@ async function zielGewaehlt() {
 
 /**
  * Ein Schritt fängt an, wo der vorige aufhört. Wird der Beginn vorgezogen, endet der vorige
- * eben früher; wird er nach hinten geschoben, bleibt eine Lücke — die ist erlaubt und heißt,
+ * eben früher; wird er nach hinten geschoben, bleibt eine Lücke – die ist erlaubt und heißt,
  * dass hier gewartet wird. Was nicht entstehen darf, ist eine Überschneidung.
  */
 function beginnGesetzt() {

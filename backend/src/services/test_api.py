@@ -17,13 +17,13 @@ ALARM = {"id": "a1", "stichwort": "BRAND K.", "kurzinfo": "Brand im Freien",
 
 
 class ApiTest(unittest.TestCase):
-    """Gerendert wird, was die laufende Sitzung hält — hochgeladen wird nichts mehr."""
+    """Gerendert wird, was die laufende Sitzung hält – hochgeladen wird nichts mehr."""
 
     @classmethod
     def setUpClass(cls):
         """
         Die Tests bekommen ihren eigenen Sitzungsspeicher. Sonst räumten sie das Verzeichnis der
-        laufenden Installation ab — und wer nebenher im Browser arbeitet, verlöre seine Sitzung.
+        laufenden Installation ab – und wer nebenher im Browser arbeitet, verlöre seine Sitzung.
         """
         cls.ablage = tempfile.TemporaryDirectory()
         cls.vorher = sitzungsdienst.sitzungen
@@ -183,7 +183,7 @@ PLANMAPPE = {
 class BlattPdfTest(ApiTest):
     """
     Wer einen Lese-Link hat, kann seinen Zettel auch mitnehmen: dasselbe Blatt, das die Seite
-    zeigt, als PDF — ohne Sitzung im Browser und ohne den Stapel aller anderen.
+    zeigt, als PDF – ohne Sitzung im Browser und ohne den Stapel aller anderen.
     """
 
     def lesen(self) -> str:

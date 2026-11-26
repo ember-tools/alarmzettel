@@ -2,7 +2,7 @@ import type {Arbeitsmappe} from '../interfaces/Alarm'
 import type {Planung} from '../interfaces/Planung'
 
 /**
- * The working set as a flat map of path to value — the same shape the server merges on, so the
+ * The working set as a flat map of path to value – the same shape the server merges on, so the
  * two sides talk about the same paths. Mirrors `backend/src/data/dokument.py`; the two are
  * checked against each other by a round-trip test on either side.
  *
@@ -35,7 +35,7 @@ const UMGEZOGEN = ['orte', 'tage', 'personen', 'rollen', 'fahrerlaubnisse']
 
 /**
  * Jede Liste des Plans mit den Feldern, die als Pfad je Eintrag geschrieben werden. Was darunter
- * hängt — Adresse, Verfügbarkeit, Schritte, Besatzung — steht in `planungsfelder`. Spiegelt
+ * hängt – Adresse, Verfügbarkeit, Schritte, Besatzung – steht in `planungsfelder`. Spiegelt
  * `PLANUNGSEINTRAEGE` in `backend/src/data/dokument.py`.
  */
 const PLANUNGSEINTRAEGE = {
@@ -71,11 +71,11 @@ function eintragsfelder(basis: string, werte: Flachbild, eintrag: Eintragsdaten,
 }
 
 /**
- * Den Plan flach machen. Die Ketten sind das Tiefste im Dokument — Lauf, Schritt, Besatzung — und
+ * Den Plan flach machen. Die Ketten sind das Tiefste im Dokument – Lauf, Schritt, Besatzung – und
  * jede Ebene trägt ihre eigene id, damit zwei Leute an verschiedenen Schritten desselben Laufs
  * arbeiten können, ohne sich zu überschreiben.
  */
-/** Tage und Personal — die Verfügbarkeiten und die Wortmengen hängen unter der Person. */
+/** Tage und Personal – die Verfügbarkeiten und die Wortmengen hängen unter der Person. */
 function katalogeintraege(werte: Flachbild, kataloge: Record<string, unknown>) {
     for (const [liste, felder] of Object.entries(KATALOGEINTRAEGE)) {
         const eintraege = (kataloge[liste] ?? []) as Eintragsdaten[]
@@ -124,8 +124,8 @@ function planungsfelder(werte: Flachbild, planung: Planung) {
 }
 
 /**
- * Eine Liste, die als ganzer Wert unter einem Pfad steht — der Abfrageweg eines Code-Hinweises
- * ist die einzige —, darf im Bild nicht dieselbe sein wie im Dokument. Sonst wächst sie im Bild
+ * Eine Liste, die als ganzer Wert unter einem Pfad steht – der Abfrageweg eines Code-Hinweises
+ * ist die einzige –, darf im Bild nicht dieselbe sein wie im Dokument. Sonst wächst sie im Bild
  * mit, sobald der Editor sie an Ort und Stelle ergänzt, und der Vergleich mit dem zuletzt
  * gesendeten Bild sähe keinen Unterschied: die Ergänzung ginge nie an den Server.
  */

@@ -2,7 +2,7 @@
 Polar-Koordinaten, wie die Leitstelle sie druckt: wo die Einsatzadresse von der Wache aus liegt,
 als Winkel gegen Gitternord und Luftlinie.
 
-Die Koordinaten sind ETRS89 / UTM 33N, also reicht ebene Trigonometrie — über Berlin verzerrt die
+Die Koordinaten sind ETRS89 / UTM 33N, also reicht ebene Trigonometrie – über Berlin verzerrt die
 Projektion weit unter dem Meter, auf den der Zettel rundet. Gegen einen echten Zettel geprüft:
 Junker-Jörg-Straße 36 zur Archenholdstraße 21 ergibt 336,6°/2,842 km gegen gedruckte
 336,6°/2,849 km.

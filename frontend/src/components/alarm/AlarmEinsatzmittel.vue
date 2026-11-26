@@ -34,7 +34,7 @@ function fahrzeugEntfernen(gruppe: number, fahrzeug: number) {
 }
 
 /**
- * What this vehicle prints, catalogue included — shown as the placeholder of every field the
+ * What this vehicle prints, catalogue included – shown as the placeholder of every field the
  * Alarm leaves empty, so the sheet holds no value the editor does not show.
  */
 function werte(fahrzeug: Fahrzeug) {
