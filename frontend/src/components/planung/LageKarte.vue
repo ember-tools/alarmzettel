@@ -231,15 +231,15 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
 
         <template v-if="material.length">
           <h3 class="eyebrow mt-3">{{ t('ablauf.material') }}</h3>
-          <div v-for="stand in material" :key="stand.materialId" class="text-sm">
+          <div v-for="entry in material" :key="entry.materialId" class="text-sm">
             <UIcon name="i-lucide-package" class="text-muted mr-1"/>
-            <span v-if="stand.anzahl > 1" class="tabular">{{ t('ablauf.materialMenge', {n: stand.anzahl}) }}</span>
-            {{ stand.name }}
+            <span v-if="entry.anzahl > 1" class="tabular">{{ t('ablauf.materialMenge', {n: entry.anzahl}) }}</span>
+            {{ entry.name }}
             <span class="text-muted">
-              {{ stand.unterwegs
-                ? t('ablauf.materialUnterwegs', {womit: stand.traeger,
-                                                 wohin: ortName(stand.unterwegs.nachOrtId)})
-                : t('ablauf.materialAn', {wo: ortName(stand.ortId)}) }}
+              {{ entry.unterwegs
+                ? t('ablauf.materialUnterwegs', {womit: entry.traeger,
+                                                 wohin: ortName(entry.unterwegs.nachOrtId)})
+                : t('ablauf.materialAn', {wo: ortName(entry.ortId)}) }}
             </span>
           </div>
         </template>

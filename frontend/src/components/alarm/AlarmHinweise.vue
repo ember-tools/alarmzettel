@@ -125,7 +125,7 @@ function antwortEntfernen(hinweis: Hinweis, index: number) {
                 </UButton>
               </div>
               <p v-if="hinweis.code" class="tabular text-[13px] text-muted">
-                Code: {{ codeAnzeige(hinweis.code) }}
+                {{ t('hinweise.codeLine', {code: codeAnzeige(hinweis.code)}) }}
               </p>
             </template>
           </div>

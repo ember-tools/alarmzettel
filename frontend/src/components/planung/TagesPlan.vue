@@ -27,7 +27,10 @@ const KUERZESTE = 10
 const VORGABEFENSTER = {von: 6 * 60, bis: 20 * 60}
 
 const tag = ref('')
-const auswahl = ref<{ lauf: Lauf, schritt: Schritt, name: string } | null>(null)
+/** The step opened for editing, with the name of its chain. */
+type Selection = { lauf: Lauf, schritt: Schritt, name: string }
+
+const auswahl = ref<Selection | null>(null)
 const gitter = ref<HTMLElement | null>(null)
 
 /** Alle Tage, an denen etwas steht, dazu die des Katalogs – der leere Tag will bepflanzt werden. */
@@ -154,7 +157,8 @@ function alsZeitpunkt(minuten: number): string {
 
 type Griff = 'neu' | 'schieben' | 'ende'
 
-const zug = ref<{
+/** A drag in progress: what is being moved or drawn, in which column, and where it stands. */
+type Drag = {
   art: Griff
   spalte: Spalte
   schritt?: Schritt
@@ -165,7 +169,9 @@ const zug = ref<{
   von: number
   bis: number
   bewegt: boolean
-} | null>(null)
+}
+
+const zug = ref<Drag | null>(null)
 
 const vorschau = computed(() => zug.value?.art === 'neu' ? zug.value : null)
 
@@ -311,29 +317,29 @@ function stichworte(kachel: Kachel): string[] {
                class="absolute inset-x-0 border-t border-muted pointer-events-none"
                :style="{top: `${oben(wann)}px`}" />
 
-          <div v-for="kachel in spalte.kacheln" :key="kachel.schritt.id"
+          <div v-for="tile in spalte.kacheln" :key="tile.schritt.id"
                class="absolute inset-x-1 rounded border px-1.5 py-1 overflow-hidden text-[12px] leading-tight"
-               :class="kachel.fremd
+               :class="tile.fremd
                  ? 'border-default bg-elevated text-muted cursor-pointer'
                  : 'border-inverted bg-default cursor-grab'"
-               :style="{top: `${oben(kachel.von)}px`,
-                        height: `${Math.max(kachel.bis - kachel.von, RASTER) * PX_JE_MINUTE}px`}"
-               @pointerdown.stop="kachel.fremd
-                 ? oeffnen(kachel) : fassen($event, 'schieben', spalte, kachel)">
-            <div v-if="kachel.da > kachel.von"
+               :style="{top: `${oben(tile.von)}px`,
+                        height: `${Math.max(tile.bis - tile.von, RASTER) * PX_JE_MINUTE}px`}"
+               @pointerdown.stop="tile.fremd
+                 ? oeffnen(tile) : fassen($event, 'schieben', spalte, tile)">
+            <div v-if="tile.da > tile.von"
                  class="absolute inset-x-0 top-0 bg-accented opacity-70 pointer-events-none"
-                 :style="{height: `${(kachel.da - kachel.von) * PX_JE_MINUTE}px`}" />
+                 :style="{height: `${(tile.da - tile.von) * PX_JE_MINUTE}px`}" />
             <div class="relative">
               <span class="tabular font-semibold">
-                {{ beschriftung(kachel.da) }}–{{ beschriftung(kachel.bis) }}
+                {{ beschriftung(tile.da) }}–{{ beschriftung(tile.bis) }}
               </span>
-              <span v-for="(zeile, nummer) in stichworte(kachel)" :key="nummer" class="block truncate">
+              <span v-for="(zeile, nummer) in stichworte(tile)" :key="nummer" class="block truncate">
                 {{ zeile }}
               </span>
             </div>
-            <div v-if="!kachel.fremd"
+            <div v-if="!tile.fremd"
                  class="absolute inset-x-0 bottom-0 h-2 cursor-ns-resize"
-                 @pointerdown.stop="fassen($event, 'ende', spalte, kachel)" />
+                 @pointerdown.stop="fassen($event, 'ende', spalte, tile)" />
           </div>
 
           <div v-if="vorschau && vorschau.spalte.schluessel === spalte.schluessel"

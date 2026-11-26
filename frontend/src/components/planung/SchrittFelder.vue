@@ -102,7 +102,7 @@ function lageAnlegen() {
     </datalist>
 
     <div class="flex items-center gap-3 flex-wrap text-[13px] text-muted">
-      <span>{{ dauer(schritt.von, schritt.bis) }} min</span>
+      <span>{{ t('ablauf.durationMinutes', {n: dauer(schritt.von, schritt.bis)}) }}</span>
       <span v-if="weg" :title="t('ablauf.anfahrtHinweis')">
         <UIcon
           :name="weg.mittel === 'fahrzeug' ? 'i-lucide-truck' : 'i-lucide-footprints'"

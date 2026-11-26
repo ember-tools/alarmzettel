@@ -265,10 +265,10 @@ onBeforeUnmount(() => {
             <span class="text-muted text-sm grow min-w-0">{{ adresstext(ort) }}</span>
             <span v-if="adresstext(ort)" class="flex gap-3 text-[13px]">
               <a :href="kartenLinks(adresstext(ort)).apple" target="_blank" rel="noreferrer">
-                Apple Maps
+                {{ t('blatt.appleMaps') }}
               </a>
               <a :href="kartenLinks(adresstext(ort)).google" target="_blank" rel="noreferrer">
-                Google Maps
+                {{ t('blatt.googleMaps') }}
               </a>
             </span>
           </div>

@@ -24,7 +24,7 @@ const SLIP_YES_NO = {
  * Zeigt eine Lage auf diesen Alarm, kommen die Zeiten aus dem Ablaufplan. Dann stehen hier die
  * Werte, die gedruckt werden, und nicht die eingetippten, die es nicht aufs Blatt schaffen.
  */
-const {zeiten} = defineProps<{ zeiten?: Record<string, string> }>()
+const {zeiten = undefined} = defineProps<{ zeiten?: Record<string, string> }>()
 
 const ZEITPUNKTE = ['einsatz', 'meldung'] as const
 
