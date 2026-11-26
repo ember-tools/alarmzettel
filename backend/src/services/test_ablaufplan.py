@@ -64,7 +64,7 @@ def daten() -> dict:
 
 
 class PersonenblattTest(unittest.TestCase):
-    """Das Blatt einer Person wird nirgends gepflegt — es ist die Summe ihrer Schritte."""
+    """Das Blatt einer Person wird nirgends gepflegt – es ist die Summe ihrer Schritte."""
 
     def blatt(self, name: str) -> dict:
         return next(blatt for blatt in daten()["personen"] if blatt["name"] == name)
@@ -107,7 +107,7 @@ class FahrzeugblattTest(unittest.TestCase):
 
 
 class GesamtplanTest(unittest.TestCase):
-    """Das Raster, das der Plan von Hand war — erzeugt statt gepflegt, also nie abweichend."""
+    """Das Raster, das der Plan von Hand war – erzeugt statt gepflegt, also nie abweichend."""
 
     def test_ein_block_je_tag_und_blattbreite(self):
         bloecke = daten()["gesamt"]["bloecke"]
@@ -140,7 +140,7 @@ class GesamtplanTest(unittest.TestCase):
 
 
 def kette(*schritte) -> dict:
-    """Eine Arbeitsmappe mit einer einzigen Fahrzeugkette — für die Ränder des Rasters."""
+    """Eine Arbeitsmappe mit einer einzigen Fahrzeugkette – für die Ränder des Rasters."""
     return {
         "version": 1, "alarme": [],
         "kataloge": {"fahrzeuge": [{"id": "f-lhf", "funkrufname": "LHF 6501.3"}],
@@ -246,14 +246,14 @@ class ZettelTest(unittest.TestCase):
         self.assertIn("Archenholdstra%C3%9Fe%2021", kita["google"])
 
     def test_ohne_adresse_gibt_es_keinen_kartenlink(self):
-        """Die Wache Nord hat in diesen Daten keine Adresse — dann steht auch kein Weg dorthin."""
+        """Die Wache Nord hat in diesen Daten keine Adresse – dann steht auch kein Weg dorthin."""
         wache = self.blatt("Alex")["orte"][0]
         self.assertEqual("", wache["adresse"])
         self.assertNotIn("apple", wache)
 
     def test_jedes_blatt_zeigt_auf_seine_lese_ansicht(self):
         """
-        Das Kennmuster im Kopf führt vom Papier auf den laufenden Stand — je Blatt auf seines,
+        Das Kennmuster im Kopf führt vom Papier auf den laufenden Stand – je Blatt auf seines,
         nicht auf die ganze Sitzung.
         """
         plan = plandaten(Arbeitsmappe.model_validate(MAPPE),
@@ -319,7 +319,7 @@ class FahrzeitTest(unittest.TestCase):
         self.assertIsNone(schaetzung(derselbe, dict(derselbe), "fahrzeug"))
 
     def test_gerundet_wird_von_der_haelfte_weg(self):
-        """7,5 km im Fahrzeug sind 22,5 Minuten — 25, wie `Math.round` im Browser."""
+        """7,5 km im Fahrzeug sind 22,5 Minuten – 25, wie `Math.round` im Browser."""
         self.assertEqual(25, schaetzung({"ostwert": 0, "nordwert": 0},
                                         {"ostwert": 0, "nordwert": 7500}, "fahrzeug"))
 
@@ -327,7 +327,7 @@ class FahrzeitTest(unittest.TestCase):
 class OhneBlattTest(unittest.TestCase):
     """
     Wer den Tag ohnehin im Fahrzeug verbringt, braucht keinen zweiten Zettel mit demselben
-    Inhalt. Er steht weiter in jeder Besatzung und im Bewegungsbild — nur sein Blatt entfällt.
+    Inhalt. Er steht weiter in jeder Besatzung und im Bewegungsbild – nur sein Blatt entfällt.
     """
 
     def blaetter(self, **person) -> list[str]:
@@ -357,7 +357,7 @@ class OhneBlattTest(unittest.TestCase):
 class AnfahrtTest(unittest.TestCase):
     """
     Folgt ein Aufenthalt direkt auf einen anderen an einem anderen Ort, entsteht die Fahrt
-    dazwischen von selbst. Sie beginnt mit dem Aufenthalt — er ist der Aufbruch, nicht die
+    dazwischen von selbst. Sie beginnt mit dem Aufenthalt – er ist der Aufbruch, nicht die
     Ankunft.
     """
 

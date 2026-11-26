@@ -5,7 +5,7 @@ import {t} from '../i18n'
 import {sitzungLesen} from '../api/sitzung'
 import {fehlertext} from '../api/render'
 import {arbeitsmappe, ersetzen, uebernehmen} from '../store/arbeitsmappe'
-import {sitzungWechseln, nameSetzen} from '../store/sitzung'
+import {nameSetzen, rememberedName, sitzungWechseln} from '../store/sitzung'
 import {useConfirm} from '@emberbox/ui'
 import type {GeleseneSitzung} from '../api/sitzung'
 
@@ -13,7 +13,7 @@ const route = useRoute()
 const router = useRouter()
 const freigabe = ref<GeleseneSitzung | null>(null)
 const fehler = ref<string | null>(null)
-const name = ref(localStorage.getItem('alarmzettel_name') ?? '')
+const name = ref(rememberedName())
 const confirm = useConfirm()
 
 /** Whether replacing what is in this browser may go ahead: at once when it holds nothing. */
@@ -53,7 +53,6 @@ async function mitarbeitenAnfordern() {
 /** Mit einem Lesetoken heißt dasselbe „ansehen“: der Browser folgt der Sitzung, ohne zu schreiben. */
 async function mitarbeiten() {
   if (!freigabe.value) return
-  if (name.value.trim()) localStorage.setItem('alarmzettel_name', name.value.trim())
   try {
     nameSetzen(name.value)
     await sitzungWechseln(String(route.params.token))

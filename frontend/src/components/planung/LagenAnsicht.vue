@@ -14,7 +14,7 @@ import {dauer, tagVon, uhrzeit} from '../../scripts/zeit'
  */
 const liste = computed(() => einsaetze(plandaten()))
 
-/** Ein Befund ohne Schritt und ohne Person hängt an der Lage — sonst stünde er nirgends. */
+/** Ein Befund ohne Schritt und ohne Person hängt an der Lage – sonst stünde er nirgends. */
 const befunde = computed(() => {
   const nachLage = new Map<string, Befund[]>()
   for (const befund of pruefen(plandaten())) {
@@ -67,7 +67,7 @@ function zeit(wann: string): string {
           {{ t('ablauf.derWievielte', {n: einsatz.nummer}) }}
         </span>
         <span class="text-muted text-sm">{{ ortName(einsatz.ortId) }}</span>
-        <span class="grow"></span>
+        <span class="grow" />
         <span class="tabular text-sm text-muted">
           {{ t('ablauf.einsatzZeiten', {
             da: uhrzeit(einsatz.da), bis: uhrzeit(einsatz.bis),

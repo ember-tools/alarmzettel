@@ -30,18 +30,21 @@ TARGET = ROOT / "frontend" / "public" / "sna-tree.json"
 CODE, QUALIFIER, KATEGORIE, ANLASS, HAUPT, UNTER, SUFFIX = 0, 3, 4, 5, 6, 7, 8
 
 
-# The workbook carries editing debris that is invisible in a spreadsheet but shows up as
-# highlighted boxes in an editor and breaks plain string matching: zero-width spaces inside
-# words and non-breaking spaces between them.
 UNSICHTBAR = str.maketrans({
-    "\u200b": None,   # zero width space
-    "\u200c": None,   # zero width non-joiner
-    "\u200d": None,   # zero width joiner
-    "\ufeff": None,   # byte order mark
-    "\u00a0": " ",    # no-break space
-    "\u2007": " ",    # figure space
-    "\u202f": " ",    # narrow no-break space
+    "\u200b": None,
+    "\u200c": None,
+    "\u200d": None,
+    "\ufeff": None,
+    "\u00a0": " ",
+    "\u2007": " ",
+    "\u202f": " ",
 })
+"""
+Editing debris the workbook carries, invisible in a spreadsheet but shown as highlighted boxes in
+an editor and breaking plain string matching. Zero-width space, zero-width non-joiner, zero-width
+joiner and byte order mark inside words are dropped; no-break, figure and narrow no-break spaces
+between words become plain spaces.
+"""
 
 
 def saeubern(text):
@@ -100,7 +103,7 @@ def load_rows():
 class Graph:
     """
     Hash-consed node store. Two nodes with the same content become one node, so paths that
-    reach the same outcome — or the same whole sub-branch — converge on a single id instead of
+    reach the same outcome – or the same whole sub-branch – converge on a single id instead of
     being duplicated. That makes the result a directed acyclic graph rather than a strict tree;
     building bottom-up from content keys is what rules cycles out.
     """
@@ -128,14 +131,14 @@ class Graph:
     def eingabe(self, question, vorlage, platzhalter, leer, ziel, eigen=False):
         """
         A question answered by typing rather than by choosing. An age is a number the caller
-        says, and no list of bands is that number — "ungefähr 60" belongs on the sheet as it was
+        says, and no list of bands is that number – "ungefähr 60" belongs on the sheet as it was
         given. One way on, so this is a node with a `ziel` instead of answers.
 
         `leer` is what gets recorded when the field is left empty. Where it is None the question
         is simply passed over and nothing is written: not every call happens on a floor.
 
         `eigen` marks an answer that belongs on the sheet as a Hinweis of its own rather than as
-        one of the numbered sentences after the code — where the crew has to go is not part of
+        one of the numbered sentences after the code – where the crew has to go is not part of
         the path to a determinant.
         """
         eingabe = {"vorlage": vorlage, "platzhalter": platzhalter}
@@ -192,7 +195,7 @@ def notfallrettung(graph, rows):
 def authored_answer(graph, entry):
     """
     One answer and whatever hangs below it. Five parts end the interrogation at a determinant,
-    four carry a further question, and the nesting goes as deep as an authored protocol needs —
+    four carry a further question, and the nesting goes as deep as an authored protocol needs –
     which for a fire is deeper than for anything else, because the question that sets the
     Stichwort is asked last.
     """
@@ -218,13 +221,13 @@ def authored(graph, protocols, question):
 
 
 HAND = ("Aus welcher Hand kommt die Meldung?", (
-    ("1. Hand — der Anrufer ist selbst betroffen",
+    ("1. Hand – der Anrufer ist selbst betroffen",
      "Meldung aus erster Hand: der Anrufer ist selbst betroffen."),
-    ("2. Hand — der Anrufer ist beim Betroffenen",
+    ("2. Hand – der Anrufer ist beim Betroffenen",
      "Meldung aus zweiter Hand: der Anrufer ist beim Betroffenen."),
-    ("3. Hand — der Anrufer meldet für andere",
+    ("3. Hand – der Anrufer meldet für andere",
      "Meldung aus dritter Hand: der Anrufer meldet für andere."),
-    ("4. Hand — der Anrufer hat es nur gehört oder gesehen",
+    ("4. Hand – der Anrufer hat es nur gehört oder gesehen",
      "Meldung aus vierter Hand: der Anrufer hat es nur gehört oder gesehen."),
     ("Automatische Meldung",
      "Die Meldung stammt aus einer automatischen Anlage."),
@@ -294,7 +297,7 @@ ORT = {
 def vorfragen(graph, ziel, *fragen):
     """
     Questions asked before the situation itself and printed as the first Hinweise. None of them
-    moves the determinant, so every answer leads to the same next question — a handful of edges
+    moves the determinant, so every answer leads to the same next question – a handful of edges
     into one node, which is the plainest case of the graph converging rather than branching.
 
     Built back to front, because each question has to know the one that follows it.
@@ -320,8 +323,8 @@ ERFUNDEN = (
 
 MELDER_HINWEIS = (
     "Die Codes und Anlässe stammen aus den offenen Daten der Berliner Feuerwehr. Die Fragen "
-    "davor — Hand der Meldung, Anrufer vor Ort, Anzahl der Betroffenen, Alter, Geschlecht, "
-    "Reaktion, Atmung, Einsatzort und Gefahren — sind ergänzt."
+    "davor – Hand der Meldung, Anrufer vor Ort, Anzahl der Betroffenen, Alter, Geschlecht, "
+    "Reaktion, Atmung, Einsatzort und Gefahren – sind ergänzt."
 )
 
 

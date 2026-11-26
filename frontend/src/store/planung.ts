@@ -26,13 +26,13 @@ import type {
 
 /**
  * Die Koordinaten der Orte, soweit der Adressdienst sie kennt. Sie kommen über das Netz, die
- * Prüfungen rechnen aber ohne Warten — deshalb liegen sie hier und werden einmal geladen.
+ * Prüfungen rechnen aber ohne Warten – deshalb liegen sie hier und werden einmal geladen.
  */
 export const ortsPunkte = reactive<Record<string, Punkt>>({})
 
 /**
  * Die Dienststelle zuerst, dann die angelegten. Sie ist kein Eintrag, den jemand anlegt, sondern
- * einer, den es gibt, solange die Wache eine Adresse hat — und deshalb auch keiner, den man
+ * einer, den es gibt, solange die Wache eine Adresse hat – und deshalb auch keiner, den man
  * löschen kann.
  */
 export function alleOrte(): Ort[] {
@@ -53,7 +53,7 @@ export function orteVon(mappe: Arbeitsmappe): Ort[] {
 }
 
 /**
- * Was die Ableitung braucht, aus einer beliebigen Arbeitsmappe — nicht nur aus der laufenden.
+ * Was die Ableitung braucht, aus einer beliebigen Arbeitsmappe – nicht nur aus der laufenden.
  * Ein Blatt, das über seinen eigenen Link geöffnet wird, liest die Sitzung, ohne in sie zu
  * wechseln, und rechnet damit dieselben Zeilen wie der Rest.
  */
@@ -126,7 +126,7 @@ export function personAnlegen(): Person {
 }
 
 /**
- * Ein Fenster, in dem jemand da ist. Wer keines hat, ist immer da — deshalb legt das erste
+ * Ein Fenster, in dem jemand da ist. Wer keines hat, ist immer da – deshalb legt das erste
  * Fenster den ganzen ersten Tag an und wird von dort aus zurechtgezogen.
  */
 export function verfuegbarkeitAnlegen(person: Person): Verfuegbarkeit {
@@ -144,7 +144,7 @@ export function entfernen<T>(liste: T[], eintrag: T) {
     if (stelle >= 0) liste.splice(stelle, 1)
 }
 
-/** Ein Wort in einer Liste an- oder abwählen — Rollen und Fahrerlaubnisklassen einer Person. */
+/** Ein Wort in einer Liste an- oder abwählen – Rollen und Fahrerlaubnisklassen einer Person. */
 export function umschalten(liste: string[], wert: string) {
     const stelle = liste.indexOf(wert)
     if (stelle >= 0) liste.splice(stelle, 1)
@@ -158,7 +158,7 @@ export function wortHinzufuegen(liste: string[], wert: string) {
 
 /**
  * Der Eintrag, wie der Store ihn hält. Ein eben gebautes Objekt ist noch keines, das Vue
- * beobachtet — erst was aus der Liste gelesen wird, meldet seine Änderungen weiter. Wer einen
+ * beobachtet – erst was aus der Liste gelesen wird, meldet seine Änderungen weiter. Wer einen
  * neuen Eintrag zum Bearbeiten zurückbekommt, muss diesen bekommen und nicht die Vorlage.
  */
 function ausDerListe<T extends {id: string}>(liste: T[], eintrag: T): T {
@@ -191,7 +191,7 @@ export function letzterSchritt(lauf: Lauf): Schritt | undefined {
 
 /**
  * Ein neuer Schritt nach dem Vorbild eines vorhandenen: Ort, Besatzung und Material kommen von
- * dort, damit man nur die Änderung anfasst. Angelegt, nicht eingehängt — wohin er gehört, sagt
+ * dort, damit man nur die Änderung anfasst. Angelegt, nicht eingehängt – wohin er gehört, sagt
  * der Aufrufer.
  */
 function neuerSchritt(lauf: Lauf, art: Schritt['art'], vorbild: Schritt | undefined,
@@ -212,7 +212,7 @@ function neuerSchritt(lauf: Lauf, art: Schritt['art'], vorbild: Schritt | undefi
 }
 
 /**
- * Hängt einen Schritt an. Er fängt an, wo der vorige aufhörte — Zeit, Ort und Besatzung kommen
+ * Hängt einen Schritt an. Er fängt an, wo der vorige aufhörte – Zeit, Ort und Besatzung kommen
  * von dort. Genau deshalb ist ein Sprung von A nach B ohne Weg dazwischen nicht darstellbar und
  * muss nicht geprüft werden.
  */
@@ -228,7 +228,7 @@ export function schrittAnhaengen(lauf: Lauf, art: Schritt['art'], minuten = 30):
 /**
  * Schiebt einen Schritt vor den an dieser Stelle. Er füllt die Lücke davor: er beginnt, wo der
  * vorige endet, und endet, wo der nächste anfängt. Wo keine Lücke ist, bekommt er fünf Minuten
- * und überschneidet sichtbar — die Zeiten der anderen zu verschieben wäre schlimmer, denn die
+ * und überschneidet sichtbar – die Zeiten der anderen zu verschieben wäre schlimmer, denn die
  * hat jemand von Hand gesetzt.
  *
  * Die Sortierung liegt zwischen den Nachbarn, statt die Liste neu durchzuzählen: so ändert sich
@@ -273,7 +273,7 @@ export function einordnen(lauf: Lauf, schritt: Schritt) {
 
 /**
  * Ein Aufenthalt über einen aufgezogenen Zeitraum. Ort, Besatzung und Material kommen von dem
- * Schritt, der davor liegt — im Tagesplan zieht man die Zeit auf und wählt den Rest danach.
+ * Schritt, der davor liegt – im Tagesplan zieht man die Zeit auf und wählt den Rest danach.
  */
 export function schrittMitZeit(lauf: Lauf, von: string, bis: string): Schritt {
     const beginn = alsMinuten(von) ?? 0
@@ -289,7 +289,7 @@ export function schrittMitZeit(lauf: Lauf, von: string, bis: string): Schritt {
 
 /**
  * Wo diese Kette zu dieser Zeit vermutlich steht. Bei einer Person zählt ihr ganzer Plan und
- * nicht nur die eigene Kette: wer mit einem Fahrzeug an die Lage gefahren ist, steht dort — und
+ * nicht nur die eigene Kette: wer mit einem Fahrzeug an die Lage gefahren ist, steht dort – und
  * ein Schritt, den man ihr danach aufzieht, fängt ebendort an und nicht an der Wache.
  */
 function wohl(lauf: Lauf, beginn: number): string {
@@ -328,7 +328,7 @@ export function besatzungHinzufuegen(schritt: Schritt, personId: string): Besatz
 
 /**
  * Es fährt immer höchstens einer; wer das Lenkrad nimmt, nimmt es dem anderen ab. Ans Lenkrad
- * kommt nur, wer die Klasse des Fahrzeugs hat — abgeben darf dagegen jeder, sonst bliebe ein
+ * kommt nur, wer die Klasse des Fahrzeugs hat – abgeben darf dagegen jeder, sonst bliebe ein
  * Fahrer aus einer älteren Fassung für immer stehen.
  */
 export function darfFahren(fahrzeugId: string, personId: string): boolean {
@@ -346,7 +346,7 @@ export function fahrerSetzen(lauf: Lauf, schritt: Schritt, personId: string) {
 
 /**
  * Material an einen Schritt hängen. Ein Name, den der Katalog noch nicht kennt, kommt dort dazu
- * — so wie ein neu geschriebenes Stichwort oder ein neuer Funkrufname.
+ * – so wie ein neu geschriebenes Stichwort oder ein neuer Funkrufname.
  */
 export function materialSichern(name: string): string {
     const sauber = name.trim()
@@ -399,7 +399,7 @@ export function programmpunkt(id: string): Programmpunkt | undefined {
 
 /**
  * Geschätzte Fahrzeit zwischen zwei Orten: Luftlinie mal Minuten je Kilometer. Nur ein
- * Vorschlag — die Luftlinie kennt weder Spree noch Baustelle. Ohne Adresse an einem der beiden
+ * Vorschlag – die Luftlinie kennt weder Spree noch Baustelle. Ohne Adresse an einem der beiden
  * Orte gibt es keine Schätzung.
  */
 export async function fahrzeitSchaetzen(vonOrtId: string, nachOrtId: string,

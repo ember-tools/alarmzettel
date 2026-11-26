@@ -2,7 +2,7 @@ import type {Arbeitsmappe} from '../interfaces/Alarm'
 import type {Planung} from '../interfaces/Planung'
 
 /**
- * The working set as a flat map of path to value — the same shape the server merges on, so the
+ * The working set as a flat map of path to value – the same shape the server merges on, so the
  * two sides talk about the same paths. Mirrors `backend/src/data/dokument.py`; the two are
  * checked against each other by a round-trip test on either side.
  *
@@ -35,7 +35,7 @@ const UMGEZOGEN = ['orte', 'tage', 'personen', 'rollen', 'fahrerlaubnisse']
 
 /**
  * Jede Liste des Plans mit den Feldern, die als Pfad je Eintrag geschrieben werden. Was darunter
- * hängt — Adresse, Verfügbarkeit, Schritte, Besatzung — steht in `planungsfelder`. Spiegelt
+ * hängt – Adresse, Verfügbarkeit, Schritte, Besatzung – steht in `planungsfelder`. Spiegelt
  * `PLANUNGSEINTRAEGE` in `backend/src/data/dokument.py`.
  */
 const PLANUNGSEINTRAEGE = {
@@ -71,11 +71,11 @@ function eintragsfelder(basis: string, werte: Flachbild, eintrag: Eintragsdaten,
 }
 
 /**
- * Den Plan flach machen. Die Ketten sind das Tiefste im Dokument — Lauf, Schritt, Besatzung — und
+ * Den Plan flach machen. Die Ketten sind das Tiefste im Dokument – Lauf, Schritt, Besatzung – und
  * jede Ebene trägt ihre eigene id, damit zwei Leute an verschiedenen Schritten desselben Laufs
  * arbeiten können, ohne sich zu überschreiben.
  */
-/** Tage und Personal — die Verfügbarkeiten und die Wortmengen hängen unter der Person. */
+/** Tage und Personal – die Verfügbarkeiten und die Wortmengen hängen unter der Person. */
 function katalogeintraege(werte: Flachbild, kataloge: Record<string, unknown>) {
     for (const [liste, felder] of Object.entries(KATALOGEINTRAEGE)) {
         const eintraege = (kataloge[liste] ?? []) as Eintragsdaten[]
@@ -124,8 +124,8 @@ function planungsfelder(werte: Flachbild, planung: Planung) {
 }
 
 /**
- * Eine Liste, die als ganzer Wert unter einem Pfad steht — der Abfrageweg eines Code-Hinweises
- * ist die einzige —, darf im Bild nicht dieselbe sein wie im Dokument. Sonst wächst sie im Bild
+ * Eine Liste, die als ganzer Wert unter einem Pfad steht – der Abfrageweg eines Code-Hinweises
+ * ist die einzige –, darf im Bild nicht dieselbe sein wie im Dokument. Sonst wächst sie im Bild
  * mit, sobald der Editor sie an Ort und Stelle ergänzt, und der Vergleich mit dem zuletzt
  * gesendeten Bild sähe keinen Unterschied: die Ergänzung ginge nie an den Server.
  */
@@ -136,6 +136,11 @@ function abgelegt(bild: Flachbild): Flachbild {
     return bild
 }
 
+/**
+ * The workbook as a flat picture: every value under its path. Status and Trupp are words and
+ * nothing else, so the word is its own key. Stichwörter and vehicles are pointed at by the Alarme,
+ * so they are keyed by an id that a rename survives.
+ */
 export function flach(mappe: Arbeitsmappe): Flachbild {
     const werte: Flachbild = {}
 
@@ -178,8 +183,6 @@ export function flach(mappe: Arbeitsmappe): Flachbild {
     werte[pfad('kataloge', 'wacheName')] = mappe.kataloge.wacheName ?? ''
     werte[pfad('kataloge', 'alarmeProTag')] = mappe.kataloge.alarmeProTag ?? 2200
     adresse(pfad('kataloge', 'wache'), werte, mappe.kataloge.wache as never)
-    // Status and Trupp are words and nothing else, so the word is its own key. Stichwörter and
-    // vehicles are pointed at by the Alarme, so they are keyed by an id that a rename survives.
     for (const liste of KATALOGWORTLISTEN) {
         for (const wert of mappe.kataloge[liste] ?? []) werte[pfad('kataloge', liste, wert)] = true
     }
@@ -263,6 +266,12 @@ function planungLesen(planung: Record<string, unknown>, rest: string[], wert: un
     }
 }
 
+/**
+ * The workbook back from a flat picture. Orte, days, personnel and the word lists once lived in
+ * the plan; their old paths keep their meaning, or an existing session would lose them, but they
+ * are no longer written. Catalogue entries are sorted by what they read as, not by their ids, so
+ * browser and server agree on the order.
+ */
 export function rund(bild: Flachbild): unknown {
     const werte = abgelegt({...bild})
     const alarme: Record<string, Record<string, never>> = {}
@@ -270,7 +279,33 @@ export function rund(bild: Flachbild): unknown {
         aktiv: false,
         ...Object.fromEntries(Object.keys(PLANUNGSEINTRAEGE).map(liste => [liste, {}])),
     }
-    const kataloge: Record<string, unknown> = {
+    const kataloge = emptyCatalogues()
+
+    for (const [schluessel, wert] of Object.entries(werte)) {
+        let teile = schluessel.split(TRENNER)
+        if (teile[0] === 'planung' && UMGEZOGEN.includes(teile[1] ?? '')) {
+            teile = ['kataloge', ...teile.slice(1)]
+        } else if (teile[0] === 'planung') {
+            planungLesen(planung, teile.slice(1), wert)
+            continue
+        }
+        if (teile[0] === 'kataloge' && teile.length === 2) {
+            kataloge[teile[1]!] = wert
+        } else if (teile[0] === 'kataloge' && teile.length >= 3) {
+            readCatalogueEntry(kataloge, teile, wert)
+        } else if (teile[0] === 'alarme' && teile.length >= 3) {
+            readAlarm(alarme, teile, wert)
+        }
+    }
+
+    sortCatalogues(kataloge)
+    sortPlan(planung)
+    return {version: 1, alarme: sortedAlarms(alarme), kataloge, planung}
+}
+
+/** The catalogues before any path is read into them. */
+function emptyCatalogues(): Record<string, unknown> {
+    return {
         stichwoerter: {} as Record<string, Record<string, unknown>>,
         fahrzeuge: {} as Record<string, Record<string, unknown>>,
         orte: {} as Record<string, Record<string, unknown>>,
@@ -280,74 +315,63 @@ export function rund(bild: Flachbild): unknown {
         ...Object.fromEntries(KATALOGWORTLISTEN.map(liste => [liste, [] as string[]])),
         ...Object.fromEntries(Object.keys(KATALOGEINTRAEGE).map(liste => [liste, {}])),
     }
+}
 
-    for (const [schluessel, wert] of Object.entries(werte)) {
-        let teile = schluessel.split(TRENNER)
-        // Orte, Tage, Personal und die Wortlisten standen einmal im Plan. Die alten Pfade
-        // behalten ihre Bedeutung, sonst verlöre eine bestehende Sitzung sie; geschrieben werden
-        // sie nicht mehr.
-        if (teile[0] === 'planung' && UMGEZOGEN.includes(teile[1] ?? '')) {
-            teile = ['kataloge', ...teile.slice(1)]
-        } else if (teile[0] === 'planung') {
-            planungLesen(planung, teile.slice(1), wert)
-            continue
-        }
-        if (teile[0] === 'kataloge' && teile.length === 2) {
-            kataloge[teile[1]!] = wert
-            continue
-        }
-        if (teile[0] === 'kataloge' && teile.length >= 3) {
-            const liste = teile[1]!
-            if (liste === 'wache' && teile.length === 3) {
-                (kataloge['wache'] as Record<string, unknown>)[teile[2]!] = wert
-            } else if ((KATALOGWORTLISTEN as readonly string[]).includes(liste)) {
-                (kataloge[liste] as string[]).push(teile[2]!)
-            } else if (liste in KATALOGEINTRAEGE) {
-                katalogLesen(kataloge, teile.slice(1), wert)
-            } else if ((liste === 'stichwoerter' || liste === 'fahrzeuge' || liste === 'material')
-                       && teile.length === 4) {
-                const eintraege = kataloge[liste] as Record<string, Record<string, unknown>>
-                ;(eintraege[teile[2]!] ??= {id: teile[2]})[teile[3]!] = wert
-            } else if (liste === 'orte' && teile.length >= 4) {
-                const eintraege = kataloge['orte'] as Record<string, Record<string, unknown>>
-                const ort = (eintraege[teile[2]!] ??= {id: teile[2], adresse: {}})
-                if (teile[3] === 'adresse' && teile.length === 5) {
-                    (ort['adresse'] as Record<string, unknown>)[teile[4]!] = wert
-                } else if (teile.length === 4) {
-                    ort[teile[3]!] = wert
-                }
-            }
-            continue
-        }
-        if (teile[0] !== 'alarme' || teile.length < 3) continue
-
-        const alarm: Record<string, never> = (alarme[teile[1]!] ??= {
-            id: teile[1], anfahrtsadresse: {}, einsatzadresse: {}, karte: {},
-            _hinweise: {}, _gruppen: {},
-        } as never)
-        const rest = teile.slice(2)
-        const kopf = rest[0]!
-        if (rest.length === 1) {
-            (alarm as Record<string, unknown>)[kopf] = wert
-        } else if (kopf === 'anfahrtsadresse' || kopf === 'einsatzadresse' || kopf === 'karte') {
-            const unterobjekt = (alarm as never as Record<string, Record<string, unknown>>)[kopf]!
-            unterobjekt[rest[1]!] = wert
-        } else if (kopf === 'hinweise' && rest.length === 3) {
-            const eintraege = (alarm as never as Record<string, Record<string, Record<string, unknown>>>)['_hinweise']!
-            ;(eintraege[rest[1]!] ??= {id: rest[1]})[rest[2]!] = wert
-        } else if (kopf === 'einsatzmittel' && rest.length >= 3) {
-            const gruppen = (alarm as never as Record<string, Record<string, Record<string, unknown>>>)['_gruppen']!
-            const gruppe = (gruppen[rest[1]!] ??= {id: rest[1], _fahrzeuge: {}})
-            if (rest[2] === 'fahrzeuge' && rest.length === 5) {
-                const fahrzeuge = gruppe['_fahrzeuge'] as Record<string, Record<string, unknown>>
-                ;(fahrzeuge[rest[3]!] ??= {id: rest[3]})[rest[4]!] = wert
-            } else if (rest.length === 3) {
-                gruppe[rest[2]!] = wert
-            }
+/** Puts one catalogue path of at least three parts back into the catalogues. */
+function readCatalogueEntry(kataloge: Record<string, unknown>, teile: string[], wert: unknown) {
+    const liste = teile[1]!
+    if (liste === 'wache' && teile.length === 3) {
+        (kataloge['wache'] as Record<string, unknown>)[teile[2]!] = wert
+    } else if ((KATALOGWORTLISTEN as readonly string[]).includes(liste)) {
+        (kataloge[liste] as string[]).push(teile[2]!)
+    } else if (liste in KATALOGEINTRAEGE) {
+        katalogLesen(kataloge, teile.slice(1), wert)
+    } else if ((liste === 'stichwoerter' || liste === 'fahrzeuge' || liste === 'material')
+               && teile.length === 4) {
+        const eintraege = kataloge[liste] as Record<string, Record<string, unknown>>
+        ;(eintraege[teile[2]!] ??= {id: teile[2]})[teile[3]!] = wert
+    } else if (liste === 'orte' && teile.length >= 4) {
+        const eintraege = kataloge['orte'] as Record<string, Record<string, unknown>>
+        const ort = (eintraege[teile[2]!] ??= {id: teile[2], adresse: {}})
+        if (teile[3] === 'adresse' && teile.length === 5) {
+            (ort['adresse'] as Record<string, unknown>)[teile[4]!] = wert
+        } else if (teile.length === 4) {
+            ort[teile[3]!] = wert
         }
     }
+}
 
-    const fertig = geordnet(alarme as never as Record<string, Sortierbar>).map(roh => {
+/** Puts one path of an Alarm back into it, creating the Alarm on its first path. */
+function readAlarm(alarme: Record<string, Record<string, never>>, teile: string[], wert: unknown) {
+    const alarm: Record<string, never> = (alarme[teile[1]!] ??= {
+        id: teile[1], anfahrtsadresse: {}, einsatzadresse: {}, karte: {},
+        _hinweise: {}, _gruppen: {},
+    } as never)
+    const rest = teile.slice(2)
+    const kopf = rest[0]!
+    if (rest.length === 1) {
+        (alarm as Record<string, unknown>)[kopf] = wert
+    } else if (kopf === 'anfahrtsadresse' || kopf === 'einsatzadresse' || kopf === 'karte') {
+        const unterobjekt = (alarm as never as Record<string, Record<string, unknown>>)[kopf]!
+        unterobjekt[rest[1]!] = wert
+    } else if (kopf === 'hinweise' && rest.length === 3) {
+        const eintraege = (alarm as never as Record<string, Record<string, Record<string, unknown>>>)['_hinweise']!
+        ;(eintraege[rest[1]!] ??= {id: rest[1]})[rest[2]!] = wert
+    } else if (kopf === 'einsatzmittel' && rest.length >= 3) {
+        const gruppen = (alarm as never as Record<string, Record<string, Record<string, unknown>>>)['_gruppen']!
+        const gruppe = (gruppen[rest[1]!] ??= {id: rest[1], _fahrzeuge: {}})
+        if (rest[2] === 'fahrzeuge' && rest.length === 5) {
+            const fahrzeuge = gruppe['_fahrzeuge'] as Record<string, Record<string, unknown>>
+            ;(fahrzeuge[rest[3]!] ??= {id: rest[3]})[rest[4]!] = wert
+        } else if (rest.length === 3) {
+            gruppe[rest[2]!] = wert
+        }
+    }
+}
+
+/** The Alarme in sort-key order, with their Hinweise, groups and vehicles in order as well. */
+function sortedAlarms(alarme: Record<string, Record<string, never>>): Record<string, unknown>[] {
+    return geordnet(alarme as never as Record<string, Sortierbar>).map(roh => {
         const alarm = roh as never as Record<string, unknown>
         alarm['hinweise'] = geordnet(alarm['_hinweise'] as Record<string, Sortierbar>)
         alarm['einsatzmittel'] = geordnet(alarm['_gruppen'] as Record<string, Sortierbar>)
@@ -361,8 +385,10 @@ export function rund(bild: Flachbild): unknown {
         delete alarm['_gruppen']
         return alarm
     })
+}
 
-    // Sorted by what they read as, not by their ids, so both sides agree on the order.
+/** Turns the catalogue collections into lists: named entries by name, the rest by sort key. */
+function sortCatalogues(kataloge: Record<string, unknown>) {
     const nachText = (feld: string) => (eintraege: Record<string, Record<string, unknown>>) =>
         Object.values(eintraege).sort((a, b) =>
             String(a[feld] ?? '').localeCompare(String(b[feld] ?? '')) ||
@@ -376,8 +402,6 @@ export function rund(bild: Flachbild): unknown {
     for (const liste of KATALOGWORTLISTEN) {
         (kataloge[liste] as string[]).sort()
     }
-
-    const nachSortierung = (eintraege: Sammlung) => geordnet(eintraege as never as Record<string, Sortierbar>)
     kataloge['orte'] = nachSortierung(kataloge['orte'] as Sammlung)
     for (const liste of Object.keys(KATALOGEINTRAEGE)) {
         kataloge[liste] = nachSortierung(kataloge[liste] as Sammlung)
@@ -386,6 +410,10 @@ export function rund(bild: Flachbild): unknown {
         person.verfuegbar = nachSortierung((person._verfuegbar ?? {}) as Sammlung)
         delete person._verfuegbar
     }
+}
+
+/** Turns the plan's collections into lists in sort-key order, steps with their crew and material. */
+function sortPlan(planung: Record<string, unknown>) {
     for (const liste of Object.keys(PLANUNGSEINTRAEGE)) {
         planung[liste] = nachSortierung(planung[liste] as Sammlung)
     }
@@ -400,5 +428,9 @@ export function rund(bild: Flachbild): unknown {
         lauf.schritte = schritte
         delete lauf._schritte
     }
-    return {version: 1, alarme: fertig, kataloge, planung}
+}
+
+/** A collection as a list in sort-key order. */
+function nachSortierung(eintraege: Sammlung) {
+    return geordnet(eintraege as never as Record<string, Sortierbar>)
 }

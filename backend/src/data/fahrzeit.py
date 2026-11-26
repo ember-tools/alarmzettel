@@ -2,7 +2,7 @@
 Die geschätzte Fahr- und Gehzeit zwischen zwei Orten.
 
 Beide Orte haben eine Adresse, die Adresse hat Koordinaten, also ist die Luftlinie dieselbe
-Rechnung wie die Polar-Koordinaten des Alarmzettels. Daraus wird eine grobe Dauer — rund 5 km/h
+Rechnung wie die Polar-Koordinaten des Alarmzettels. Daraus wird eine grobe Dauer – rund 5 km/h
 zu Fuß und gut 25 km/h im Stadtverkehr, wenn man den üblichen Umweg von etwa einem Viertel
 gegenüber der Luftlinie einrechnet.
 
@@ -29,7 +29,7 @@ def schaetzung(von: dict | None, nach: dict | None, mittel: str) -> int | None:
     """
     Auf fünf Minuten gerundet und nie unter fünf; ohne Koordinaten gibt es keine Schätzung.
 
-    Gerundet wird von der Hälfte weg und nicht zur geraden Zahl hin, weil der Browser es so tut —
+    Gerundet wird von der Hälfte weg und nicht zur geraden Zahl hin, weil der Browser es so tut –
     eine halbe Minute Unterschied wäre eine andere Ankunftszeit auf dem Blatt als auf dem Schirm.
     """
     je_km = MINUTEN_JE_KM.get(mittel, 0)

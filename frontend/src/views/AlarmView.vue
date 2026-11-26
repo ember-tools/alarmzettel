@@ -21,7 +21,7 @@ const abgeleitet = ref<Alarmableitung | null>(null)
 
 /**
  * Zeigt eine Lage auf diesen Alarm, kommen Zeiten, Einsatzadresse und Aufgebot aus dem Plan.
- * Gerechnet wird das auf dem Server, damit hier nichts anderes steht als auf dem Blatt — und
+ * Gerechnet wird das auf dem Server, damit hier nichts anderes steht als auf dem Blatt – und
  * neu gerechnet, sobald sich am Plan etwas ändert, das diesen Alarm angeht.
  */
 const planstand = computed(() => JSON.stringify([
@@ -55,11 +55,13 @@ function rendern(): Promise<Blob> {
   return renderEinen(String(route.params.id))
 }
 
+/**
+ * Prints the sheet after an exchange, so it shows what everyone has rather than what this browser
+ * happened to see a few seconds ago. Outside a shared session the exchange does nothing.
+ */
 async function pdf() {
   fehler.value = null
   try {
-    // Exchanged first, so the sheet is printed from what everyone has rather than from what this
-    // browser happened to see a few seconds ago. Outside a shared workspace this does nothing.
     await jetztAbgleichen()
     const blob = await rendern()
     const url = URL.createObjectURL(blob)

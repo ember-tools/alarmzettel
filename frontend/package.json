@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
+    "lint": "emberbox-lint",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -24,10 +25,12 @@
     "vue-router": "^5.5.1"
   },
   "devDependencies": {
+    "@emberbox/lint": "^0.2.0",
     "@types/node": "^25.9.1",
     "@vitejs/plugin-vue": "^6.0.11",
     "@vue/tsconfig": "^0.9.1",
     "esbuild": "^0.28.2",
+    "eslint": "^10.15.0",
     "typescript": "~6.0.3",
     "vite": "^8.3.8",
     "vue-tsc": "^3.3.14"

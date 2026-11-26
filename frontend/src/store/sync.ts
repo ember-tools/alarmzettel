@@ -3,6 +3,7 @@ import client from '../api/http'
 import {arbeitsmappe, ersetzen, uebernehmen} from './arbeitsmappe'
 import {flach, rund, TRENNER, type Flachbild} from '../scripts/flach'
 import type {Arbeitsmappe} from '../interfaces/Alarm'
+import {parsedOr, storeQuietly} from './browserStorage'
 
 interface Aenderung {
     pfad: string
@@ -46,24 +47,15 @@ const SPEICHER = 'alarmzettel_arbeitsraum'
  * Cookie; hier steht es nur mit dem Namen zusammen, unter dem gearbeitet wird.
  */
 function merken(token: string, wer: string) {
-    try {
-        localStorage.setItem(SPEICHER, JSON.stringify({token, wer}))
-    } catch { /* a browser with storage blocked simply does not reconnect */ }
+    storeQuietly(() => localStorage.setItem(SPEICHER, JSON.stringify({token, wer})))
 }
 
 function vergessen() {
-    try {
-        localStorage.removeItem(SPEICHER)
-    } catch { /* nothing to do */ }
+    storeQuietly(() => localStorage.removeItem(SPEICHER))
 }
 
 function gemerkt(): { token: string, wer: string } | null {
-    try {
-        const roh = localStorage.getItem(SPEICHER)
-        return roh ? JSON.parse(roh) : null
-    } catch {
-        return null
-    }
+    return parsedOr<{ token: string, wer: string } | null>(() => localStorage.getItem(SPEICHER), null)
 }
 
 function gleich(a: unknown, b: unknown): boolean {
@@ -93,15 +85,15 @@ const LISTEN = new Set([
 ])
 
 /**
- * The shortest prefix of a removed path that is gone entirely — the entity itself rather than
+ * The shortest prefix of a removed path that is gone entirely – the entity itself rather than
  * one of its fields.
  *
  * Deleting an Alarm removes its fields, and marking only those as gone is not enough: the entity
- * has no tombstone of its own, so the next person to edit it — not yet knowing it was deleted —
+ * has no tombstone of its own, so the next person to edit it – not yet knowing it was deleted –
  * writes one field back and the whole thing returns. Burying the entity stops that.
  *
  * Es muss aber ein *Eintrag* sein, nie die Liste, in der er steht. Wird der letzte Tag gelöscht,
- * ist auch `planung / tage` vollständig verschwunden — ein Grabstein darauf würde die Liste für
+ * ist auch `planung / tage` vollständig verschwunden – ein Grabstein darauf würde die Liste für
  * immer zumauern, denn der Server hält alles unter einem Grabstein für gelöscht. Ein Eintrag
  * erkennt sich daran, dass der Abschnitt über ihm eine Liste ist.
  */
@@ -166,7 +158,7 @@ function anlegen(bild: Flachbild, aenderungen: Aenderung[]): Flachbild {
  * comes from the shadow, which is the merged truth.
  *
  * Gebaut wird nur, wenn der Server etwas mitgeschickt hat. Der Aufbau ersetzt jedes Objekt der
- * Arbeitsmappe durch ein neues, und alles, was daran hängt, hält das für eine Änderung — die
+ * Arbeitsmappe durch ein neues, und alles, was daran hängt, hält das für eine Änderung – die
  * Vorschau etwa renderte den Zettel danach im Sekundentakt neu, obwohl niemand etwas getippt
  * hatte. Ohne eingehende Änderung steht ohnehin schon alles im Dokument, was hier stünde.
  */
@@ -180,6 +172,11 @@ function einarbeiten(antwort: Antwort, gesendet: Aenderung[], gesendetBild: Flac
     ersetzen(uebernehmen(rund(anlegen(serverBild, waehrenddessen)) as Arbeitsmappe))
 }
 
+/**
+ * Exchanges this browser's edits with the session, one exchange at a time. A failed exchange
+ * changes nothing: the edits stay in the difference and go with the next one, so a dropped
+ * connection costs time rather than work.
+ */
 async function austauschen() {
     if (!verbindung.token || laeuftGerade) {
         anstehend = anstehend || laeuftGerade
@@ -198,8 +195,6 @@ async function austauschen() {
         einarbeiten(data, gesendet, gesendetBild)
         verbindung.fehler = null
     } catch (fehler) {
-        // A failed exchange changes nothing: the edits stay in the difference and go with the
-        // next one, so a dropped connection costs time rather than work.
         verbindung.fehler = (fehler as Error).message
     } finally {
         laeuftGerade = false
@@ -212,7 +207,7 @@ async function austauschen() {
 
 /**
  * Exchanges now instead of waiting for the next beat. Wanted before something is produced from
- * the working set — a PDF, a download — so it is made from what everyone has, not from what this
+ * the working set – a PDF, a download – so it is made from what everyone has, not from what this
  * browser happened to have a moment ago.
  */
 export async function jetztAbgleichen() {
@@ -230,13 +225,12 @@ function beiAenderung() {
 watch(arbeitsmappe, beiAenderung, {deep: true})
 
 /**
- * Verbindet mit einer Sitzung. Was auf dem Bildschirm steht, wird durch das ersetzt, was die
- * Sitzung hält — sie wird nicht mit dem zusammengeführt, was zufällig in diesem Browser lag,
- * sonst landen die Reste des einen bei allen anderen.
+ * Joins a session. What is on screen is replaced by what the session holds rather than merged
+ * with whatever happened to be in this browser, or one person's leftovers would land on everyone
+ * else. The session is fetched before anything is thrown away, so a session that cannot be
+ * reached leaves this browser with what it had.
  */
 export async function beitreten(token: string, wer: string, nurLesen = false) {
-    // Fetched before anything is thrown away, so a workspace that cannot be reached leaves this
-    // browser with what it had.
     const {data} = await client.get<Antwort>(
         `/api/sitzung/${token}/aenderungen`, {params: {seit: 0}})
 

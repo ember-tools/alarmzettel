@@ -56,6 +56,10 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
       - uses: actions/setup-python@v7
         with:
           python-version: '3.14'
@@ -73,7 +77,7 @@ jobs:
         run: node tools/ablauf_pruefen.mjs
 
       # Das Bewegungsbild, der Stand zu einem Zeitpunkt und die Umrechnung der amtlichen
-      # Koordinaten in die der Karte — gegen Punkte, die der Berliner Dienst in beiden Systemen
+      # Koordinaten in die der Karte – gegen Punkte, die der Berliner Dienst in beiden Systemen
       # ausgibt.
       - name: Check das Bewegungsbild
         run: node tools/bewegungen_pruefen.mjs
@@ -111,13 +115,13 @@ jobs:
           cd frontend && npm ci
 
       # Two clients on one workspace, driving the browser's real sync module outside a browser.
-      # The merge is covered by unit tests; this covers the client half — the shadow copy and the
+      # The merge is covered by unit tests; this covers the client half – the shadow copy and the
       # way an incoming change is folded into it, which is where the bugs were.
       - name: Two clients on one workspace
         run: node tools/sync_probe.mjs
 
       # Personenplan und Bewegungsbild entstehen zweimal: im Browser für die Ansicht, auf dem
-      # Server für das PDF. Weichen sie ab, widerspricht der Ausdruck dem Bildschirm — und genau
+      # Server für das PDF. Weichen sie ab, widerspricht der Ausdruck dem Bildschirm – und genau
       # das soll die Ableitung ja unmöglich machen.
       - name: Compare the derived plans
         run: |

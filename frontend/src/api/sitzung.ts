@@ -3,7 +3,7 @@ import type {Arbeitsmappe} from '../interfaces/Alarm'
 
 /**
  * Die Sitzung ist die Arbeitsmappe auf dem Server. Das Token steht in einem Cookie, das der
- * Server setzt — deshalb steht es in keinem Aufruf hier drin — und im Link, den man weitergibt.
+ * Server setzt – deshalb steht es in keinem Aufruf hier drin – und im Link, den man weitergibt.
  * Beides ist derselbe Schlüssel; eine Anmeldung gibt es nicht.
  */
 export interface Sitzungskopf {
@@ -41,7 +41,7 @@ export async function sitzungLesen(token: string): Promise<GeleseneSitzung> {
 
 /**
  * Das Token, mit dem eine Sitzung nur angesehen werden kann. Es entsteht beim ersten Fragen und
- * bleibt danach dasselbe. Den Link daraus baut der Browser selbst — er weiß, unter welcher
+ * bleibt danach dasselbe. Den Link daraus baut der Browser selbst – er weiß, unter welcher
  * Adresse er erreichbar ist, der Server hinter einem Proxy nicht unbedingt.
  */
 export async function lesetoken(token: string): Promise<string> {
@@ -50,7 +50,7 @@ export async function lesetoken(token: string): Promise<string> {
     return data.token
 }
 
-/** Macht diese Sitzung zur laufenden — das ist Wechseln und Beitreten in einem. */
+/** Macht diese Sitzung zur laufenden – das ist Wechseln und Beitreten in einem. */
 export async function sitzungUebernehmen(token: string): Promise<Sitzungskopf> {
     const {data} = await client.post<Sitzungskopf>(`/api/sitzung/${token}/uebernehmen`)
     return data

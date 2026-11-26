@@ -44,6 +44,8 @@ def _hinweise(text: str) -> list:
     """
     Splits the merged Hinweise cell back into entries. A line beginning `Code: 67-B-3:` becomes a
     code entry whose numbered sentences are the interrogation path; everything else is a note.
+    The path is numbered 1., 2., 3. in order, so only the next expected number starts an answer;
+    otherwise an ordinal inside a sentence, as in "(Anrufer 4. Hand)", would split it.
     """
     if not text.strip():
         return []
@@ -59,8 +61,6 @@ def _hinweise(text: str) -> list:
             continue
 
         rest = treffer.group("rest").strip()
-        # The path is numbered 1., 2., 3. in order, so only the next expected number starts an
-        # answer. Without that, an ordinal inside a sentence — "(Anrufer 4. Hand)" — splits it.
         stellen = []
         erwartet = 1
         for stelle in ANTWORT.finditer(rest):
@@ -80,14 +80,16 @@ def _hinweise(text: str) -> list:
 
 
 def alarm_aus_zeile(zeile: dict[str, str]) -> Alarm:
+    """
+    One Alarm from a row of the old spreadsheet. The old sheet listed identification numbers
+    behind the strength; only the strength is wanted now, and the Trupp line is rebuilt from it.
+    """
     holen = lambda *namen: next((zeile[n] for n in namen if zeile.get(n)), "")
 
     adresse = Adresse(strasse=holen("Straße", "Strasse"), hnr=holen("H.Nr.", "HNr"),
                       objekt=holen("Objekt"), plz=holen("PLZ"), ort=holen("Ort"))
     datum, zeitpunkt = holen("Datum"), holen("Zeit")
 
-    # The old sheet listed identification numbers behind the strength; only the strength is
-    # wanted now, and the Trupp line is rebuilt from it.
     roher_trupp = holen("Trupp")
     staerke = staerke_aus_text(roher_trupp)
     fahrzeug = Fahrzeug(funkrufname=holen("Funkrufname"), ezp=holen("EZP"),

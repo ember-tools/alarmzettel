@@ -1,0 +1,46 @@
+{
+  "entries": [
+    {
+      "key": "alarmzettel_arbeitsmappe",
+      "purpose": "Die Arbeitsmappe mit Alarmen, Katalogen und Planung, damit sie ohne Sitzung im Browser bleibt.",
+      "kind": "LOCAL_STORAGE"
+    },
+    {
+      "key": "alarmzettel_arbeitsraum",
+      "purpose": "Token der gemeinsamen Sitzung, in der dieser Browser arbeitet, und der Name, unter dem er darin arbeitet, damit er sich nach einem Neuladen wieder verbindet.",
+      "kind": "LOCAL_STORAGE"
+    },
+    {
+      "key": "alarmzettel_sitzungen",
+      "purpose": "Die Sitzungen, die dieser Browser schon kennt, mit Beschriftung und letztem Zugriff.",
+      "kind": "LOCAL_STORAGE"
+    },
+    {
+      "key": "alarmzettel_name",
+      "purpose": "Der Name, unter dem in Sitzungen gearbeitet wird.",
+      "kind": "LOCAL_STORAGE"
+    },
+    {
+      "key": "alarmplaner_ablaufansicht",
+      "purpose": "Welche Ansicht des Ablaufplans zuletzt gewählt war.",
+      "kind": "LOCAL_STORAGE"
+    },
+    {
+      "key": "alarmplaner_karte_folgt",
+      "purpose": "Ob die Lagekarte dem gewählten Schritt folgt.",
+      "kind": "LOCAL_STORAGE"
+    },
+    {
+      "key": "alarmplaner_kataloge",
+      "purpose": "Welche Abschnitte in Katalogen und Ablauf aufgeklappt sind.",
+      "kind": "LOCAL_STORAGE",
+      "source": "@emberbox/ui"
+    },
+    {
+      "key": "vueuse-color-scheme",
+      "purpose": "Ob die Seite hell oder dunkel erscheint.",
+      "kind": "LOCAL_STORAGE",
+      "source": "@emberbox/ui"
+    }
+  ]
+}

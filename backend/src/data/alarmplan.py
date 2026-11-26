@@ -3,7 +3,7 @@ Der Alarmzettel aus dem Ablaufplan.
 
 Zeigt eine Lage auf einen Alarm, dann weiß der Plan Dinge, die sonst von Hand einzutragen wären:
 wann das Fahrzeug losfährt, wo die Lage stattfindet, wer mitfährt. Diese Felder kommen deshalb
-beim Rendern aus dem Plan, und der Zettel entsteht je Fahrzeug einmal — er ist an genau eines
+beim Rendern aus dem Plan, und der Zettel entsteht je Fahrzeug einmal – er ist an genau eines
 gerichtet, das ist der grau hinterlegte Funkrufname.
 
 Ein Alarm, auf den keine Lage zeigt, verhält sich wie bisher; ohne eingeschaltete Planung ändert
@@ -32,7 +32,7 @@ def _nummer(beginn: str, pro_tag: int) -> str:
     """
     Die Einsatznummer aus der Uhrzeit: der Anteil des Tages, der bis dahin vergangen ist, mal die
     Alarme, die die Leitstelle an einem Tag zählt. Damit steigen die Nummern über den Tag und
-    haben Lücken — wie im Echtbetrieb, wo dazwischen die der ganzen Stadt liegen.
+    haben Lücken – wie im Echtbetrieb, wo dazwischen die der ganzen Stadt liegen.
     """
     if not pro_tag or len(beginn) < 16:
         return ""
@@ -46,7 +46,7 @@ def _nummer(beginn: str, pro_tag: int) -> str:
 def _anfahrt(lauf: Lauf, stelle: int) -> str:
     """
     Wann das Fahrzeug für diese Lage losfährt. Bei einer eingetragenen Fahrt ist es deren Beginn;
-    sonst der Beginn des Aufenthalts, denn der ist der Aufbruch — die Fahrt dorthin entsteht aus
+    sonst der Beginn des Aufenthalts, denn der ist der Aufbruch – die Fahrt dorthin entsteht aus
     ihm und dauert bis zur Ankunft.
     """
     schritt = lauf.schritte[stelle]
@@ -58,7 +58,7 @@ def _anfahrt(lauf: Lauf, stelle: int) -> str:
 
 def _schritte_an(lauf: Lauf, punkt: Programmpunkt) -> list[tuple[int, Schritt]]:
     """
-    Die Schritte dieser Kette, die auf diese Lage zeigen — auch die ohne Aufgebot, und auch eine
+    Die Schritte dieser Kette, die auf diese Lage zeigen – auch die ohne Aufgebot, und auch eine
     Fahrt, die sie selbst trägt: dann ist ihr Beginn die Einsatzzeit.
     """
     return [(stelle, schritt) for stelle, schritt in enumerate(lauf.schritte)
@@ -77,7 +77,7 @@ def _beteiligte(arbeitsmappe: Arbeitsmappe, punkt: Programmpunkt,
     """
     Die Fahrzeuge, die zu dieser Lage fahren, mit ihrer tatsächlichen Stärke und Zeit.
 
-    Der EZP ist die geschätzte Fahrzeit dieses Fahrzeugs zur Lage — dieselbe Luftlinienrechnung
+    Der EZP ist die geschätzte Fahrzeit dieses Fahrzeugs zur Lage – dieselbe Luftlinienrechnung
     wie im Ablaufplan. Ohne Koordinaten bleibt der Wert, den der Katalog führt.
     """
     koepfe = {person.id: person.anzahl for person in arbeitsmappe.kataloge.personen}
@@ -107,7 +107,7 @@ def _beteiligte(arbeitsmappe: Arbeitsmappe, punkt: Programmpunkt,
 def _alarmierte(gruppe: list[dict]) -> list[dict]:
     """
     Wer aus dieser Gruppe auf den Zettel kommt: die alarmierten Fahrzeuge, jedes einmal. Wer nur
-    Mimen bringt, steht am selben Ort und bleibt außen vor — er ist nicht alarmiert.
+    Mimen bringt, steht am selben Ort und bleibt außen vor – er ist nicht alarmiert.
     """
     gesehen: dict[str, dict] = {}
     for eintrag in gruppe:
@@ -119,13 +119,13 @@ def _alarmierte(gruppe: list[dict]) -> list[dict]:
 def _gruppen(beteiligte: list[dict]) -> list[list[dict]]:
     """
     Ein Einsatz ist die Lage, einmal gelaufen: zusammen gehört, wessen Zeiten sich überschneiden.
-    Ist zwischendurch niemand mehr da, ist der Einsatz zu Ende und der nächste fängt an — zwei
+    Ist zwischendurch niemand mehr da, ist der Einsatz zu Ende und der nächste fängt an – zwei
     Alarme nacheinander am selben Ort sind zwei Alarme, auch wenn sie auf dieselbe Lage zeigen.
     Die Überschneidung überträgt sich: A mit B und B mit C hält alle drei zusammen, auch wenn A
     und C einander nicht mehr berühren.
 
     Gruppiert wird über alle, die an der Lage stehen, und nicht nur über die Alarmierten: sonst
-    fiele der Einsatz auseinander, sobald ihn ein Fahrzeug ohne Aufgebot überbrückt — und die
+    fiele der Einsatz auseinander, sobald ihn ein Fahrzeug ohne Aufgebot überbrückt – und die
     Übersicht im Browser, die dieselbe Regel rechnet, zeigte etwas anderes als der Zettel.
     """
     gruppen: list[list[dict]] = []
@@ -243,7 +243,7 @@ def mit_plan(arbeitsmappe: Arbeitsmappe, punkte: dict | None = None) -> Arbeitsm
     Die Arbeitsmappe, wie sie zu drucken ist: aus jedem Alarm, auf den eine Lage zeigt, wird ein
     Zettel je beteiligtem Fahrzeug.
 
-    Hängt an der Lage noch kein Fahrzeug, bleibt der Zettel der getippte — bis auf die Adresse,
+    Hängt an der Lage noch kein Fahrzeug, bleibt der Zettel der getippte – bis auf die Adresse,
     die der Ort der Lage ohnehin weiß. Ein leeres Aufgebot zu drucken hieße, den Zettel an
     niemanden zu adressieren, und der Zwischenzustand „Lage angelegt, Ketten noch nicht“ ist
     beim Planen der Normalfall.

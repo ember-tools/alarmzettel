@@ -1,7 +1,7 @@
 """
 The Berlin address list: downloaded once, then queried locally.
 
-The source is the city's address WFS — some 400 000 points carrying street, house number,
+The source is the city's address WFS – some 400 000 points carrying street, house number,
 postcode, Ortsteil and the official coordinates in ETRS89 / UTM 33N. It is not committed and not
 part of the image: the server fetches it into a cache the first time it gets the chance, and
 again once the copy grows old. Nothing about startup depends on it. Until a download has
@@ -94,7 +94,7 @@ class Adressen:
     def _zerlegen(cls, text: str) -> tuple[str, str]:
         """
         Splits "Archenholdstr 21" into the street and the house number, so one field can carry a
-        whole address. A trailing word that is not a number stays part of the name — "Straße des
+        whole address. A trailing word that is not a number stays part of the name – "Straße des
         17. Juni" is a street, not a street and a number.
         """
         treffer = cls.ANGEHAENGT.match(text.strip())

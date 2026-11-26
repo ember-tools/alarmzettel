@@ -62,7 +62,7 @@ def _stichwort(alarm: Alarm, stichwoerter: dict[str, str]) -> str:
 
 def _anfahrt(alarm: Alarm) -> Adresse:
     """
-    Wohin gefahren wird, ist die Einsatzadresse — außer jemand hat ausdrücklich eine andere
+    Wohin gefahren wird, ist die Einsatzadresse – außer jemand hat ausdrücklich eine andere
     Anfahrtsadresse eingetragen. Zwei Felder, die fast immer dasselbe tragen, würden sonst
     zweimal getippt und einmal vergessen.
     """

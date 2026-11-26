@@ -148,7 +148,7 @@ fall('Jeder Tag bekommt sein eigenes Bild', () => {
     const gesetzt = daten({fahrzeuge: [fahrzeug('f-lhf', 'LHF')], laeufe: [kette]})
     return [
         ['zwei Tage', bewegungstage(gesetzt).join(','), '2026-09-19,2026-09-20'],
-        ['und je Tag, was an ihm geschieht — auch die Wache, von der die Anfahrt herführt',
+        ['und je Tag, was an ihm geschieht – auch die Wache, von der die Anfahrt herführt',
             bewegungsbild(gesetzt, '2026-09-20').baender.map(b => b.name).join(','),
             'Wache Nord,Kindergarten'],
     ]
@@ -227,7 +227,7 @@ fall('Die nächsten Ereignisse stehen in der Reihenfolge, in der sie eintreten',
     ]
 })
 
-fall('Material liegt irgendwo oder ist unterwegs — der Plan sagt es von selbst', () => {
+fall('Material liegt irgendwo oder ist unterwegs – der Plan sagt es von selbst', () => {
     const kette = lauf({fahrzeugId: 'f-lhf'}, [
         schritt('aufenthalt', '08:00', '08:30', 'o-nord', {material: [posten('m-puppe', 4)]}),
         schritt('fahrt', '08:30', '08:50', 'o-sued', {material: [posten('m-puppe', 4)]}),
@@ -253,7 +253,7 @@ fall('Material liegt irgendwo oder ist unterwegs — der Plan sagt es von selbst
     ]
 })
 
-// Der Berliner Adressdienst gibt dieselben Punkte in beiden Systemen aus; das sind die Zahlen.
+/** Points the Berlin address service gives in both coordinate systems; these are its numbers. */
 const KOORDINATEN = [
     ['Junker-Jörg-Straße 36', {ostwert: 399598.791, nordwert: 5815944.114}, 52.48439726, 13.52144944],
     ['Archenholdstraße 21', {ostwert: 398470.239, nordwert: 5818552.633}, 52.50763155, 13.50404047],

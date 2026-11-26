@@ -14,24 +14,36 @@ import {
     type Arbeitsmappe,
     type Kataloge,
 } from '../interfaces/Alarm'
+import {parsedOr, storeQuietly} from './browserStorage'
 
 const STORAGE_KEY = 'alarmzettel_arbeitsmappe'
 
+/** The workbook this browser kept; a blocked, corrupt or empty store starts with an empty one. */
 function laden(): Arbeitsmappe {
+    const roh = parsedOr<unknown>(() => localStorage.getItem(STORAGE_KEY), null)
     try {
-        const roh = localStorage.getItem(STORAGE_KEY)
-        if (roh) return uebernehmen(JSON.parse(roh))
-    } catch { /* a blocked or corrupt store simply starts empty */ }
-    return leereArbeitsmappe()
+        return roh ? uebernehmen(roh) : leereArbeitsmappe()
+    } catch {
+        return leereArbeitsmappe()
+    }
 }
 
-/** Fills in whatever an older or hand-edited file leaves out, so the editor never sees holes. */
+/**
+ * Fills in whatever an older or hand-edited file leaves out, so the editor never sees holes.
+ *
+ * A file written before vehicles carried their strength lists bare Funkrufnamen. A file written
+ * before either catalogue had an identity of its own knew Stichwörter as bare strings and vehicles
+ * by their Funkrufname: both get an id here, and the Alarme that use them are pointed at it, so a
+ * later rename reaches the sheets already written. Matching on the text is only safe this once;
+ * from then on the id is the link. Orte once lived in the plan; they belong to the station rather
+ * than to one exercise day, so they move into the catalogue once, and the steps only point at their
+ * id anyway.
+ */
 export function uebernehmen(roh: unknown): Arbeitsmappe {
     const leer = leereArbeitsmappe()
     const quelle = (roh ?? {}) as Partial<Arbeitsmappe> & {kataloge?: {funkrufnamen?: string[]}}
     const kataloge = {...leer.kataloge, ...(quelle.kataloge ?? {})}
 
-    // A file written before vehicles carried their strength lists bare Funkrufnamen.
     const alteNamen = quelle.kataloge?.funkrufnamen
     if (Array.isArray(alteNamen) && !quelle.kataloge?.fahrzeuge?.length) {
         kataloge.fahrzeuge = alteNamen.map(funkrufname => ({
@@ -40,10 +52,6 @@ export function uebernehmen(roh: unknown): Arbeitsmappe {
         }))
     }
 
-    // A file written before either catalogue had an identity of its own: Stichwörter were bare
-    // strings and vehicles were known by their Funkrufname. Both get an id here, and the Alarme
-    // that use them are pointed at it, so a later rename reaches the sheets that were already
-    // written. Matching on the text is only safe this once — from now on the id is the link.
     kataloge.stichwoerter = (kataloge.stichwoerter ?? []).map(eintrag =>
         typeof eintrag === 'string'
             ? {id: crypto.randomUUID(), text: eintrag}
@@ -51,8 +59,6 @@ export function uebernehmen(roh: unknown): Arbeitsmappe {
     kataloge.fahrzeuge = kataloge.fahrzeuge.map(vorlage =>
         ({...vorlage, id: vorlage.id || crypto.randomUUID()}))
 
-    // Orte standen einmal im Plan. Sie gehören der Wache und nicht dem einzelnen Übungstag, also
-    // ziehen sie einmalig in den Katalog um; die Schritte zeigen ohnehin nur auf ihre id.
     const alteOrte = (quelle.planung as {orte?: Ort[]} | undefined)?.orte
     kataloge.orte = (kataloge.orte?.length ? kataloge.orte : alteOrte ?? [])
         .map(ort => ({...ort, adresse: {...leereAdresse(), ...ort.adresse}}))
@@ -95,7 +101,7 @@ function katalogFuellen(kataloge: Kataloge, quelle?: Partial<Planung>) {
 /**
  * Füllt den Plan auf, was eine Datei oder ein Abgleich weggelassen hat.
  *
- * Eine Menge, die leer ist, hat keinen einzigen Pfad — eine Person ohne Rollen kommt deshalb ganz
+ * Eine Menge, die leer ist, hat keinen einzigen Pfad – eine Person ohne Rollen kommt deshalb ganz
  * ohne `rollen` zurück. Der Editor darf darauf nicht stoßen, also wird hier jeder Eintrag auf
  * seine volle Form gebracht, so wie es die Alarme längst tun.
  *
@@ -145,7 +151,7 @@ function verweiseHerstellen(mappe: Arbeitsmappe): Arbeitsmappe {
 /**
  * A working set written before vehicles referred to the catalogue carries its values copied into
  * every Alarm. Clearing the ones that still match turns those copies back into references
- * without changing a single printed sheet — the value is the same either way, it just starts
+ * without changing a single printed sheet – the value is the same either way, it just starts
  * following the catalogue again. Anything that differs was meant as an override and stays.
  */
 function katalogVerknuepfen(mappe: Arbeitsmappe): Arbeitsmappe {
@@ -189,9 +195,7 @@ function sortierungSetzen(mappe: Arbeitsmappe): Arbeitsmappe {
 export const arbeitsmappe = reactive<Arbeitsmappe>(laden())
 
 watch(arbeitsmappe, (wert) => {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(wert))
-    } catch { /* nothing to do if the browser refuses to store */ }
+    storeQuietly(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(wert)))
 }, {deep: true})
 
 export function ersetzen(neu: Arbeitsmappe) {
@@ -210,6 +214,7 @@ export function alarmAnlegen(): Alarm {
     return alarm
 }
 
+/** A copy of an Alarm whose entries get their own identity, or the merge would treat them as the originals. */
 export function alarmKopieren(id: string): Alarm | undefined {
     const vorlage = alarmFinden(id)
     if (!vorlage) return undefined
@@ -217,7 +222,6 @@ export function alarmKopieren(id: string): Alarm | undefined {
     kopie.id = crypto.randomUUID()
     kopie.sortierung = vorlage.sortierung + 0.5
     kopie.einsatzNr = String(arbeitsmappe.alarme.length)
-    // Copied entries need their own identity, or the merge would treat them as the originals.
     for (const hinweis of kopie.hinweise) hinweis.id = crypto.randomUUID()
     for (const gruppe of kopie.einsatzmittel) {
         gruppe.id = crypto.randomUUID()
@@ -280,7 +284,7 @@ export function stichwortIdFuer(text: string): string {
 
 /**
  * The catalogue entry for this Stichwort, adding it if it is new. A word typed for the first
- * time joins the catalogue, so it is offered next time and can be corrected in one place later —
+ * time joins the catalogue, so it is offered next time and can be corrected in one place later –
  * which only works if the Alarm points at an entry rather than merely spelling the same word.
  */
 export function stichwortSichern(text: string): string {
@@ -294,7 +298,7 @@ export function stichwortSichern(text: string): string {
 }
 
 /**
- * Eine Adresse, die in einem Alarm entsteht, wird ein Ort im Katalog — so, wie ein neu
+ * Eine Adresse, die in einem Alarm entsteht, wird ein Ort im Katalog – so, wie ein neu
  * geschriebenes Stichwort und ein neuer Funkrufname dort landen. Damit steht der Einsatzort für
  * die Ablaufplanung bereit, ohne ihn ein zweites Mal einzutippen.
  *
@@ -328,7 +332,7 @@ export function funkrufnameVorschlaege(): string[] {
 
 /**
  * The catalogue entry a vehicle stands for: the one it points at, or failing that the one whose
- * Funkrufname it reads like — a vehicle typed by hand or imported from a spreadsheet has no id.
+ * Funkrufname it reads like – a vehicle typed by hand or imported from a spreadsheet has no id.
  */
 export function fahrzeugvorlage(fahrzeug: {vorlageId?: string, funkrufname: string}) {
     if (fahrzeug.vorlageId) {

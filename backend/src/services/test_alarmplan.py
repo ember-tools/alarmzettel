@@ -122,7 +122,7 @@ class EinsatznummerTest(unittest.TestCase):
         return [alarm.einsatzNr for alarm in mit_plan(mappe).alarme if alarm.id != "a-frei"]
 
     def test_acht_uhr_dreissig_bei_2200_alarmen(self):
-        """Beide Blätter desselben Alarms tragen dieselbe Nummer — die des ersten, der losfährt."""
+        """Beide Blätter desselben Alarms tragen dieselbe Nummer – die des ersten, der losfährt."""
         self.assertEqual(["779", "779"], self.nummern(alarmeProTag=2200))
 
     def test_ohne_angabe_bleibt_die_getippte_nummer(self):
@@ -209,7 +209,7 @@ class BlaetterTest(unittest.TestCase):
 
 
 class AnfahrtTest(unittest.TestCase):
-    """Die Einsatzzeit ist der Beginn der Anfahrt — sofern es eine gibt."""
+    """Die Einsatzzeit ist der Beginn der Anfahrt – sofern es eine gibt."""
 
     def zeit(self, planung: dict) -> str:
         return mit_plan(mappe(planung=planung)).alarme[0].einsatzZeit
@@ -276,7 +276,7 @@ class VorbereitungTest(unittest.TestCase):
 
 
 class ZweiLagenTest(unittest.TestCase):
-    """Am selben Ort laufen zwei Lagen nacheinander — jede hat ihren eigenen Zettel."""
+    """Am selben Ort laufen zwei Lagen nacheinander – jede hat ihren eigenen Zettel."""
 
     def alarme(self):
         punkte = [

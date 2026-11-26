@@ -119,7 +119,7 @@ class Materialvorlage(BaseModel):
     id: str = Field(default_factory=_kennung)
     name: str = ""
     """
-    Wie viel davon überhaupt da ist. Null heißt nicht erfasst — dann wird auch nicht gezählt,
+    Wie viel davon überhaupt da ist. Null heißt nicht erfasst – dann wird auch nicht gezählt,
     ob der Plan mehr verplant, als es gibt.
     """
     bestand: int = 0
@@ -140,7 +140,7 @@ class Kataloge(Modell):
     status: list[str] = []
     trupp: list[str] = []
     """
-    Die angelegten Orte. Ein Ort gehört der Wache und nicht einem einzelnen Übungstag — deshalb
+    Die angelegten Orte. Ein Ort gehört der Wache und nicht einem einzelnen Übungstag – deshalb
     steht er hier neben den Fahrzeugen und nicht im Plan.
     """
     orte: list[Ort] = []
@@ -148,7 +148,7 @@ class Kataloge(Modell):
     material: list[Materialvorlage] = []
     """
     Die Tage der Veranstaltung, das Personal und die Wörter, aus denen sich seine Rollen und
-    Fahrerlaubnisklassen zusammensetzen. Alles, was die Wache dauerhaft führt, steht hier —
+    Fahrerlaubnisklassen zusammensetzen. Alles, was die Wache dauerhaft führt, steht hier –
     damit es an einem Ort steht und nicht an zweien.
     """
     tage: list[Tag] = []
@@ -171,7 +171,7 @@ class Kataloge(Modell):
     def alle_orte(self) -> list[Ort]:
         """
         Die Dienststelle zuerst, dann die angelegten. Sie ist kein Eintrag, den jemand anlegt,
-        sondern einer, den es gibt, solange die Wache eine Adresse hat — und deshalb auch keiner,
+        sondern einer, den es gibt, solange die Wache eine Adresse hat – und deshalb auch keiner,
         den man löschen kann.
         """
         dienststelle = Ort(id=DIENSTSTELLE, sortierung=-1,
@@ -187,7 +187,7 @@ class Arbeitsmappe(BaseModel):
     def _orte_in_den_katalog(cls, werte: Any) -> Any:
         """
         Orte standen einmal im Plan. Sie gehören der Wache und nicht dem einzelnen Übungstag,
-        also ziehen sie einmalig in den Katalog um — die Schritte zeigen ohnehin nur auf ihre id.
+        also ziehen sie einmalig in den Katalog um – die Schritte zeigen ohnehin nur auf ihre id.
         """
         if not isinstance(werte, dict):
             return werte

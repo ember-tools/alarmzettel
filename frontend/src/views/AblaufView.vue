@@ -11,6 +11,7 @@ import {fehlertext, renderAblaufplan, renderAblaufplanZip, renderAlle} from '../
 import {arbeitsmappe} from '../store/arbeitsmappe'
 import {alleOrte, entfernen, laufAnlegen, laufVon, personName, punkteLaden} from '../store/planung'
 import {jetztAbgleichen} from '../store/sync'
+import {storedOr, storeQuietly} from '../store/browserStorage'
 import {sitzung} from '../store/sitzung'
 
 watch(() => alleOrte().map(ort => Object.values(ort.adresse).join()).join('|'),
@@ -36,7 +37,7 @@ function offen(fuer: {fahrzeugId?: string, personId?: string}): boolean {
 /** Geplant wird in den Ketten; die drei anderen Ansichten sind dieselben Daten von anderer Seite. */
 /**
  * Bild und Karte bringen ihre Zeichenbibliotheken mit und werden deshalb erst geladen, wenn
- * jemand sie auch aufschlägt — der Rest der Seite soll davon nichts merken.
+ * jemand sie auch aufschlägt – der Rest der Seite soll davon nichts merken.
  */
 const BewegungsBild = defineAsyncComponent(
     () => import('../components/planung/BewegungsBild.vue'))
@@ -48,17 +49,18 @@ type Ansicht = typeof ANSICHTEN[number]
 const SPEICHER = 'alarmplaner_ablaufansicht'
 
 /**
- * Dieselben Daten von sieben Seiten; keine ist die richtige. Womit jemand arbeitet, merkt sich
- * der Browser — es gehört zu ihm und nicht zur Arbeitsmappe, so wie das Farbthema.
+ * The same data from seven sides; none is the right one. Which one someone works with is
+ * remembered by the browser, since it belongs to the browser and not to the workbook, like the
+ * colour theme. A browser that cannot store it simply starts with the day plan each time.
  */
 function gemerkteAnsicht(): Ansicht {
-  const gemerkt = localStorage.getItem(SPEICHER) as Ansicht | null
-  return gemerkt && ANSICHTEN.includes(gemerkt) ? gemerkt : 'tag'
+  const gemerkt = storedOr(() => localStorage.getItem(SPEICHER), 'tag') as Ansicht
+  return ANSICHTEN.includes(gemerkt) ? gemerkt : 'tag'
 }
 
 const ansicht = ref<Ansicht>(gemerkteAnsicht())
 
-/** Wer nur zusieht, bekommt die Ketten nicht — dort wird gearbeitet, nicht gelesen. */
+/** Wer nur zusieht, bekommt die Ketten nicht – dort wird gearbeitet, nicht gelesen. */
 const reiter = computed<readonly Ansicht[]>(() =>
     sitzung.nurLesen ? ANSICHTEN.filter(name => name !== 'ketten') : ANSICHTEN)
 
@@ -66,11 +68,8 @@ watch(reiter, liste => {
   if (!liste.includes(ansicht.value)) ansicht.value = liste[0] ?? 'tag'
 }, {immediate: true})
 
-watch(ansicht, gewaehlt => {
-  try {
-    localStorage.setItem(SPEICHER, gewaehlt)
-  } catch { /* ein Browser ohne Speicher fängt eben jedes Mal beim Tagesplan an */ }
-})
+watch(ansicht, gewaehlt => storeQuietly(() => localStorage.setItem(SPEICHER, gewaehlt)))
+
 const fehler = ref<string | null>(null)
 
 /**
@@ -124,7 +123,7 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
     <p v-if="fehler" class="text-(--eb-signal-text) text-sm">{{ fehler }}</p>
 
     <div class="flex flex-wrap gap-2">
-      <UButton size="sm" v-for="name in reiter" :key="name"
+      <UButton v-for="name in reiter" :key="name" size="sm"
                :color="ansicht === name ? 'primary' : 'neutral'" :variant="ansicht === name ? 'solid' : 'outline'" @click="ansicht = name">
         {{ t(`ablauf.ansicht.${name}`) }}
       </UButton>
@@ -145,15 +144,15 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
     <section class="panel">
       <h2 class="section-title">{{ t('ablauf.einplanen') }}</h2>
       <div class="flex flex-wrap gap-2">
-        <UButton size="sm" color="neutral" variant="outline" v-for="fahrzeug in arbeitsmappe.kataloge.fahrzeuge.filter(v => offen({fahrzeugId: v.id}))"
-                :key="fahrzeug.id"
-                @click="einplanen({fahrzeugId: fahrzeug.id})">
+        <UButton v-for="fahrzeug in arbeitsmappe.kataloge.fahrzeuge.filter(v => offen({fahrzeugId: v.id}))"
+                 :key="fahrzeug.id" size="sm" color="neutral" variant="outline"
+                 @click="einplanen({fahrzeugId: fahrzeug.id})">
           <UIcon name="i-lucide-plus"/>
           {{ fahrzeug.funkrufname || t('ablauf.ohneName') }}
         </UButton>
-        <UButton size="sm" color="neutral" variant="outline" v-for="person in arbeitsmappe.kataloge.personen.filter(p => offen({personId: p.id}))"
-                :key="person.id"
-                @click="einplanen({personId: person.id})">
+        <UButton v-for="person in arbeitsmappe.kataloge.personen.filter(p => offen({personId: p.id}))"
+                 :key="person.id" size="sm" color="neutral" variant="outline"
+                 @click="einplanen({personId: person.id})">
           <UIcon name="i-lucide-plus"/>
           {{ person.name || t('ablauf.ohneName') }}
         </UButton>
@@ -165,7 +164,7 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
       {{ t('ablauf.keineKetten') }}
     </p>
 
-    <CollapsibleSection storage-key="alarmplaner_kataloge" v-for="lauf in arbeitsmappe.planung.laeufe" :key="lauf.id"
+    <CollapsibleSection v-for="lauf in arbeitsmappe.planung.laeufe" :key="lauf.id" storage-key="alarmplaner_kataloge"
                     :name="`kette-${lauf.id}`" :title="beschriftung(lauf)"
                     :icon="lauf.fahrzeugId ? 'i-lucide-table' : 'i-lucide-users'"
                     :count="lauf.schritte.length" default-open>

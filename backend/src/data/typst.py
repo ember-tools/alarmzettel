@@ -89,7 +89,7 @@ LEERER_PLAN = {"personen": [], "fahrzeuge": [], "gesamt": {"bloecke": []}}
 
 def _dateiname(name: str, art: str) -> str:
     """
-    Ein Name, den jedes Dateisystem annimmt. Umlaute bleiben — der Zettel gehört einem Menschen,
+    Ein Name, den jedes Dateisystem annimmt. Umlaute bleiben – der Zettel gehört einem Menschen,
     und „Jörg“ soll auch so heißen.
     """
     sauber = "".join("-" if zeichen in '/\\:*?"<>|' or zeichen.isspace() else zeichen

@@ -1,6 +1,6 @@
 /**
  * Anything that sits in a list carries an id and a sort key. Two people editing one Alarm touch
- * different entries far more often than the same one, so the merge works per entry — which needs
+ * different entries far more often than the same one, so the merge works per entry – which needs
  * an identity that survives a reorder. The sort key is fractional: an entry moved between two
  * others takes the value between theirs, so moving one thing never rewrites the rest.
  */
@@ -12,7 +12,7 @@ export interface Eintrag {
 /**
  * Eine Anschrift, und wahlweise der Punkt dazu: `koordinaten` hält „52.486300, 13.521500“ in
  * WGS 84, gesetzt auf der Karte. Steht dort etwas, gilt es und die Straße wird nicht
- * nachgeschlagen — für den Hof hinter dem Haus, die Wiese ohne Hausnummer, den Treffpunkt im
+ * nachgeschlagen – für den Hof hinter dem Haus, die Wiese ohne Hausnummer, den Treffpunkt im
  * Wald.
  */
 export interface Adresse {
@@ -41,7 +41,7 @@ export interface Fahrzeug extends Eintrag {
     staerke: string
     trupp: string
     hinweis: string
-    /** The vehicle this sheet is addressed to — printed on grey, and only ever one per Alarm. */
+    /** The vehicle this sheet is addressed to – printed on grey, and only ever one per Alarm. */
     alarmFuer: boolean
 }
 
@@ -117,7 +117,7 @@ export interface Materialvorlage {
     id: string
     name: string
     /**
-     * Wie viel davon überhaupt da ist. Null heißt nicht erfasst — dann wird auch nicht gezählt,
+     * Wie viel davon überhaupt da ist. Null heißt nicht erfasst – dann wird auch nicht gezählt,
      * ob der Plan mehr verplant, als es gibt.
      */
     bestand: number
@@ -135,7 +135,7 @@ export interface Kataloge {
     status: string[]
     trupp: string[]
     /**
-     * Die angelegten Orte. Ein Ort gehört der Wache und nicht einem einzelnen Übungstag —
+     * Die angelegten Orte. Ein Ort gehört der Wache und nicht einem einzelnen Übungstag –
      * deshalb steht er hier neben den Fahrzeugen und nicht im Plan.
      */
     orte: Ort[]
@@ -143,7 +143,7 @@ export interface Kataloge {
     material: Materialvorlage[]
     /**
      * Die Tage der Veranstaltung, das Personal und die Wörter, aus denen sich seine Rollen und
-     * Fahrerlaubnisklassen zusammensetzen. Alles, was die Wache dauerhaft führt, steht hier —
+     * Fahrerlaubnisklassen zusammensetzen. Alles, was die Wache dauerhaft führt, steht hier –
      * damit es an einem Ort steht und nicht an zweien.
      */
     tage: Tag[]

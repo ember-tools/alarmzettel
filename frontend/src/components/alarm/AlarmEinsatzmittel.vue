@@ -34,7 +34,7 @@ function fahrzeugEntfernen(gruppe: number, fahrzeug: number) {
 }
 
 /**
- * What this vehicle prints, catalogue included — shown as the placeholder of every field the
+ * What this vehicle prints, catalogue included – shown as the placeholder of every field the
  * Alarm leaves empty, so the sheet holds no value the editor does not show.
  */
 function werte(fahrzeug: Fahrzeug) {
@@ -76,7 +76,7 @@ function alarmFuerWaehlen(gruppe: number, fahrzeug: number) {
   <section class="panel">
     <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
       <h2 class="section-title">{{ t('abschnitt.einsatzmittel') }}</h2>
-      <UButton size="sm" color="neutral" variant="outline" v-if="!ausPlan" @click="gruppeHinzufuegen">
+      <UButton v-if="!ausPlan" size="sm" color="neutral" variant="outline" @click="gruppeHinzufuegen">
         <UIcon name="i-lucide-plus"/>
         {{ t('einsatzmittel.gruppeNeu') }}
       </UButton>

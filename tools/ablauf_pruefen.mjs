@@ -1,7 +1,7 @@
 /**
  * Prüft die Ableitung des Ablaufplans: den Personenplan, die Ortssicht und die acht Prüfungen.
  *
- * Der Personenplan wird nirgends gepflegt, sondern gerechnet — er ist damit genau so richtig wie
+ * Der Personenplan wird nirgends gepflegt, sondern gerechnet – er ist damit genau so richtig wie
  * diese Rechnung. Und die Prüfungen sind der Grund, warum der Plan überhaupt hier und nicht in
  * einer Tabelle entsteht. Beides gehört geprüft, ohne dafür einen Browser zu starten: das Modul
  * kennt weder Store noch Vue, also lässt es sich bündeln und direkt aufrufen.

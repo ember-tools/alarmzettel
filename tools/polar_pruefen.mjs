@@ -1,7 +1,7 @@
 /**
  * Checks the Polar-Koordinaten against the values a real slip carries.
  *
- * The rule was not documented anywhere — it was recovered from two printed slips by solving for
+ * The rule was not documented anywhere – it was recovered from two printed slips by solving for
  * the point both bearings and distances agree on, which turned out to be the station itself. That
  * makes these numbers the only specification there is, so they are worth a test.
  *
@@ -22,16 +22,19 @@ const gebaut = await build({
 const {polarKoordinaten} = await import(
     'data:text/javascript;base64,' + Buffer.from(gebaut.outputFiles[0].text).toString('base64'))
 
-// Feuerwache Karlshorst, Junker-Jörg-Straße 36, from the Berlin address register.
+/** Feuerwache Karlshorst, Junker-Jörg-Straße 36, from the Berlin address register. */
 const WACHE = {ostwert: 399598.791, nordwert: 5815944.114}
 
+/**
+ * The cases checked against printed slips. The Archenholdstraße slip prints 336,6°/2,849 km: the
+ * bearing matches to the digit, and the seven metres are the difference between the register's
+ * point for the station and whatever the dispatch system measures from, below what the sheet
+ * would show as a change in bearing.
+ */
 const FAELLE = [
     {
         was: 'Archenholdstraße 21, 10315',
         ziel: {ostwert: 398470.239, nordwert: 5818552.633},
-        // The slip prints 336,6°/2,849 km. The bearing matches to the digit; the seven metres are
-        // the difference between the register's point for the station and whatever the dispatch
-        // system measures from, and are below what the sheet would show as a change in bearing.
         erwartet: '336,6°/2,842 km',
     },
     {

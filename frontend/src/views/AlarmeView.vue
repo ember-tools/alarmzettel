@@ -26,20 +26,23 @@ function anlegen() {
   router.push(`/alarm/${alarmAnlegen().id}`)
 }
 
+/**
+ * Saves the workbook after an exchange, so the file holds what everyone has. Outside a shared
+ * session the exchange does nothing.
+ */
 async function herunterladen() {
-  // Exchanged first, so the saved file holds what everyone has. Outside a shared workspace this
-  // does nothing.
   await jetztAbgleichen()
   speichern(new Blob([JSON.stringify(arbeitsmappe, null, 2)], {type: 'application/json'}),
       'alarmplaner.json')
 }
 
+/**
+ * Prints all sheets after an exchange, so they show what everyone has rather than what this
+ * browser happened to see a few seconds ago. Outside a shared session the exchange does nothing.
+ */
 async function pdf() {
   fehler.value = null
   try {
-    // Exchanged first, so the sheets are printed from what everyone has rather than from what
-    // this browser happened to see a few seconds ago. Outside a shared workspace this does
-    // nothing.
     await jetztAbgleichen()
     speichern(await renderAlle(), 'alarmzettel.pdf')
   } catch (error) {
@@ -125,9 +128,10 @@ async function laden(event: Event) {
       </div>
     </div>
 
-    <input ref="datei" type="file" accept="application/json" class="hidden" @change="laden"/>
-    <input ref="tabelle" type="file" class="hidden" @change="tabelleLaden"
-           accept=".ods,.xlsx,application/vnd.oasis.opendocument.spreadsheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+    <input ref="datei" type="file" accept="application/json" class="hidden" :aria-label="t('datei.hochladen')" @change="laden"/>
+    <input ref="tabelle" type="file" class="hidden" :aria-label="t('datei.tabelle')"
+           accept=".ods,.xlsx,application/vnd.oasis.opendocument.spreadsheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+           @change="tabelleLaden"/>
 
     <p v-if="meldung" class="text-sm text-muted">{{ meldung }}</p>
     <p v-if="fehler" class="text-sm text-(--eb-signal-text)">{{ fehler }}</p>

@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from 'vue'
+import {computed, onMounted, ref, useId, watch} from 'vue'
 import {t} from '../../i18n'
 import {codeAnzeige} from '../../scripts/code'
 import {ladeBaum, suchen} from '../../api/sna'
 import type {SnaBaum, SnaDisziplin, SnaSchritt, SnaTreffer} from '../../interfaces/Sna'
+
+/** The prefix of this instance's field ids, so labels find their fields when it appears more than once. */
+const fieldId = useId()
 
 const emit = defineEmits<{ schliessen: [], uebernehmen: [treffer: SnaTreffer, meldung: string] }>()
 
@@ -30,6 +33,16 @@ const knoten = computed(() => {
 })
 
 const amEnde = computed(() => knoten.value?.code !== undefined)
+
+/** The part of Nuxt UI's input that exposes the native element. */
+type InputHandle = { inputRef: HTMLInputElement | null }
+
+const inputField = ref<InputHandle | null>(null)
+
+/** A question that asks for typed input takes the focus, also when it follows another question. */
+watch(() => knoten.value?.eingabe, eingabe => {
+  if (eingabe) inputField.value?.inputRef?.focus()
+}, {flush: 'post'})
 
 const treffer = computed<SnaTreffer | null>(() => {
   const ziel = knoten.value
@@ -68,7 +81,7 @@ function antworten(label: string, aussage: string, ziel: string) {
 }
 
 /**
- * Takes a typed answer. Left empty the question is passed over — recorded where the gap itself
+ * Takes a typed answer. Left empty the question is passed over – recorded where the gap itself
  * says something, as an age asked for and not known does, and silently where it does not: not
  * every call happens on a floor.
  */
@@ -87,7 +100,7 @@ function eintragen() {
 
 /**
  * Steps back to the state before the given answer, so a wrong turn costs one click. Every step
- * carries the question it answered, so this is a lookup rather than a walk back down the graph —
+ * carries the question it answered, so this is a lookup rather than a walk back down the graph –
  * which also holds for a path that came out of the search and never passed some questions.
  */
 function zurueckZu(index: number) {
@@ -115,13 +128,13 @@ function ausSuche(gewaehlt: SnaTreffer) {
 /**
  * The numbered answers, as they will be written into the Hinweis. Choosing a discipline or a
  * protocol is a turn in the graph rather than something the caller said, so those steps carry no
- * statement and are not numbered — the Hinweis drops them too, and the two have to agree or the
+ * statement and are not numbered – the Hinweis drops them too, and the two have to agree or the
  * preview would promise a line the slip does not print.
  */
 const abfrageweg = computed(() => treffer.value?.pfad
     .filter(schritt => schritt.aussage.trim() && !schritt.eigen) ?? [])
 
-/** Answers that print as Hinweise of their own, above the code — where to go, before what for. */
+/** Answers that print as Hinweise of their own, above the code – where to go, before what for. */
 const eigeneHinweise = computed(() => treffer.value?.pfad
     .filter(schritt => schritt.eigen && schritt.aussage.trim()) ?? [])
 
@@ -144,8 +157,8 @@ watch(amEnde, (erreicht) => {
 
       <template v-else>
         <div class="mb-4">
-          <label class="field-label">{{ t('sna.suche') }}</label>
-          <UInput v-model="suchtext" type="text" :placeholder="t('sna.suchePlatzhalter')" class="w-full"/>
+          <label class="field-label" :for="`${fieldId}-search`">{{ t('sna.suche') }}</label>
+          <UInput :id="`${fieldId}-search`" v-model="suchtext" type="text" :placeholder="t('sna.suchePlatzhalter')" class="w-full"/>
           <ul v-if="gefunden.length" class="mt-2 grid gap-1 max-h-64 overflow-auto">
             <li v-for="fund in gefunden" :key="`${fund.disziplin.id}-${fund.code}-${fund.anlass}`">
               <button type="button"
@@ -195,8 +208,8 @@ watch(amEnde, (erreicht) => {
             <p class="font-condensed font-bold uppercase tracking-wide">{{ knoten.frage }}</p>
 
             <form v-if="knoten.eingabe" class="flex gap-2 flex-wrap" @submit.prevent="eintragen">
-              <UInput v-model="eingegeben" type="text"
-                      :placeholder="knoten.eingabe.platzhalter" autofocus class="grow min-w-40"/>
+              <UInput ref="inputField" v-model="eingegeben" type="text"
+                      :placeholder="knoten.eingabe.platzhalter" class="grow min-w-40"/>
               <UButton class="shrink-0" type="submit">
                 {{ eingegeben.trim() ? t('sna.weiter')
                    : (knoten.eingabe.leer?.label ?? t('sna.ueberspringen')) }}
@@ -225,8 +238,8 @@ watch(amEnde, (erreicht) => {
             </div>
 
             <div>
-              <label class="field-label">{{ t('sna.meldung') }}</label>
-              <UInput v-model="meldung" type="text" class="w-full"/>
+              <label class="field-label" :for="`${fieldId}-message`">{{ t('sna.meldung') }}</label>
+              <UInput :id="`${fieldId}-message`" v-model="meldung" type="text" class="w-full"/>
             </div>
 
             <div v-if="eigeneHinweise.length">

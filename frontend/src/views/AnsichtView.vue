@@ -11,7 +11,7 @@ import {jetztAbgleichen} from '../store/sync'
 
 /**
  * Die Arbeitsmappe zum Lesen: dieselben Angaben wie in den Editoren, nur als Seite. Das ist die
- * Ansicht hinter einem Lesen-Link — wer zusieht, will den Stand sehen und nicht in Felder blicken,
+ * Ansicht hinter einem Lesen-Link – wer zusieht, will den Stand sehen und nicht in Felder blicken,
  * in denen er ohnehin nichts ändern kann.
  */
 const ANSICHTEN = ['alarme', 'einsaetze', 'personen', 'orte'] as const
@@ -54,7 +54,7 @@ async function pdf() {
     <p v-if="fehler" class="text-sm text-(--eb-signal-text)">{{ fehler }}</p>
 
     <div v-if="reiter.length > 1" class="flex flex-wrap gap-2">
-      <UButton size="sm" v-for="name in reiter" :key="name"
+      <UButton v-for="name in reiter" :key="name" size="sm"
                :color="ansicht === name ? 'primary' : 'neutral'" :variant="ansicht === name ? 'solid' : 'outline'" @click="ansicht = name">
         {{ t(`ansicht.reiter.${name}`) }}
       </UButton>

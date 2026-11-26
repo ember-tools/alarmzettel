@@ -6,15 +6,15 @@ das Einzige, was zur Datei führt, deshalb ist es lang und zufällig; wer es hat
 schreiben. Eine Anmeldung gibt es nicht.
 
 Die Datei hält das Dokument als Merge-Fakten, nicht als fertige Arbeitsmappe, damit zwei
-gleichzeitige Schreiber beide Änderungen behalten — siehe data/dokument.py. Schreibvorgänge sind
+gleichzeitige Schreiber beide Änderungen behalten – siehe data/dokument.py. Schreibvorgänge sind
 je Sitzung durch das Schloss serialisiert, was die Revisionsnummern zu einer totalen Ordnung
 macht.
 
-Eine Sitzung läuft 30 Tage nach der letzten Benutzung ab, nicht nach dem Anlegen — was in
+Eine Sitzung läuft 30 Tage nach der letzten Benutzung ab, nicht nach dem Anlegen – was in
 Gebrauch ist, bleibt; was niemand öffnet, geht. Der Aufräumer löscht Zeile und Datei zusammen.
 
 **Der Speicher ist ein Cache, keine Ablage.** Die Platte ist die Wahrheit; geöffnete Sitzungen
-liegen zusätzlich im Speicher, weil sonst jede Abgleichsabfrage — alle drei Sekunden je Browser —
+liegen zusätzlich im Speicher, weil sonst jede Abgleichsabfrage – alle drei Sekunden je Browser –
 die Datei liest und parst. Wer eine Weile nicht angefasst wurde, fliegt raus und wird beim
 nächsten Zugriff wieder von der Platte gelesen. Verdrängung kann deshalb nie Daten kosten.
 
@@ -57,6 +57,14 @@ class SitzungFehler(RuntimeError):
 
 
 class Sitzungen:
+    """
+    The shared sessions: documents on disk, their rows in SQLite, and a small cache in memory.
+
+    There is one lock per session, so a busy session does not hold up the others; the outer lock
+    only guards handing these out. The cache keeps the most recently used last, so eviction takes
+    from the front.
+    """
+
     def __init__(self, verzeichnis: Path, tage: int,
                  cache_eintraege: int = 64, cache_minuten: int = 30):
         self._verzeichnis = verzeichnis
@@ -64,18 +72,15 @@ class Sitzungen:
         self._cache_eintraege = cache_eintraege
         self._cache_sekunden = cache_minuten * 60
         self._lock = threading.Lock()
-        # One lock per session, so a busy workspace does not hold up the others. The outer lock
-        # only guards handing these out.
         self._sperren: dict[str, threading.Lock] = defaultdict(threading.Lock)
-        # Zuletzt benutzt zuletzt: das Verdrängen nimmt vom Anfang.
         self._cache: OrderedDict[str, tuple[Dokument, float]] = OrderedDict()
         self._cache_lock = threading.Lock()
         self._umbenennen()
 
     def _spalte_lesetoken(self, db) -> None:
         """
-        Das Lesetoken kam später dazu. Eine Tabelle, die es noch nicht kennt — eine bestehende
-        Installation, oder die aus `freigaben` umbenannte —, bekommt die Spalte hier;
+        Das Lesetoken kam später dazu. Eine Tabelle, die es noch nicht kennt – eine bestehende
+        Installation, oder die aus `freigaben` umbenannte –, bekommt die Spalte hier;
         `CREATE TABLE IF NOT EXISTS` ergänzt eine vorhandene nicht. Der Index folgt danach,
         sonst zeigte er auf eine Spalte, die es in diesem Moment noch nicht gibt.
         """
@@ -110,14 +115,15 @@ class Sitzungen:
         """
         `with sqlite3.connect(...)` commits but never closes, which in a server that runs for
         weeks is a handle leak. This commits and closes.
+
+        The schema is ensured on every connection, not only at start: a volume emptied or
+        remounted under the running server must not take the service down. All of it is
+        idempotent and costs nothing next to reading the file.
         """
         self._verzeichnis.mkdir(parents=True, exist_ok=True)
         db = sqlite3.connect(self._verzeichnis / "freigaben.sqlite", timeout=10)
         try:
             db.execute("PRAGMA journal_mode=WAL")
-            # Bei jeder Verbindung, nicht nur beim Start: ein Volume, das unter dem laufenden
-            # Server geleert oder neu eingehängt wird, soll den Dienst nicht mitnehmen. Alles
-            # hier ist auf Wiederholung gebaut und kostet neben dem Dateilesen nichts.
             db.executescript(SCHEMA)
             self._spalte_lesetoken(db)
             yield db
@@ -180,9 +186,11 @@ class Sitzungen:
         return dokument
 
     def _schreiben(self, token: str, dokument: Dokument, alarme: int) -> None:
+        """
+        Stores a document. It is written beside the target and moved into place, so a crash
+        mid-write cannot leave a half-written document where a readable one used to be.
+        """
         roh = json.dumps(dokument.sichern(), ensure_ascii=False).encode("utf-8")
-        # Written beside the target and moved into place, so a crash mid-write cannot leave a
-        # half-written document where a readable one used to be.
         vorlaeufig = self._datei(token).with_suffix(".json.neu")
         vorlaeufig.write_bytes(roh)
         vorlaeufig.replace(self._datei(token))
@@ -207,7 +215,7 @@ class Sitzungen:
     def aufloesen(self, token: str) -> tuple[str, bool]:
         """
         Zu welcher Sitzung dieses Token gehört und ob es nur lesen darf. Ein unbekanntes Token
-        fliegt hier auf und nicht erst an der Datei — beides ist für den Aufrufer dasselbe: 404.
+        fliegt hier auf und nicht erst an der Datei – beides ist für den Aufrufer dasselbe: 404.
         """
         with self._verbindung() as db:
             zeile = db.execute(
@@ -220,7 +228,7 @@ class Sitzungen:
     def lesetoken(self, token: str) -> str:
         """
         Das Token, das nur lesen darf. Es entsteht, wenn es zum ersten Mal gebraucht wird, und
-        bleibt dann — ein Link, den man weitergegeben hat, soll nicht unter der Hand sterben.
+        bleibt dann – ein Link, den man weitergegeben hat, soll nicht unter der Hand sterben.
         """
         with self._sperre(token):
             with self._verbindung() as db:
@@ -254,7 +262,7 @@ class Sitzungen:
 
     def schreiben(self, token: str, aenderungen: list[dict], wer: str, seit: int) -> dict:
         """
-        Applies one client's batch and answers with everything it has not seen — including what
+        Applies one client's batch and answers with everything it has not seen – including what
         just arrived from someone else. Held under the share's lock, so two writers landing at
         the same moment are ordered rather than interleaved.
         """
@@ -274,7 +282,11 @@ class Sitzungen:
                                   (token,)).rowcount > 0
 
     def aufraeumen(self) -> int:
-        """Drops everything unread for longer than the retention, file and row together."""
+        """
+        Drops everything unread for longer than the retention, file and row together. A file
+        without a row is orphaned, by a crash between the write and the insert or a volume restored
+        from elsewhere; nothing can reach it, so it goes too.
+        """
         grenze = (_jetzt() - timedelta(days=self._tage)).isoformat()
         with self._lock:
             fort: list[str] = []
@@ -286,8 +298,6 @@ class Sitzungen:
                     self._datei(token).unlink(missing_ok=True)
                     db.execute("DELETE FROM sitzungen WHERE token = ?", (token,))
 
-            # A file without a row is orphaned - a crash between the write and the insert, or a
-            # volume restored from elsewhere. Nothing can reach it, so it goes too.
             with self._verbindung() as db:
                 bekannt = {z[0] for z in db.execute("SELECT token FROM sitzungen").fetchall()}
             for datei in self._verzeichnis.glob("*.json.neu"):
@@ -301,7 +311,7 @@ class Sitzungen:
         return len(abgelaufen)
 
     def im_speicher(self) -> int:
-        """Wie viele Sitzungen gerade im Cache liegen — für die Gesundheitsanzeige."""
+        """Wie viele Sitzungen gerade im Cache liegen – für die Gesundheitsanzeige."""
         with self._cache_lock:
             return len(self._cache)
 

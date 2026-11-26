@@ -11,10 +11,11 @@ import {mitte, utm33ZuWgs84} from '../../scripts/geo'
 import type {Ortsmarke} from '../../scripts/geo'
 import {alsMinuten, uhrzeit} from '../../scripts/zeit'
 import {MAP_LIMITS, TILE_LAYER_OPTIONS, TILE_URL} from '../../scripts/tiles'
+import {storedOr, storeQuietly} from '../../store/browserStorage'
 
 /**
  * Die Karte für den Ausführungstag: alle Orte, und darauf, wo jede Kette gerade ist. Der
- * Schieber verschiebt den dargestellten Zeitpunkt minutenweise, „Jetzt“ hängt ihn an die Uhr —
+ * Schieber verschiebt den dargestellten Zeitpunkt minutenweise, „Jetzt“ hängt ihn an die Uhr –
  * damit lässt sich der Tag durchfahren, bevor er läuft, und mitverfolgen, während er läuft.
  *
  * Ob die Karte der Uhr folgt, merkt sich der Browser: am Ausführungstag will man sie aufschlagen
@@ -27,10 +28,10 @@ const SPEICHER = 'alarmplaner_karte_folgt'
 const tage = computed(() => bewegungstage(plandaten()))
 const tag = ref('')
 const minute = ref(8 * 60)
-const folgt = ref(localStorage.getItem(SPEICHER) === 'ja')
+const folgt = ref(storedOr(() => localStorage.getItem(SPEICHER), 'nein') === 'ja')
 let uhr: ReturnType<typeof setInterval> | undefined
 
-/** Der heutige Tag, wie die Uhr an der Wand ihn zählt — nicht der, den UTC gerade hat. */
+/** Der heutige Tag, wie die Uhr an der Wand ihn zählt – nicht der, den UTC gerade hat. */
 function heutigerTag(): string {
   const jetzt = new Date()
   return `${jetzt.getFullYear()}-${String(jetzt.getMonth() + 1).padStart(2, '0')}-` +
@@ -41,6 +42,10 @@ const zeitpunkt = computed(() =>
     `${tag.value}T${String(Math.floor(minute.value / 60)).padStart(2, '0')}:` +
     String(Math.floor(minute.value % 60)).padStart(2, '0'))
 
+/**
+ * The stretch of the day the slider covers. The time shown always lies inside it, or the slider
+ * would stand at its stop while the map shows the time, and the two would say different things.
+ */
 const fenster = computed(() => {
   const zeiten = arbeitsmappe.planung.laeufe
       .flatMap(lauf => lauf.schritte)
@@ -48,8 +53,6 @@ const fenster = computed(() => {
       .flatMap(schritt => [alsMinuten(schritt.von), alsMinuten(schritt.bis)])
       .filter((wert): wert is number => wert !== null)
   const mitternacht = alsMinuten(`${tag.value}T00:00`) ?? 0
-  // Der gezeigte Zeitpunkt gehört immer ins Fenster: sonst stünde der Schieber am Anschlag,
-  // während die Karte die Uhrzeit zeigt, und beide sagten Verschiedenes.
   const gezeigt = minute.value
   if (!zeiten.length) return {von: Math.min(6 * 60, gezeigt), bis: Math.max(22 * 60, gezeigt)}
   return {
@@ -99,12 +102,12 @@ function jetztSetzen() {
 function folgenBeenden() {
   if (!folgt.value) return
   folgt.value = false
-  localStorage.setItem(SPEICHER, 'nein')
+  storeQuietly(() => localStorage.setItem(SPEICHER, 'nein'))
 }
 
 function folgenUmschalten() {
   folgt.value = !folgt.value
-  localStorage.setItem(SPEICHER, folgt.value ? 'ja' : 'nein')
+  storeQuietly(() => localStorage.setItem(SPEICHER, folgt.value ? 'ja' : 'nein'))
   if (folgt.value) jetztSetzen()
 }
 
@@ -189,11 +192,11 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
   <section class="panel">
     <div class="flex items-baseline gap-3 flex-wrap mb-3">
       <h2 class="section-title">{{ t('ablauf.karte') }}</h2>
-      <select v-if="tage.length > 1" v-model="tag" class="native-select w-auto">
+      <select v-if="tage.length > 1" v-model="tag" class="native-select w-auto" :aria-label="t('ablauf.chooseDay')">
         <option v-for="eintrag in tage" :key="eintrag" :value="eintrag">{{ eintrag }}</option>
       </select>
       <span v-else class="text-muted text-sm">{{ tag }}</span>
-      <span class="grow"></span>
+      <span class="grow" />
       <span class="tabular text-lg">{{ uhrzeit(zeitpunkt) }}</span>
       <UButton size="sm" :color="folgt ? 'primary' : 'neutral'" :variant="folgt ? 'solid' : 'outline'"
                @click="folgenUmschalten">
@@ -202,10 +205,10 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
     </div>
 
     <input v-model.number="minute" type="range" :min="fenster.von" :max="fenster.bis" step="1"
-           class="w-full mb-3" @input="folgenBeenden"/>
+           class="w-full mb-3" :aria-label="t('ablauf.mapTime')" @input="folgenBeenden"/>
 
     <div class="grid lg:grid-cols-[1fr_280px] gap-4 items-start">
-      <div ref="behaelter" class="h-[60vh] min-h-80 rounded border border-default"></div>
+      <div ref="behaelter" class="h-[60vh] min-h-80 rounded border border-default" />
 
       <div class="grid gap-2">
         <h3 class="eyebrow">{{ t('ablauf.naechste') }}</h3>
@@ -228,15 +231,15 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
 
         <template v-if="material.length">
           <h3 class="eyebrow mt-3">{{ t('ablauf.material') }}</h3>
-          <div v-for="stand in material" :key="stand.materialId" class="text-sm">
+          <div v-for="entry in material" :key="entry.materialId" class="text-sm">
             <UIcon name="i-lucide-package" class="text-muted mr-1"/>
-            <span v-if="stand.anzahl > 1" class="tabular">{{ t('ablauf.materialMenge', {n: stand.anzahl}) }}</span>
-            {{ stand.name }}
+            <span v-if="entry.anzahl > 1" class="tabular">{{ t('ablauf.materialMenge', {n: entry.anzahl}) }}</span>
+            {{ entry.name }}
             <span class="text-muted">
-              {{ stand.unterwegs
-                ? t('ablauf.materialUnterwegs', {womit: stand.traeger,
-                                                 wohin: ortName(stand.unterwegs.nachOrtId)})
-                : t('ablauf.materialAn', {wo: ortName(stand.ortId)}) }}
+              {{ entry.unterwegs
+                ? t('ablauf.materialUnterwegs', {womit: entry.traeger,
+                                                 wohin: ortName(entry.unterwegs.nachOrtId)})
+                : t('ablauf.materialAn', {wo: ortName(entry.ortId)}) }}
             </span>
           </div>
         </template>

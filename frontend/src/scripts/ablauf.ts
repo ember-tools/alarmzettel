@@ -3,7 +3,7 @@
  * Prüfungen.
  *
  * Gepflegt wird nur die Kette je Fahrzeug und je Person. Alles hier ist gerechnet und wird
- * nirgends gespeichert — zwei Pläne, die sich widersprechen könnten, gibt es damit nicht.
+ * nirgends gespeichert – zwei Pläne, die sich widersprechen könnten, gibt es damit nicht.
  *
  * Das Modul kennt weder Store noch Vue, damit dieselbe Rechnung die Oberfläche versorgt und in
  * `tools/ablauf_pruefen.mjs` außerhalb eines Browsers geprüft werden kann.
@@ -32,16 +32,16 @@ export interface Plandaten {
     fahrzeuge: Fahrzeugvorlage[]
     /** Die Orte des Katalogs, die Dienststelle voran. */
     orte: Ort[]
-    /** Das Personal des Katalogs — die Ketten zeigen nur auf seine Kennungen. */
+    /** Das Personal des Katalogs – die Ketten zeigen nur auf seine Kennungen. */
     personen: Person[]
-    /** Was die Wache an Material führt — wonach die Standorte benannt werden. */
+    /** Was die Wache an Material führt – wonach die Standorte benannt werden. */
     kataloge?: {material: Materialvorlage[]}
     /** Die Alarme, damit eine Lage den Namen ihres Alarmzettels tragen kann. */
     alarme?: {id: string, stichwort: string}[]
     punkte?: Record<string, Punkt>
 }
 
-/** Ein Schritt, wie er im Plan einer Person steht — mit dem Lauf, aus dem er stammt. */
+/** Ein Schritt, wie er im Plan einer Person steht – mit dem Lauf, aus dem er stammt. */
 export interface Personenschritt {
     lauf: Lauf
     schritt: Schritt
@@ -49,7 +49,7 @@ export interface Personenschritt {
     faehrt: boolean
     /**
      * Wo der Schritt anfängt: bei einer Fahrt der Ort des vorigen Schritts, bei einem Aufenthalt
-     * mit erzeugter Anfahrt der Ort, von dem diese Person kommt — stand sie schon am Ziel, ist
+     * mit erzeugter Anfahrt der Ort, von dem diese Person kommt – stand sie schon am Ziel, ist
      * es das Ziel selbst.
      */
     vonOrtId: string
@@ -62,7 +62,7 @@ export interface Personenschritt {
     ankunft: string
     /**
      * Wann sie wieder weg ist. Holt ein anderes Fahrzeug sie ab, während sie noch an einem
-     * Einsatz steht, endet ihre Zeit dort mit der Abholung — das Fahrzeug bleibt, sie nicht.
+     * Einsatz steht, endet ihre Zeit dort mit der Abholung – das Fahrzeug bleibt, sie nicht.
      */
     bis: string
 }
@@ -80,7 +80,7 @@ export interface Anfahrt {
     mittel: Mittel
 }
 
-/** Wer und was zu welcher Zeit an einem Ort ist. Fahrten zählen nicht — sie sind dazwischen. */
+/** Wer und was zu welcher Zeit an einem Ort ist. Fahrten zählen nicht – sie sind dazwischen. */
 export interface Ortsbelegung {
     lauf: Lauf
     schritt: Schritt
@@ -120,7 +120,7 @@ function name(daten: Plandaten, personId: string): string {
     return person(daten, personId)?.name ?? ''
 }
 
-/** Wie viele Köpfe eine Zeile bedeutet — „Mimen (4)“ zählt vier. */
+/** Wie viele Köpfe eine Zeile bedeutet – „Mimen (4)“ zählt vier. */
 function koepfe(daten: Plandaten, personId: string): number {
     return person(daten, personId)?.anzahl || 1
 }
@@ -128,7 +128,7 @@ function koepfe(daten: Plandaten, personId: string): number {
 /**
  * Wie eine Lage heißt: was an ihr steht, sonst das Stichwort ihres Alarms.
  *
- * Meist genügt das Stichwort, und dann bleibt die Bezeichnung leer — zweimal dasselbe zu pflegen
+ * Meist genügt das Stichwort, und dann bleibt die Bezeichnung leer – zweimal dasselbe zu pflegen
  * hieße, es widersprüchlich pflegen zu können. Wo es aber wie „[FR] RD1NC REA. [ERSTHELFER]“
  * aussieht, ist es im Plan schwer zu lesen; dann schreibt man einen Namen hin, und der gilt.
  */
@@ -164,7 +164,7 @@ export function mittelVon(lauf: Lauf, schritt: Schritt): Mittel {
  * Die Fahrt zu diesem Aufenthalt, sofern sie entsteht: der Schritt davor ist ein Aufenthalt an
  * einem anderen Ort. Steht dort eine eingetragene Fahrt, gilt die, und hier entsteht nichts.
  *
- * Sie beginnt, wenn der Aufenthalt beginnt — wer um 7:50 aufbricht und fünf Minuten braucht, ist
+ * Sie beginnt, wenn der Aufenthalt beginnt – wer um 7:50 aufbricht und fünf Minuten braucht, ist
  * um 7:55 da. Deshalb ist 7:50 auch die Einsatzzeit des Alarms, der an der Lage hängt.
  */
 export function anfahrt(daten: Plandaten, lauf: Lauf, schritt: Schritt): Anfahrt | null {
@@ -182,7 +182,7 @@ export function anfahrt(daten: Plandaten, lauf: Lauf, schritt: Schritt): Anfahrt
 
 /**
  * Wann für diesen Schritt aufgebrochen wird. Steht eine eingetragene Fahrt davor, die hierher
- * führt, ist es deren Beginn — sie ist die Anfahrt, und mit ihr fängt der Einsatz an.
+ * führt, ist es deren Beginn – sie ist die Anfahrt, und mit ihr fängt der Einsatz an.
  */
 export function aufbruch(lauf: Lauf, schritt: Schritt): string {
     const vorher = lauf.schritte[lauf.schritte.indexOf(schritt) - 1]
@@ -214,11 +214,11 @@ function nachZeit<T extends { von: string }>(eintraege: T[]): T[] {
  * Der Plan einer Person: alle Fahrzeugschritte, in deren Besatzung sie steht, plus die Schritte
  * ihrer eigenen Kette, nach Zeit sortiert. Er wird nirgends gepflegt, sondern hieraus gelesen.
  *
- * Die erzeugte Anfahrt fährt nur mit, wer vorher am Startort stand. Wer schon am Ziel wartet —
- * der Mime, der auf das Fahrzeug wartet — steigt dort zu, fährt nicht mit und ist mit dem
+ * Die erzeugte Anfahrt fährt nur mit, wer vorher am Startort stand. Wer schon am Ziel wartet –
+ * der Mime, der auf das Fahrzeug wartet – steigt dort zu, fährt nicht mit und ist mit dem
  * Beginn des Schritts da.
  *
- * Holt ein anderes Fahrzeug sie ab, ist sie ab dessen Aufbruch fort — auch mitten aus einem
+ * Holt ein anderes Fahrzeug sie ab, ist sie ab dessen Aufbruch fort – auch mitten aus einem
  * Einsatz heraus. Das Fahrzeug bleibt stehen, seine Zeit gilt weiter; ihre endet dort.
  */
 export function personenplan(daten: Plandaten, personId: string): Personenschritt[] {
@@ -267,7 +267,7 @@ export function mitfahrer(daten: Plandaten, lauf: Lauf, schritt: Schritt): strin
         .some(eintrag => eintrag.schritt.id === schritt.id && eintrag.vonOrtId === weg.vonOrtId))
 }
 
-/** Wer und was an diesem Ort steht, nach Zeit sortiert — die Ortssicht. */
+/** Wer und was an diesem Ort steht, nach Zeit sortiert – die Ortssicht. */
 export function ortssicht(daten: Plandaten, ortId: string): Ortsbelegung[] {
     const belegungen: Ortsbelegung[] = []
     for (const lauf of daten.planung.laeufe) {
@@ -288,7 +288,7 @@ export function ortssicht(daten: Plandaten, ortId: string): Ortsbelegung[] {
 export interface Beteiligter {
     lauf: Lauf
     schritt: Schritt
-    /** Wann er aufbricht — bei einem Fahrzeug die Einsatzzeit seines Zettels. */
+    /** Wann er aufbricht – bei einem Fahrzeug die Einsatzzeit seines Zettels. */
     aufbruch: string
     /** Das Zeitfenster des Schritts. Daran hängt, was zu einem Einsatz zusammengehört. */
     von: string
@@ -309,7 +309,7 @@ export interface Einsatz {
     /** Der wievielte Einsatz dieser Lage. Zwei nacheinander sind zwei. */
     nummer: number
     ortId: string
-    /** Früheste Abfahrt — die Einsatzzeit. */
+    /** Früheste Abfahrt – die Einsatzzeit. */
     von: string
     /** Früheste Ankunft: ab hier geschieht am Ort etwas. */
     da: string
@@ -319,13 +319,13 @@ export interface Einsatz {
 }
 
 /**
- * Alle Einsätze des Plans, nach Zeit sortiert.
+ * Every Einsatz of the plan, sorted by time.
  *
- * Eine Lage ist der Anlass, ein Einsatz das eine Mal, das sie läuft: zusammen gehört, wessen
- * Zeiten sich überschneiden. Ist zwischendurch niemand mehr da, ist der Einsatz zu Ende und der
- * nächste fängt an — auch wenn beide auf dieselbe Lage zeigen. Dieselbe Regel entscheidet auf
- * dem Server, wer zusammen auf einem Alarmzettel steht; `tools/plan_vergleichen` hält die beiden
- * aneinander.
+ * A Lage is the occasion, an Einsatz one run of it: whoever's times overlap belongs together. Once
+ * nobody is left in between, the Einsatz ends and the next one begins, even when both point at the
+ * same Lage. The same rule decides on the server who shares an Alarmzettel; `tools/plan_vergleichen`
+ * keeps the two in step. Where an Einsatz takes place is said by a stay; a drive only names its
+ * destination.
  */
 export function einsaetze(daten: Plandaten): Einsatz[] {
     const gefunden: Einsatz[] = []
@@ -369,7 +369,6 @@ export function einsaetze(daten: Plandaten): Einsatz[] {
                 }
             }
             const dazu = gefunden[gefunden.length - 1]!
-            // Wo der Einsatz stattfindet, sagt ein Aufenthalt; eine Fahrt nennt nur ihr Ziel.
             if (!dazu.ortId && eintrag.schritt.art === 'aufenthalt') dazu.ortId = eintrag.schritt.ortId
             ende = Math.max(ende ?? 0, alsMinuten(eintrag.bis) ?? 0)
         }
@@ -388,7 +387,7 @@ export function einsaetze(daten: Plandaten): Einsatz[] {
  * Was am Ort läuft, während diese Person dort steht, ohne dass sie selbst dazugehört.
  *
  * Wer mit einem Fahrzeug an einen Ort gefahren wird, das mit dem Szenario nichts zu tun hat,
- * soll trotzdem wissen, was dort geschieht — sonst steht er da und weiß nur, dass er da ist.
+ * soll trotzdem wissen, was dort geschieht – sonst steht er da und weiß nur, dass er da ist.
  */
 export function einsaetzeAmOrt(eintrag: Personenschritt, alle: Einsatz[]): Einsatz[] {
     if (eintrag.schritt.art !== 'aufenthalt') return []
@@ -402,7 +401,7 @@ export function einsaetzeAmOrt(eintrag: Personenschritt, alle: Einsatz[]): Einsa
  * Die Prüfungen, die an einem einzelnen Schritt hängen: Plätze, Fahrerlaubnis, Fahrer und die
  * Fahrzeit. Die Oberfläche zeigt sie am Schritt, `pruefen` sammelt sie über den ganzen Plan.
  *
- * Gefahren wird auch in einem Aufenthalt, dem eine erzeugte Anfahrt vorausgeht — sonst führe ein
+ * Gefahren wird auch in einem Aufenthalt, dem eine erzeugte Anfahrt vorausgeht – sonst führe ein
  * Fahrzeug ungeprüft, sobald eine Kette aus lauter Aufenthalten besteht.
  */
 export function schrittBefunde(daten: Plandaten, lauf: Lauf, schritt: Schritt): Befund[] {
@@ -459,9 +458,9 @@ export function schrittBefunde(daten: Plandaten, lauf: Lauf, schritt: Schritt): 
 /**
  * Geschätzte Fahrzeit zwischen zwei Orten: Luftlinie mal Minuten je Kilometer, auf fünf Minuten
  * gerundet und nie unter fünf. Ohne Koordinaten an einem der beiden Orte gibt es keine Schätzung
- * — die Luftlinie kennt ohnehin weder Spree noch Baustelle.
+ * – die Luftlinie kennt ohnehin weder Spree noch Baustelle.
  *
- * Zwei Orte auf demselben Punkt — dieselbe Adresse, zwei Namen — sind kein Weg und bekommen
+ * Zwei Orte auf demselben Punkt – dieselbe Adresse, zwei Namen – sind kein Weg und bekommen
  * keine Schätzung. Sonst käme die Untergrenze von fünf Minuten heraus, und der Server, der die
  * Koordinaten vergleicht, rechnete anders.
  */
@@ -490,7 +489,7 @@ export function fahrzeitSchaetzung(daten: Plandaten, lauf: Lauf, schritt: Schrit
 
 /**
  * Zwei Schritte einer Kette, die sich zeitlich überlappen. Eine Kette ist eine Folge, und die
- * Oberfläche hält sie lückenlos — aber eine geänderte Zeit, ein anderer Browser oder eine von
+ * Oberfläche hält sie lückenlos – aber eine geänderte Zeit, ein anderer Browser oder eine von
  * Hand geladene Datei können sie brechen, und dann steht ein Fahrzeug an zwei Orten zugleich,
  * ohne dass eine der anderen Prüfungen anschlüge.
  */
@@ -507,7 +506,7 @@ function ueberschneidungBefunde(lauf: Lauf): Befund[] {
 
 /**
  * Zustieg ins Nichts: jemand steht in einem Schritt, war aber unmittelbar davor woanders. Das
- * ist die Abholung, die nicht aufgeht — und der Fahrerwechsel am falschen Ort ist derselbe Fall.
+ * ist die Abholung, die nicht aufgeht – und der Fahrerwechsel am falschen Ort ist derselbe Fall.
  */
 function zustiegBefunde(daten: Plandaten, personId: string, plan: Personenschritt[]): Befund[] {
     const befunde: Befund[] = []
@@ -530,7 +529,7 @@ function zustiegBefunde(daten: Plandaten, personId: string, plan: Personenschrit
  * Dieselbe Person zur selben Zeit in zwei Ketten.
  *
  * Sich zu überschneiden ist erlaubt und heißt umsteigen: wer abgeholt wird, ist ab dem Aufbruch
- * des nächsten fort, und ihre Zeit im vorigen endet dort. Was nicht geht, bleibt übrig — sie
+ * des nächsten fort, und ihre Zeit im vorigen endet dort. Was nicht geht, bleibt übrig – sie
  * wird abgeholt, bevor sie überhaupt angekommen ist. Dann war sie nie dort, und irgendwo steht
  * sie zweimal.
  */
@@ -563,7 +562,7 @@ function ausserhalbBefunde(wer: Person, plan: Personenschritt[]): Befund[] {
  * Mehr Material verplant, als es gibt.
  *
  * Gezählt wird über die Zeit und nicht über einen Schritt: vier Puppen sind zweimal gleichzeitig
- * eingeplant acht. Geprüft wird an jedem Zeitpunkt, an dem sich etwas ändert — dazwischen kann
+ * eingeplant acht. Geprüft wird an jedem Zeitpunkt, an dem sich etwas ändert – dazwischen kann
  * die Summe nicht steigen. Ohne erfassten Bestand wird nicht gezählt.
  */
 function materialBefunde(daten: Plandaten): Befund[] {

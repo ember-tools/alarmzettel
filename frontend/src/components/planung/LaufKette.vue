@@ -6,7 +6,7 @@ import {tagVon, uhrzeit} from '../../scripts/zeit'
 import type {Lauf} from '../../interfaces/Planung'
 
 /**
- * Die Kette als Folge von Karten. Was an einem Schritt hängt, steht in `SchrittFelder` — dieselben
+ * Die Kette als Folge von Karten. Was an einem Schritt hängt, steht in `SchrittFelder` – dieselben
  * Felder benutzt der Tagesplan in seinem Fenster.
  */
 const {lauf} = defineProps<{ lauf: Lauf }>()
@@ -34,14 +34,14 @@ const {lauf} = defineProps<{ lauf: Lauf }>()
           <span v-if="mehrereTage()" class="text-muted">{{ tagVon(schritt.von) }}</span>
           {{ uhrzeit(schritt.von) }}–{{ uhrzeit(schritt.bis) }}
         </span>
-        <span class="grow"></span>
+        <span class="grow" />
         <UButton size="sm" color="signal" variant="outline"
                  @click="entfernen(lauf.schritte, schritt)">
           <UIcon name="i-lucide-x"/>
         </UButton>
       </div>
 
-      <SchrittFelder :lauf="lauf" :schritt="schritt"/>
+      <SchrittFelder :lauf-id="lauf.id" :schritt-id="schritt.id"/>
     </div>
 
     <div class="flex gap-2 flex-wrap">

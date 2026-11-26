@@ -4,7 +4,7 @@ Authored interrogation graphs for BRAND and TECHNISCHE HILFELEISTUNG.
 Berlin's Alarm- und Ausrückeordnung is classified "Nur für den Dienstgebrauch" and the FPDS
 determinant codes are licensed IAED material, so neither can be derived from public data. These
 graphs are written for this tool: the shape and the vocabulary follow what the AAO is publicly
-known to do — three disciplines, levels raised a step at a time — but every question, answer and
+known to do – three disciplines, levels raised a step at a time – but every question, answer and
 determinant here is invented and must be replaced with the real Ausrückeordnung before anyone
 relies on it operationally.
 
@@ -26,7 +26,7 @@ def menschen(protokoll, nummer, anlass, ohne, gefaehrdet, rettung):
     asked last, because the answer is what sets the Stichwort. The same fire is a different alarm
     with people still inside, so the situation only fixes the base level and this raises it.
 
-    Returns the tail of an answer — question and children — to be spliced in with `*`.
+    Returns the tail of an answer – question and children – to be spliced in with `*`.
     """
     return ("Sind Menschen in Gefahr?", [
         ("Niemand in Gefahr",

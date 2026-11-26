@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {CollapsibleSection, TextField} from '@emberbox/ui'
-import {computed, reactive, ref, watch} from 'vue'
+import {computed, reactive, ref, useId, watch} from 'vue'
 import AddressField from '../components/base/AddressField.vue'
+import PersonCard from '../components/kataloge/PersonCard.vue'
 import {t} from '../i18n'
 import {arbeitsmappe} from '../store/arbeitsmappe'
 import {
-  entfernen as ausListe, ortAnlegen, personAnlegen, tagAnlegen, umschalten,
-  verfuegbarkeitAnlegen, wortHinzufuegen,
+  entfernen as ausListe, ortAnlegen, personAnlegen, tagAnlegen,
 } from '../store/planung'
 import {truppText} from '../scripts/staerke'
 import {STICHWOERTER} from '../interfaces/Alarm'
@@ -14,6 +14,9 @@ import type {
   Fahrzeugvorlage, Kataloge, Materialvorlage, Stichwortvorlage,
 } from '../interfaces/Alarm'
 import type {Ort} from '../interfaces/Planung'
+
+/** The prefix of this instance's field ids, so labels find their fields when it appears more than once. */
+const fieldId = useId()
 
 type Wortliste = Extract<keyof Kataloge, 'status' | 'trupp' | 'rollen' | 'fahrerlaubnisse'>
 
@@ -25,12 +28,15 @@ const listen: { schluessel: Wortliste, titel: string }[] = [
 ]
 
 /**
- * Eine Anzeigereihenfolge, die stillsteht, solange jemand im Abschnitt schreibt.
+ * A display order that stands still while someone is typing in the section.
  *
- * Der Aufbau sortiert die Kataloge nach Namen. Täte die Ansicht das bei jedem Tastendruck mit,
- * wanderte die Zeile unter dem Cursor weg und der nächste Buchstabe landete in einem fremden
- * Feld. Neu geordnet wird deshalb erst, wenn der Abschnitt den Fokus verliert — und wenn ein
- * Eintrag dazukommt oder verschwindet.
+ * The catalogues are sorted by name. Sorting on every keystroke would move the row under the
+ * cursor and send the next letter into a different field, so the list is re-sorted only when the
+ * section loses focus, and when an entry is added or removed. What is watched is *which* entries
+ * exist, as a sorted set of ids, not their order: an exchange rebuilds the workbook and may lay it
+ * out the other way round, and if sorting depended on that, the row under the cursor would jump
+ * away mid-word. The result is `reactive` so the template reads `liste` without `.value`, which
+ * Vue does not unwrap in a plain object.
  */
 function geordnet<T extends { id: string }>(quelle: () => T[], lesen: (eintrag: T) => string) {
   const reihenfolge = ref<string[]>([])
@@ -41,7 +47,7 @@ function geordnet<T extends { id: string }>(quelle: () => T[], lesen: (eintrag: 
         .map(eintrag => eintrag.id)
   }
 
-  /** Was neu ist, hängt hinten an, bis neu geordnet wird — dort sieht man es auch. */
+  /** Was neu ist, hängt hinten an, bis neu geordnet wird – dort sieht man es auch. */
   const liste = computed(() => {
     const nachId = new Map(quelle().map(eintrag => [eintrag.id, eintrag]))
     const bekannt = reihenfolge.value
@@ -51,12 +57,7 @@ function geordnet<T extends { id: string }>(quelle: () => T[], lesen: (eintrag: 
     return [...bekannt, ...quelle().filter(eintrag => !gesehen.has(eintrag.id))]
   })
 
-  // Beobachtet wird, *welche* Einträge es gibt, nicht in welcher Reihenfolge sie stehen: der
-  // Abgleich baut die Arbeitsmappe neu auf und legt sie dabei anders herum hin. Hinge das
-  // Ordnen daran, spränge die Zeile unter dem Cursor mitten im Wort davon.
   watch(() => [...quelle().map(eintrag => eintrag.id)].sort().join(), ordnen, {immediate: true})
-  // Als `reactive`, damit die Vorlage `liste` ohne `.value` liest — in einem einfachen Objekt
-  // packt Vue eine Referenz nicht aus.
   return reactive({liste, ordnen})
 }
 
@@ -92,19 +93,6 @@ function materialHinzufuegen() {
 function materialEntfernen(stueck: Materialvorlage) {
   const stelle = arbeitsmappe.kataloge.material.indexOf(stueck)
   if (stelle >= 0) arbeitsmappe.kataloge.material.splice(stelle, 1)
-}
-
-/**
- * Ein Wort an einer Person: was der Katalog noch nicht kennt, kommt dort dazu — so wie ein neu
- * geschriebenes Stichwort oder ein neues Materialstück. Die Knöpfe daneben bleiben der schnelle
- * Weg für alles, was schon geführt wird.
- */
-function wortGeben(liste: 'rollen' | 'fahrerlaubnisse', an: string[], feld: HTMLInputElement) {
-  const wert = feld.value.trim()
-  feld.value = ''
-  if (!wert) return
-  wortHinzufuegen(arbeitsmappe.kataloge[liste], wert)
-  if (!an.includes(wert)) an.push(wert)
 }
 
 function ortEntfernen(ort: Ort) {
@@ -176,7 +164,7 @@ function fahrzeugEntfernen(index: number) {
 }
 
 /**
- * Renaming an entry reaches every Alarm pointing at it — which is the whole reason the catalogue
+ * Renaming an entry reaches every Alarm pointing at it – which is the whole reason the catalogue
  * has ids. An Alarm that merely happens to read the same, because someone typed the word rather
  * than picking it, is left alone: it was never linked to this entry.
  */
@@ -234,8 +222,8 @@ function truppVorschau(staerke: string): string {
         <TextField v-model="arbeitsmappe.kataloge.wacheName" :label="t('kataloge.wacheName')"
                   :placeholder="t('kataloge.wachePlatzhalter')"/>
         <div>
-          <label class="field-label">{{ t('kataloge.alarmeProTag') }}</label>
-          <UInput v-model.number="arbeitsmappe.kataloge.alarmeProTag" type="number" min="0"
+          <label class="field-label" :for="`${fieldId}-calls-per-day`">{{ t('kataloge.alarmeProTag') }}</label>
+          <UInput :id="`${fieldId}-calls-per-day`" v-model.number="arbeitsmappe.kataloge.alarmeProTag" type="number" min="0"
                   step="100" class="w-full" :ui="{base: 'tabular'}"/>
         </div>
       </div>
@@ -361,7 +349,7 @@ function truppVorschau(staerke: string): string {
       </form>
       <p v-if="stichwortvorschlaege.length" class="text-muted text-[13px] mb-3">
         {{ t('kataloge.stichwortFehlen') }}
-        <UButton size="sm" color="neutral" variant="outline" class="ml-2 mb-1" v-for="text in stichwortvorschlaege" :key="text"
+        <UButton v-for="text in stichwortvorschlaege" :key="text" size="sm" color="neutral" variant="outline" class="ml-2 mb-1"
                  @click="stichwortUebernehmen(text)">
           {{ text }}
         </UButton>
@@ -375,7 +363,7 @@ function truppVorschau(staerke: string): string {
         <div v-for="eintrag in stichwoerter.liste" :key="eintrag.id"
              class="flex gap-2 items-center">
           <UInput v-model="eintrag.text" type="text"
-                  @change="stichwortUmbenannt(eintrag)" class="w-full"/>
+                  class="w-full" @change="stichwortUmbenannt(eintrag)"/>
           <UButton size="sm" color="signal" variant="outline" class="shrink-0"
                    :title="t('kataloge.eintragEntfernen')"
                    @click="stichwortEntfernen(arbeitsmappe.kataloge.stichwoerter.indexOf(eintrag))">
@@ -399,8 +387,8 @@ function truppVorschau(staerke: string): string {
         <div v-for="tag in arbeitsmappe.kataloge.tage" :key="tag.id"
              class="grid md:grid-cols-[10rem_1fr_auto] gap-2 items-end">
           <div>
-            <label class="field-label">{{ t('planung.datum') }}</label>
-            <UInput v-model="tag.datum" type="date" class="w-full"/>
+            <label class="field-label" :for="`${fieldId}-date-${tag.id}`">{{ t('planung.datum') }}</label>
+            <UInput :id="`${fieldId}-date-${tag.id}`" v-model="tag.datum" type="date" class="w-full"/>
           </div>
           <TextField v-model="tag.name" :label="t('planung.tagName')"
                     :placeholder="t('planung.tagPlatzhalter')"/>
@@ -426,90 +414,11 @@ function truppVorschau(staerke: string): string {
       </p>
 
       <div class="grid gap-4">
-        <div v-for="person in arbeitsmappe.kataloge.personen" :key="person.id"
-             class="border border-default rounded p-3 bg-muted grid gap-3">
-          <div class="grid md:grid-cols-[1fr_6rem_auto_auto] gap-3 items-end">
-            <TextField v-model="person.name" :label="t('planung.personName')"/>
-            <div>
-              <label class="field-label">{{ t('planung.anzahl') }}</label>
-              <UInput v-model.number="person.anzahl" type="number" min="1" class="w-full"/>
-            </div>
-            <label class="flex items-center gap-2 text-sm h-9.5"
-                   :title="t('planung.blattHinweis')">
-              <input v-model="person.blatt" type="checkbox"/>
-              {{ t('planung.blatt') }}
-            </label>
-            <UButton size="sm" color="signal" variant="outline"
-                     @click="ausListe(arbeitsmappe.kataloge.personen, person)">
-              <UIcon name="i-lucide-trash-2"/>
-            </UButton>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-3">
-            <div>
-              <span class="field-label">{{ t('planung.rollen') }}</span>
-              <div class="flex flex-wrap gap-2 items-center">
-                <UButton size="sm" v-for="wert in arbeitsmappe.kataloge.rollen" :key="wert"
-                         :color="person.rollen.includes(wert) ? 'primary' : 'neutral'" :variant="person.rollen.includes(wert) ? 'solid' : 'outline'"
-                         @click="umschalten(person.rollen, wert)">
-                  {{ wert }}
-                </UButton>
-                <UInput type="text" list="rollenliste"
-                        :placeholder="t('planung.rolleDazu')"
-                        @change="wortGeben('rollen', person.rollen, $event.target as HTMLInputElement)" class="w-auto"/>
-              </div>
-            </div>
-            <div>
-              <span class="field-label">{{ t('planung.fahrerlaubnis') }}</span>
-              <div class="flex flex-wrap gap-2 items-center">
-                <UButton size="sm" v-for="wert in arbeitsmappe.kataloge.fahrerlaubnisse" :key="wert"
-                         :color="person.fahrerlaubnis.includes(wert) ? 'primary' : 'neutral'" :variant="person.fahrerlaubnis.includes(wert) ? 'solid' : 'outline'"
-                         @click="umschalten(person.fahrerlaubnis, wert)">
-                  {{ wert }}
-                </UButton>
-                <UInput type="text" list="klassenliste"
-                        :placeholder="t('planung.klasseDazu')"
-                        @change="wortGeben('fahrerlaubnisse', person.fahrerlaubnis,
-                        $event.target as HTMLInputElement)" class="w-auto"/>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex items-center gap-3 mb-2 flex-wrap">
-              <span class="field-label mb-0">{{ t('planung.verfuegbar') }}</span>
-              <UButton size="sm" color="neutral" variant="outline"
-                       @click="verfuegbarkeitAnlegen(person)">
-                <UIcon name="i-lucide-plus"/>
-                {{ t('planung.fensterNeu') }}
-              </UButton>
-            </div>
-            <p v-if="!person.verfuegbar.length" class="text-muted text-[13px]">
-              {{ t('planung.immerDa') }}
-            </p>
-            <div class="grid gap-2">
-              <div v-for="fenster in person.verfuegbar" :key="fenster.id"
-                   class="grid md:grid-cols-[1fr_1fr_auto] gap-2 items-end">
-                <div>
-                  <label class="field-label">{{ t('planung.von') }}</label>
-                  <UInput v-model="fenster.von" type="datetime-local" class="w-full"/>
-                </div>
-                <div>
-                  <label class="field-label">{{ t('planung.bis') }}</label>
-                  <UInput v-model="fenster.bis" type="datetime-local" class="w-full"/>
-                </div>
-                <UButton size="sm" color="signal" variant="outline"
-                         @click="ausListe(person.verfuegbar, fenster)">
-                  <UIcon name="i-lucide-x"/>
-                </UButton>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PersonCard v-for="person in arbeitsmappe.kataloge.personen" :key="person.id" :person-id="person.id"/>
       </div>
     </CollapsibleSection>
     <div class="grid md:grid-cols-2 gap-4">
-      <CollapsibleSection storage-key="alarmplaner_kataloge" v-for="liste in listen" :key="liste.schluessel" :name="liste.schluessel"
+      <CollapsibleSection v-for="liste in listen" :key="liste.schluessel" storage-key="alarmplaner_kataloge" :name="liste.schluessel"
                       :title="liste.titel" :count="arbeitsmappe.kataloge[liste.schluessel].length">
 
         <form class="flex gap-2 mb-3" @submit.prevent="hinzufuegen(liste.schluessel)">

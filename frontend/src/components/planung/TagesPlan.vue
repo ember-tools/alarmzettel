@@ -15,7 +15,7 @@ import type {Lauf, Schritt} from '../../interfaces/Planung'
 /**
  * Der Tag als Kalender: senkrecht die Zeit, je Fahrzeug und Person eine Spalte. Ein Aufenthalt
  * wird aufgezogen wie ein Termin, verschoben wie einer, und was in ihm steckt, steht auf der
- * Kachel — geändert wird er im Fenster.
+ * Kachel – geändert wird er im Fenster.
  *
  * Die Kette bleibt dabei eine Folge: ein verschobener Block rückt auch in ihr an seine Stelle,
  * sonst zeigte die erzeugte Anfahrt auf den falschen Vorgänger.
@@ -27,10 +27,13 @@ const KUERZESTE = 10
 const VORGABEFENSTER = {von: 6 * 60, bis: 20 * 60}
 
 const tag = ref('')
-const auswahl = ref<{ lauf: Lauf, schritt: Schritt, name: string } | null>(null)
+/** The step opened for editing, with the name of its chain. */
+type Selection = { lauf: Lauf, schritt: Schritt, name: string }
+
+const auswahl = ref<Selection | null>(null)
 const gitter = ref<HTMLElement | null>(null)
 
-/** Alle Tage, an denen etwas steht, dazu die des Katalogs — der leere Tag will bepflanzt werden. */
+/** Alle Tage, an denen etwas steht, dazu die des Katalogs – der leere Tag will bepflanzt werden. */
 const tage = computed(() => {
   const gefunden = new Set(arbeitsmappe.kataloge.tage.map(eintrag => eintrag.datum))
   for (const lauf of arbeitsmappe.planung.laeufe) {
@@ -154,7 +157,8 @@ function alsZeitpunkt(minuten: number): string {
 
 type Griff = 'neu' | 'schieben' | 'ende'
 
-const zug = ref<{
+/** A drag in progress: what is being moved or drawn, in which column, and where it stands. */
+type Drag = {
   art: Griff
   spalte: Spalte
   schritt?: Schritt
@@ -165,7 +169,9 @@ const zug = ref<{
   von: number
   bis: number
   bewegt: boolean
-} | null>(null)
+}
+
+const zug = ref<Drag | null>(null)
 
 const vorschau = computed(() => zug.value?.art === 'neu' ? zug.value : null)
 
@@ -173,7 +179,7 @@ const vorschau = computed(() => zug.value?.art === 'neu' ? zug.value : null)
  * Gezogen wird am Fenster und nicht am Element: die Unterkante ist ein eigener Griff, und wer
  * über die Spalte hinausfährt, soll den Block trotzdem weiterschieben.
  *
- * Wer nur zusieht, fasst nichts an — was auf der Kachel steht, ist ohnehin alles, was er ändern
+ * Wer nur zusieht, fasst nichts an – was auf der Kachel steht, ist ohnehin alles, was er ändern
  * könnte.
  */
 function fassen(ereignis: PointerEvent, art: Griff, spalte: Spalte, kachel?: Kachel) {
@@ -238,7 +244,7 @@ function loslassen() {
 }
 
 /**
- * Der Schritt gehört der Kette, in der er steht — auch wenn er in der Spalte einer Person liegt,
+ * Der Schritt gehört der Kette, in der er steht – auch wenn er in der Spalte einer Person liegt,
  * die in ihr mitfährt. Das Fenster nennt deshalb die Kette und nicht die Spalte. Wer nur zusieht,
  * bekommt keins: was auf der Kachel steht, ist alles, was er darin ändern könnte.
  */
@@ -274,7 +280,7 @@ function stichworte(kachel: Kachel): string[] {
   <section class="panel">
     <div class="flex items-center gap-3 flex-wrap mb-3">
       <h2 class="section-title">{{ t('ablauf.tagesplan') }}</h2>
-      <select v-model="tag" class="native-select w-auto">
+      <select v-model="tag" class="native-select w-auto" :aria-label="t('ablauf.chooseDay')">
         <option v-for="wann in tage" :key="wann" :value="wann">{{ wann }}</option>
       </select>
       <span class="text-muted text-[13px]">{{ t('ablauf.tagesplanHinweis') }}</span>
@@ -284,7 +290,7 @@ function stichworte(kachel: Kachel): string[] {
 
     <div v-else class="overflow-auto border border-default rounded" style="max-height: 70vh">
       <div class="grid" :style="{gridTemplateColumns: `4rem repeat(${spalten.length}, minmax(9rem, 1fr))`}">
-        <div class="sticky top-0 z-20 bg-default border-b border-default"></div>
+        <div class="sticky top-0 z-20 bg-default border-b border-default" />
         <div v-for="spalte in spalten" :key="spalte.schluessel"
              class="sticky top-0 z-20 bg-default border-b border-l border-default px-2 py-2">
           <span class="eyebrow block truncate" :title="spalte.name">
@@ -309,42 +315,42 @@ function stichworte(kachel: Kachel): string[] {
              @pointerdown="fassen($event, 'neu', spalte)">
           <div v-for="wann in stunden" :key="wann"
                class="absolute inset-x-0 border-t border-muted pointer-events-none"
-               :style="{top: `${oben(wann)}px`}"></div>
+               :style="{top: `${oben(wann)}px`}" />
 
-          <div v-for="kachel in spalte.kacheln" :key="kachel.schritt.id"
+          <div v-for="tile in spalte.kacheln" :key="tile.schritt.id"
                class="absolute inset-x-1 rounded border px-1.5 py-1 overflow-hidden text-[12px] leading-tight"
-               :class="kachel.fremd
+               :class="tile.fremd
                  ? 'border-default bg-elevated text-muted cursor-pointer'
                  : 'border-inverted bg-default cursor-grab'"
-               :style="{top: `${oben(kachel.von)}px`,
-                        height: `${Math.max(kachel.bis - kachel.von, RASTER) * PX_JE_MINUTE}px`}"
-               @pointerdown.stop="kachel.fremd
-                 ? oeffnen(kachel) : fassen($event, 'schieben', spalte, kachel)">
-            <div v-if="kachel.da > kachel.von"
+               :style="{top: `${oben(tile.von)}px`,
+                        height: `${Math.max(tile.bis - tile.von, RASTER) * PX_JE_MINUTE}px`}"
+               @pointerdown.stop="tile.fremd
+                 ? oeffnen(tile) : fassen($event, 'schieben', spalte, tile)">
+            <div v-if="tile.da > tile.von"
                  class="absolute inset-x-0 top-0 bg-accented opacity-70 pointer-events-none"
-                 :style="{height: `${(kachel.da - kachel.von) * PX_JE_MINUTE}px`}"></div>
+                 :style="{height: `${(tile.da - tile.von) * PX_JE_MINUTE}px`}" />
             <div class="relative">
               <span class="tabular font-semibold">
-                {{ beschriftung(kachel.da) }}–{{ beschriftung(kachel.bis) }}
+                {{ beschriftung(tile.da) }}–{{ beschriftung(tile.bis) }}
               </span>
-              <span v-for="(zeile, nummer) in stichworte(kachel)" :key="nummer" class="block truncate">
+              <span v-for="(zeile, nummer) in stichworte(tile)" :key="nummer" class="block truncate">
                 {{ zeile }}
               </span>
             </div>
-            <div v-if="!kachel.fremd"
+            <div v-if="!tile.fremd"
                  class="absolute inset-x-0 bottom-0 h-2 cursor-ns-resize"
-                 @pointerdown.stop="fassen($event, 'ende', spalte, kachel)"></div>
+                 @pointerdown.stop="fassen($event, 'ende', spalte, tile)" />
           </div>
 
           <div v-if="vorschau && vorschau.spalte.schluessel === spalte.schluessel"
                class="absolute inset-x-1 rounded border border-dashed border-(--eb-focus) bg-signal-50 dark:bg-signal-950 pointer-events-none"
                :style="{top: `${oben(vorschau.von)}px`,
-                        height: `${Math.max(vorschau.bis - vorschau.von, RASTER) * PX_JE_MINUTE}px`}"></div>
+                        height: `${Math.max(vorschau.bis - vorschau.von, RASTER) * PX_JE_MINUTE}px`}" />
         </div>
       </div>
     </div>
 
-    <SchrittFenster v-if="auswahl" :lauf="auswahl.lauf" :schritt="auswahl.schritt"
+    <SchrittFenster v-if="auswahl" :lauf-id="auswahl.lauf.id" :schritt-id="auswahl.schritt.id"
                     :name="auswahl.name" @schliessen="auswahl = null"/>
   </section>
 </template>

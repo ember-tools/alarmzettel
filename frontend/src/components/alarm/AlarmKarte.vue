@@ -6,7 +6,7 @@ import type {Adresse, Alarm} from '../../interfaces/Alarm'
 
 /**
  * Ein Alarm zum Lesen: dieselben Angaben wie auf dem Zettel, nur als Seite statt als Formular.
- * Was leer ist, steht nicht da — ein Feld ohne Inhalt sagt nichts und nimmt nur Platz.
+ * Was leer ist, steht nicht da – ein Feld ohne Inhalt sagt nichts und nimmt nur Platz.
  */
 const {alarm} = defineProps<{ alarm: Alarm }>()
 
@@ -53,7 +53,7 @@ const fahrzeuge = computed(() =>
       <div class="flex items-baseline gap-3 flex-wrap">
         <h2 class="headline text-xl">{{ alarm.stichwort || t('liste.ohneStichwort') }}</h2>
         <span v-if="alarm.einsatzNr" class="tabular text-muted">{{ alarm.einsatzNr }}</span>
-        <span class="grow"></span>
+        <span class="grow" />
         <span class="tabular text-sm">
           {{ `${alarm.einsatzDatum} ${alarm.einsatzZeit}`.trim() }}
         </span>

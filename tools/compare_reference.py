@@ -1,8 +1,8 @@
 """
 Compares a rendered Alarmzettel against a reference PDF, row by row.
 
-Neither the reference document nor the data behind it belongs in this repository — both carry
-real call details — so both paths are arguments:
+Neither the reference document nor the data behind it belongs in this repository – both carry
+real call details – so both paths are arguments:
 
     python tools/compare_reference.py reference.pdf rendered.pdf
 

@@ -10,7 +10,7 @@
  * Berlin holds a non-German passport and about a third of the city has a migration background;
  * the largest groups are Turkish, Ukrainian, Indian, Polish and Syrian, with a Vietnamese
  * population concentrated in the eastern districts. The weights below reflect that shape. They
- * are a plausible mix, not a distribution derived from the registry — nobody publishes surname
+ * are a plausible mix, not a distribution derived from the registry – nobody publishes surname
  * frequencies per city.
  *
  * First names span the ages, since callers do: the names common among people born in the GDR sit
@@ -19,7 +19,7 @@
 
 interface Vorname {
     name: string
-    /** Only needed where the surname inflects — Polish and Ukrainian ones do. */
+    /** Only needed where the surname inflects – Polish and Ukrainian ones do. */
     weiblich: boolean
 }
 
@@ -35,10 +35,17 @@ interface Herkunft {
 const m = (name: string): Vorname => ({name, weiblich: false})
 const w = (name: string): Vorname => ({name, weiblich: true})
 
+/**
+ * Where the generated callers' names come from, weighted roughly like Berlin. The German group takes
+ * the top of the national surname list and given names from every decade a caller might have been
+ * born in, Manfred and Renate as readily as Leon and Mia. The Turkish group is the largest one
+ * holding a foreign passport and one settled here for generations. Ukrainian surnames keep to the
+ * -enko and -uk endings, which read the same for everyone, as most Slavic ones do not. The
+ * Vietnamese group is concentrated in the eastern districts and written the way a German form
+ * takes it.
+ */
 const HERKUENFTE: Herkunft[] = [
     {
-        // The top of the national surname list, and given names from every decade a caller might
-        // have been born in — Manfred and Renate as readily as Leon and Mia.
         gewicht: 68,
         vornamen: [
             m('Michael'), m('Thomas'), m('Andreas'), m('Frank'), m('Peter'), m('Uwe'),
@@ -56,7 +63,6 @@ const HERKUENFTE: Herkunft[] = [
         ],
     },
     {
-        // The largest group holding a foreign passport, and one settled here for generations.
         gewicht: 9,
         vornamen: [
             m('Mehmet'), m('Mustafa'), m('Ali'), m('Hasan'), m('Emre'), m('Murat'), m('Yusuf'),
@@ -72,7 +78,6 @@ const HERKUENFTE: Herkunft[] = [
             m('Oleksandr'), m('Serhij'), m('Andrij'), m('Dmytro'), m('Wolodymyr'),
             w('Olena'), w('Natalija'), w('Iryna'), w('Oksana'), w('Kateryna'),
         ],
-        // The -enko and -uk endings read the same for everyone, which most Slavic ones do not.
         nachnamen: ['Melnyk', 'Kowalenko', 'Schewtschenko', 'Bondarenko', 'Tkatschuk',
                     'Kowaltschuk', 'Boyko', 'Kravets'],
     },
@@ -100,7 +105,6 @@ const HERKUENFTE: Herkunft[] = [
                     'Al-Ahmad', 'Darwisch'],
     },
     {
-        // Concentrated in the eastern districts, and written here the way a German form takes it.
         gewicht: 4,
         vornamen: [
             m('Minh'), m('Tuan'), m('Duc'), m('Hieu'), m('Long'),

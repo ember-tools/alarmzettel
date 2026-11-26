@@ -50,6 +50,9 @@ command. `./toolchain.sh docker` lists what is in a group.
 Frontend
   fe-build              Type-check with vue-tsc, then build
   fe-typecheck          vue-tsc only
+  fe-lint [name] [args] Every linter of @emberbox/lint, as frontend/emberbox-lint.config.mjs sets
+                        them up, failing when one does; with a name only that one
+  fe-audit              All linters, non-gating; prints everything they find
   fe-dev                Vite dev server, proxying /api to the backend
   fe-install            npm install - reconciles node_modules and the lock file with package.json
   fe-deploy             Build and copy the result to backend/static, which is how the backend
@@ -102,7 +105,7 @@ Docker
   docker-dev            Start the dev stack: backend with --reload, Vite on 5175
 
 Combined
-  verify                be-test, fe-build, sna-check, the two sync checks, the
+  verify                be-test, fe-build, fe-lint, sna-check, the two sync checks, the
                         Polar-Koordinaten and den Ablaufplan - what CI runs
 EOF
 }
@@ -162,6 +165,8 @@ shift || true
 case "$cmd" in
     fe-build)      fe; run npm run build "$@" ;;
     fe-typecheck)  fe; run npx vue-tsc -b "$@" ;;
+    fe-lint)       fe; run npx emberbox-lint "$@" ;;
+    fe-audit)      fe; run npx emberbox-lint --audit ;;
     fe-dev)        fe; run npm run dev -- "$@" ;;
     fe-install)    fe; run npm install "$@" ;;
     fe-deploy)
@@ -273,6 +278,7 @@ print(Adressen(settings.adressen_datei, settings.adressen_tage).bestand())" ;;
     verify)
         "$ROOT/toolchain.sh" be-test
         "$ROOT/toolchain.sh" fe-build
+        "$ROOT/toolchain.sh" fe-lint
         "$ROOT/toolchain.sh" sna-check
         "$ROOT/toolchain.sh" sync-pfade
         # Ein zweites Mal mit dem Ablaufbeispiel: der Alarmzettel-Beispieldatensatz kennt weder

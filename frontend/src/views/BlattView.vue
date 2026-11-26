@@ -16,7 +16,7 @@ import type {Lauf, Ort} from '../interfaces/Planung'
  * Ein Blatt für eine Person oder ein Fahrzeug, hinter einem eigenen Link.
  *
  * Es liest die Sitzung, ohne in sie zu wechseln: wer den Link bekommt, sieht seinen Tag und
- * sonst nichts — kein Editor, keine fremden Ketten, kein Cookie. Dieselben Zeilen wie auf dem
+ * sonst nichts – kein Editor, keine fremden Ketten, kein Cookie. Dieselben Zeilen wie auf dem
  * gedruckten Zettel, nur dass sie sich von selbst auffrischen.
  */
 const TAKT = 30000
@@ -161,7 +161,7 @@ function fahrzeugzeilen(): Zeile[] {
 const zeilen = computed(() => art.value === 'person' ? personenzeilen() : fahrzeugzeilen())
 const tage = computed(() => tagwechsel(zeilen.value.map(zeile => zeile.von)))
 
-/** Die Orte des Blattes mit Adresse und Weg dorthin — der Zettel soll für sich genügen. */
+/** Die Orte des Blattes mit Adresse und Weg dorthin – der Zettel soll für sich genügen. */
 const orte = computed(() => {
   const gesehen: string[] = []
   for (const zeile of zeilen.value) {
@@ -231,7 +231,7 @@ onBeforeUnmount(() => {
           </div>
           <p class="text-muted text-[13px] mt-1">{{ t('blatt.hinweis') }}</p>
         </div>
-        <UButton size="sm" color="neutral" variant="outline" v-if="zeilen.length" @click="pdf">
+        <UButton v-if="zeilen.length" size="sm" color="neutral" variant="outline" @click="pdf">
           <UIcon name="i-lucide-file-text"/>
           {{ t('blatt.pdf') }}
         </UButton>
@@ -265,10 +265,10 @@ onBeforeUnmount(() => {
             <span class="text-muted text-sm grow min-w-0">{{ adresstext(ort) }}</span>
             <span v-if="adresstext(ort)" class="flex gap-3 text-[13px]">
               <a :href="kartenLinks(adresstext(ort)).apple" target="_blank" rel="noreferrer">
-                Apple Maps
+                {{ t('blatt.appleMaps') }}
               </a>
               <a :href="kartenLinks(adresstext(ort)).google" target="_blank" rel="noreferrer">
-                Google Maps
+                {{ t('blatt.googleMaps') }}
               </a>
             </span>
           </div>

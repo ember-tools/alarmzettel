@@ -3,7 +3,7 @@
  *
  * Geplant wird als Kette: ein Fahrzeug oder eine Person hat eine Folge von Schritten, und jeder
  * fängt an, wo der vorige aufgehört hat. Der Startort einer Fahrt wird deshalb nirgends
- * gespeichert — er steht schon fest, und ein Sprung von A nach B ohne Weg dazwischen ist nicht
+ * gespeichert – er steht schon fest, und ein Sprung von A nach B ohne Weg dazwischen ist nicht
  * darstellbar statt nur falsch.
  *
  * Der Personenplan wird aus denselben Daten gerechnet und nirgends gepflegt: alle Schritte, in
@@ -20,7 +20,7 @@ export interface Tag extends Eintrag {
 }
 
 /**
- * Ein eingetragener Ort mit einer Identität — kein Text in einer Zelle. Nur dadurch ist „am
+ * Ein eingetragener Ort mit einer Identität – kein Text in einer Zelle. Nur dadurch ist „am
  * selben Ort zur selben Zeit“ überhaupt entscheidbar, woran Fahrerwechsel, Zustieg und Übergabe
  * hängen.
  *
@@ -44,14 +44,14 @@ export interface Verfuegbarkeit extends Eintrag {
 export interface Person extends Eintrag {
     name: string
     /**
-     * Ob diese Person ein eigenes Blatt bekommt. Wer nur mitfährt — die vier Mimen etwa — steht
+     * Ob diese Person ein eigenes Blatt bekommt. Wer nur mitfährt – die vier Mimen etwa – steht
      * im Plan und in jeder Besatzung, braucht aber keinen Zettel in die Hand.
      */
     blatt: boolean
     rollen: string[]
     /** Führerscheinklassen, gegen `Fahrzeugvorlage.fuehrerschein` geprüft. */
     fahrerlaubnis: string[]
-    /** Wie viele Köpfe diese Zeile bedeutet — „Mimen (4)“ belegt vier Plätze. */
+    /** Wie viele Köpfe diese Zeile bedeutet – „Mimen (4)“ belegt vier Plätze. */
     anzahl: number
     verfuegbar: Verfuegbarkeit[]
 }
@@ -63,7 +63,7 @@ export interface Person extends Eintrag {
  */
 export interface Programmpunkt extends Eintrag {
     name: string
-    /** Der Alarm, der zu dieser Lage gehört. Leer, wenn es keiner ist — Frühstück etwa. */
+    /** Der Alarm, der zu dieser Lage gehört. Leer, wenn es keiner ist – Frühstück etwa. */
     alarmId: string
 }
 
@@ -76,7 +76,7 @@ export interface Besatzung extends Eintrag {
 }
 
 /**
- * Ein Stück Material, das in diesem Schritt dabei ist. Es hängt am Schritt wie die Besatzung —
+ * Ein Stück Material, das in diesem Schritt dabei ist. Es hängt am Schritt wie die Besatzung –
  * dadurch sagt der Plan von selbst, wo etwas liegt und womit es wohin gefahren wird.
  */
 export interface Materialposten extends Eintrag {
@@ -87,12 +87,12 @@ export interface Materialposten extends Eintrag {
 
 /**
  * Ein Schritt einer Kette: entweder an einem Ort sein, oder zu einem fahren. Die Besatzung ist
- * die vollständige Liste für diesen Schritt, nicht die Änderung gegenüber dem vorigen — dadurch
+ * die vollständige Liste für diesen Schritt, nicht die Änderung gegenüber dem vorigen – dadurch
  * ist jeder Schritt für sich lesbar und jede Prüfung eine Frage an einen einzelnen Schritt.
  */
 export interface Schritt extends Eintrag {
     art: 'aufenthalt' | 'fahrt'
-    /** Womit es hergeht — beim Aufenthalt für die erzeugte Anfahrt, bei der Fahrt für sie selbst. */
+    /** Womit es hergeht – beim Aufenthalt für die erzeugte Anfahrt, bei der Fahrt für sie selbst. */
     mittel: Mittel
     /** Minuten für die erzeugte Anfahrt. Null heißt: die Schätzung gilt. */
     fahrzeit: number
@@ -101,11 +101,11 @@ export interface Schritt extends Eintrag {
     /** Wo man ist, beziehungsweise wohin es geht. Woher, sagt der vorige Schritt. */
     ortId: string
     programmpunktId: string
-    /** Was sonst zu diesem Schritt zu sagen ist — für alles, wofür es kein Feld gibt. */
+    /** Was sonst zu diesem Schritt zu sagen ist – für alles, wofür es kein Feld gibt. */
     notiz: string
     /**
      * Ob dieses Fahrzeug zum Einsatzmittelaufgebot der Lage gehört. Wer nur Mimen hinbringt,
-     * steht am Ort, ohne alarmiert zu sein — und bekommt weder einen Zettel noch eine Zeile
+     * steht am Ort, ohne alarmiert zu sein – und bekommt weder einen Zettel noch eine Zeile
      * darauf.
      */
     aufgebot: boolean
@@ -123,8 +123,8 @@ export interface Lauf extends Eintrag {
 /**
  * Der Plan eines Übungstages: die Lagen und die Ketten.
  *
- * Was die Wache dauerhaft führt — Tage, Personal, Rollen, Fahrerlaubnisklassen, Orte und
- * Material — steht im Katalog und nicht hier.
+ * Was die Wache dauerhaft führt – Tage, Personal, Rollen, Fahrerlaubnisklassen, Orte und
+ * Material – steht im Katalog und nicht hier.
  */
 export interface Planung {
     /** Aus: kein Navigationspunkt, keine Daten, der Alarmzettel-Teil unverändert. */

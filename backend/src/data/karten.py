@@ -2,7 +2,7 @@
 Ein Ort so aufgeschrieben, dass man ihn vom Blatt aus findet.
 
 Auf dem Papier steht die Adresse, und daneben zwei Kennmuster: eines für Apple Karten, eines für
-Google Maps. Wer den Zettel in der Hand hat, hält das Telefon davor und wird hingeführt — ohne
+Google Maps. Wer den Zettel in der Hand hat, hält das Telefon davor und wird hingeführt – ohne
 eine Adresse abzutippen, die zur Hälfte im Regen steht.
 """
 
@@ -15,7 +15,7 @@ GOOGLE = "https://www.google.com/maps/search/?api=1&query="
 
 
 def adresstext(adresse: Adresse) -> str:
-    """Straße und Hausnummer, dann Postleitzahl und Ort — was fehlt, fehlt einfach."""
+    """Straße und Hausnummer, dann Postleitzahl und Ort – was fehlt, fehlt einfach."""
     strasse = " ".join(teil for teil in (adresse.strasse, adresse.hnr) if teil.strip())
     ort = " ".join(teil for teil in (adresse.plz, adresse.ort) if teil.strip())
     return ", ".join(teil for teil in (strasse, ort) if teil)
