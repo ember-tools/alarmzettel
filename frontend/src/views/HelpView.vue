@@ -21,7 +21,7 @@ function paragraphs(topic: string, count: number): string[] {
 </script>
 
 <template>
-  <HelpPage :title="t('help.title')" back="/info">
+  <HelpPage :title="t('help.title')" back="/">
     <HelpSection :title="t('help.overview.title')">
       <HelpTopic :paragraphs="paragraphs('overview', 2)"/>
     </HelpSection>

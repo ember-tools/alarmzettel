@@ -27,18 +27,18 @@ useHead({
 
 <template>
   <EmberboxApp>
-    <AppHeader :name="t('app.name')" :subtitle="t('app.untertitel')" :home="isPublic ? '/info' : '/'"
+    <AppHeader :name="t('app.name')" :subtitle="t('app.untertitel')" :home="isPublic ? '/' : '/alarme'"
                logo="/favicon.svg">
       <template #nav>
         <template v-if="isPublic">
-          <RouterLink to="/info" class="nav-link">{{ t('nav.info') }}</RouterLink>
+          <RouterLink to="/" class="nav-link">{{ t('nav.info') }}</RouterLink>
           <RouterLink to="/hilfe" class="nav-link">{{ t('nav.hilfe') }}</RouterLink>
         </template>
         <template v-else-if="sitzung.nurLesen">
           <RouterLink to="/ansicht" class="nav-link">{{ t('nav.ansicht') }}</RouterLink>
         </template>
         <template v-else>
-          <RouterLink to="/" class="nav-link">{{ t('nav.alarme') }}</RouterLink>
+          <RouterLink to="/alarme" class="nav-link">{{ t('nav.alarme') }}</RouterLink>
           <RouterLink to="/kataloge" class="nav-link">{{ t('nav.kataloge') }}</RouterLink>
         </template>
         <RouterLink v-if="!isPublic && arbeitsmappe.planung.aktiv" to="/ablauf" class="nav-link">
@@ -47,7 +47,7 @@ useHead({
       </template>
 
       <template #actions>
-        <UButton v-if="isPublic" to="/" size="sm" icon="i-lucide-arrow-right" trailing :label="t('nav.zurApp')"/>
+        <UButton v-if="isPublic" to="/alarme" size="sm" icon="i-lucide-arrow-right" trailing :label="t('nav.zurApp')"/>
         <template v-else>
           <SessionMenu>
             <ShareMenu/>

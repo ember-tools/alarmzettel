@@ -178,7 +178,7 @@ That builds the image from this checkout. A prebuilt one is published to GHCR on
 rather not build it yourself. `compose.prod.yml` runs that image behind Traefik at
 <https://alarmzettel.emberbox.app>, one of the [Emberbox](https://emberbox.app) tools.
 
-The application is then on <http://localhost:8080>. The `freigaben` volume, mounted at `/data`, holds
+The start page is then on <http://localhost:8080>, the application on <http://localhost:8080/alarme>. The `freigaben` volume, mounted at `/data`, holds
 the shared working sets, the downloaded address list and the map tile cache; everything else is
 stateless. The tile proxy fetches at most four tiles at once and limits cache misses per client
 and overall, answering 429 beyond that, as the OpenStreetMap tile policy asks.

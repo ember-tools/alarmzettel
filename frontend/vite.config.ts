@@ -10,8 +10,8 @@ export default defineConfig({
         emberbox({
             url: 'https://alarmzettel.emberbox.app',
             logo: 'alarmzettel',
-            app: {name: 'Alarmzettel', description: 'Alarme für Einsatzübungen schreiben und Übungstage planen.'},
-            prerender: {entry: 'src/prerender.ts', paths: ['/info', '/hilfe']},
+            app: {name: 'Alarmzettel', description: 'Alarme für Einsatzübungen schreiben und Übungstage planen.', startUrl: '/alarme'},
+            prerender: {entry: 'src/prerender.ts', paths: ['/', '/hilfe']},
         }),
     ],
     server: {
