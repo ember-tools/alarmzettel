@@ -112,6 +112,8 @@ function umgebung() {
  * A fresh instance of the module. ES modules are cached per URL, so each client gets its own
  * source text, bundled to its own file, and with it its own shadow copy and its own view of the
  * working set.
+ * `@emberbox/ui` resolves to its poller alone: the sync module needs nothing else from it, and the
+ * library's entry brings Vue components that do not bundle outside the frontend build.
  */
 async function klient(name) {
     const umfeld = umgebung()
@@ -127,6 +129,7 @@ async function klient(name) {
         stdin: {contents: quelle, resolveDir: WURZEL, loader: 'ts'},
         bundle: true, format: 'esm', write: false, platform: 'node', banner: BANNER,
         define: {'import.meta.env': JSON.stringify({VITE_API_BASE_URL: basis})},
+        alias: {'@emberbox/ui': resolve(WURZEL, 'frontend/node_modules/@emberbox/ui/src/poller.ts')},
     })
     const datei = resolve(ABLAGE, `${name}.mjs`)
     writeFileSync(datei, gebautJe.outputFiles[0].text)

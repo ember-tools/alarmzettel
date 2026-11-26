@@ -21,26 +21,43 @@
       "kind": "LOCAL_STORAGE"
     },
     {
-      "key": "alarmplaner_ablaufansicht",
+      "key": "alarmzettel_ablaufansicht",
       "purpose": "Welche Ansicht des Ablaufplans zuletzt gewählt war.",
       "kind": "LOCAL_STORAGE"
     },
     {
-      "key": "alarmplaner_karte_folgt",
+      "key": "alarmzettel_karte_folgt",
       "purpose": "Ob die Lagekarte dem gewählten Schritt folgt.",
       "kind": "LOCAL_STORAGE"
     },
     {
-      "key": "alarmplaner_kataloge",
+      "key": "alarmzettel_kataloge",
       "purpose": "Welche Abschnitte in Katalogen und Ablauf aufgeklappt sind.",
-      "kind": "LOCAL_STORAGE",
-      "source": "@emberbox/ui"
+      "kind": "LOCAL_STORAGE"
     },
     {
       "key": "vueuse-color-scheme",
       "purpose": "Ob die Seite hell oder dunkel erscheint.",
       "kind": "LOCAL_STORAGE",
       "source": "@emberbox/ui"
+    },
+    {
+      "key": "alarmplaner_ablaufansicht",
+      "purpose": "Früherer Name von alarmzettel_ablaufansicht; der Wert zieht beim Start um.",
+      "kind": "LOCAL_STORAGE",
+      "retired": true
+    },
+    {
+      "key": "alarmplaner_karte_folgt",
+      "purpose": "Früherer Name von alarmzettel_karte_folgt; der Wert zieht beim Start um.",
+      "kind": "LOCAL_STORAGE",
+      "retired": true
+    },
+    {
+      "key": "alarmplaner_kataloge",
+      "purpose": "Früherer Name von alarmzettel_kataloge; der Wert zieht beim Start um.",
+      "kind": "LOCAL_STORAGE",
+      "retired": true
     }
   ]
 }

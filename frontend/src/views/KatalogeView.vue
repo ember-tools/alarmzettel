@@ -216,7 +216,7 @@ function truppVorschau(staerke: string): string {
       <p class="text-muted text-[13px] mt-2">{{ t('planung.einschaltenHinweis') }}</p>
     </section>
 
-    <CollapsibleSection storage-key="alarmplaner_kataloge" name="dienststelle" :title="t('kataloge.dienststelle')">
+    <CollapsibleSection storage-key="alarmzettel_kataloge" name="dienststelle" :title="t('kataloge.dienststelle')">
       <div class="grid md:grid-cols-3 gap-3">
         <TextField v-model="arbeitsmappe.kataloge.arbeitsgruppe" :label="t('feld.arbeitsgruppe')"/>
         <TextField v-model="arbeitsmappe.kataloge.wacheName" :label="t('kataloge.wacheName')"
@@ -234,7 +234,7 @@ function truppVorschau(staerke: string): string {
       <p class="text-muted text-[13px] mt-3">{{ t('kataloge.wacheHinweis') }}</p>
     </CollapsibleSection>
 
-    <CollapsibleSection storage-key="alarmplaner_kataloge" name="orte" :title="t('kataloge.orte')"
+    <CollapsibleSection storage-key="alarmzettel_kataloge" name="orte" :title="t('kataloge.orte')"
                     :count="arbeitsmappe.kataloge.orte.length + 1">
       <template #actions>
         <UButton size="sm" color="neutral" variant="outline" @click="ortAnlegen">
@@ -266,7 +266,7 @@ function truppVorschau(staerke: string): string {
       </div>
     </CollapsibleSection>
 
-    <CollapsibleSection storage-key="alarmplaner_kataloge" name="fahrzeuge" :title="t('kataloge.fahrzeuge')"
+    <CollapsibleSection storage-key="alarmzettel_kataloge" name="fahrzeuge" :title="t('kataloge.fahrzeuge')"
                     :count="arbeitsmappe.kataloge.fahrzeuge.length">
       <template #actions>
         <UButton size="sm" color="neutral" variant="outline" @click="fahrzeugHinzufuegen">
@@ -308,7 +308,7 @@ function truppVorschau(staerke: string): string {
       </div>
     </CollapsibleSection>
 
-    <CollapsibleSection storage-key="alarmplaner_kataloge" name="material" :title="t('kataloge.material')"
+    <CollapsibleSection storage-key="alarmzettel_kataloge" name="material" :title="t('kataloge.material')"
                     :count="arbeitsmappe.kataloge.material.length">
       <p class="text-muted text-[13px] mb-3">{{ t('kataloge.materialHinweis') }}</p>
       <form class="flex gap-2 mb-3" @submit.prevent="materialHinzufuegen">
@@ -336,7 +336,7 @@ function truppVorschau(staerke: string): string {
       </div>
     </CollapsibleSection>
 
-    <CollapsibleSection storage-key="alarmplaner_kataloge" name="stichwoerter" :title="t('kataloge.stichwoerter')"
+    <CollapsibleSection storage-key="alarmzettel_kataloge" name="stichwoerter" :title="t('kataloge.stichwoerter')"
                     :count="arbeitsmappe.kataloge.stichwoerter.length">
       <p class="text-muted text-[13px] mb-3">{{ t('kataloge.stichwoerterHinweis') }}</p>
 
@@ -373,7 +373,7 @@ function truppVorschau(staerke: string): string {
       </div>
     </CollapsibleSection>
 
-    <CollapsibleSection storage-key="alarmplaner_kataloge" name="tage" :title="t('planung.tage')"
+    <CollapsibleSection storage-key="alarmzettel_kataloge" name="tage" :title="t('planung.tage')"
                     :count="arbeitsmappe.kataloge.tage.length">
       <template #actions>
         <UButton size="sm" color="neutral" variant="outline" @click="tagAnlegen">
@@ -400,7 +400,7 @@ function truppVorschau(staerke: string): string {
       </div>
     </CollapsibleSection>
 
-    <CollapsibleSection storage-key="alarmplaner_kataloge" name="personen" :title="t('planung.personen')"
+    <CollapsibleSection storage-key="alarmzettel_kataloge" name="personen" :title="t('planung.personen')"
                     :count="arbeitsmappe.kataloge.personen.length">
       <template #actions>
         <UButton size="sm" color="neutral" variant="outline" @click="personAnlegen">
@@ -418,7 +418,7 @@ function truppVorschau(staerke: string): string {
       </div>
     </CollapsibleSection>
     <div class="grid md:grid-cols-2 gap-4">
-      <CollapsibleSection v-for="liste in listen" :key="liste.schluessel" storage-key="alarmplaner_kataloge" :name="liste.schluessel"
+      <CollapsibleSection v-for="liste in listen" :key="liste.schluessel" storage-key="alarmzettel_kataloge" :name="liste.schluessel"
                       :title="liste.titel" :count="arbeitsmappe.kataloge[liste.schluessel].length">
 
         <form class="flex gap-2 mb-3" @submit.prevent="hinzufuegen(liste.schluessel)">

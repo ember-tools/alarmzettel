@@ -129,7 +129,9 @@ can never lose data.
 
 ### Editing together
 
-Browsers exchange every three seconds and send their changes 400 ms after typing stops.
+Browsers exchange every three seconds and send their changes 400 ms after typing stops. A hidden tab
+exchanges every thirty seconds (browsers stretch that to about a minute after five minutes hidden) and at
+once when it is shown again; while the server cannot be reached, the wait doubles up to thirty seconds.
 
 Merging happens **field by field**. The server does not hold the working set as a finished
 document but as a set of paths, each carrying the revision it was written at:

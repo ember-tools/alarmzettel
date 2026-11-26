@@ -46,7 +46,7 @@ const LageKarte = defineAsyncComponent(() => import('../components/planung/LageK
 const ANSICHTEN = ['tag', 'ketten', 'bewegung', 'karte', 'personen', 'orte', 'lagen'] as const
 type Ansicht = typeof ANSICHTEN[number]
 
-const SPEICHER = 'alarmplaner_ablaufansicht'
+const SPEICHER = 'alarmzettel_ablaufansicht'
 
 /**
  * The same data from seven sides; none is the right one. Which one someone works with is
@@ -164,7 +164,7 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
       {{ t('ablauf.keineKetten') }}
     </p>
 
-    <CollapsibleSection v-for="lauf in arbeitsmappe.planung.laeufe" :key="lauf.id" storage-key="alarmplaner_kataloge"
+    <CollapsibleSection v-for="lauf in arbeitsmappe.planung.laeufe" :key="lauf.id" storage-key="alarmzettel_kataloge"
                     :name="`kette-${lauf.id}`" :title="beschriftung(lauf)"
                     :icon="lauf.fahrzeugId ? 'i-lucide-table' : 'i-lucide-users'"
                     :count="lauf.schritte.length" default-open>
