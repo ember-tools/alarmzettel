@@ -13,6 +13,8 @@ class StaticResponseTest(unittest.TestCase):
         root = Path(cls.folder.name)
         (root / "pages" / "hilfe").mkdir(parents=True)
         (root / "pages" / "hilfe" / "index.html").write_text("help page")
+        (root / "pages" / "hilfe" / "adressen").mkdir()
+        (root / "pages" / "hilfe" / "adressen" / "index.html").write_text("help topic")
         (root / "pages" / "index.html").write_text("start page")
         (root / "index.html").write_text("shell")
         (root / "build.json").write_text("{}")
@@ -31,6 +33,14 @@ class StaticResponseTest(unittest.TestCase):
             response = main.static_response(path)
             self.assertTrue(str(response.path).endswith("pages/hilfe/index.html"))
             self.assertNotIn("x-robots-tag", response.headers)
+
+    def test_help_topics_are_public_and_unknown_ones_are_not(self):
+        for path in ("hilfe/adressen", "hilfe/adressen/"):
+            response = main.static_response(path)
+            self.assertTrue(str(response.path).endswith("pages/hilfe/adressen/index.html"))
+            self.assertNotIn("x-robots-tag", response.headers)
+        response = main.static_response("hilfe/unbekannt")
+        self.assertEqual("noindex, nofollow", response.headers["x-robots-tag"])
 
     def test_start_page_is_public(self):
         for path in ("", "/"):

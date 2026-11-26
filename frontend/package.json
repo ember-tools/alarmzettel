@@ -11,7 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emberbox/ui": "^0.13.0",
+    "@emberbox/ui": "^0.14.0",
     "@iconify/vue": "^5.0.5",
     "@nuxt/ui": "^4.13.1",
     "@types/leaflet": "^1.9.22",

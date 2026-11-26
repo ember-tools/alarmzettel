@@ -1,5 +1,6 @@
 import type {RouteLocation} from 'vue-router'
 import {createRouter, type RouteRecordRaw, type RouterHistory} from 'vue-router'
+import {HELP_TOPICS} from '../helpTopics'
 import {sitzung} from '../store/sitzung'
 
 /**
@@ -12,6 +13,8 @@ const routes: RouteRecordRaw[] = [
     {path: '/', name: 'Info', component: () => import('../views/InfoView.vue'), meta: {public: true}},
     {path: '/info', redirect: '/'},
     {path: '/hilfe', name: 'Hilfe', component: () => import('../views/HelpView.vue'), meta: {public: true}},
+    {path: '/hilfe/:slug', name: 'HelpTopic', component: () => import('../views/HelpTopicView.vue'), props: true,
+        meta: {public: true}},
     {path: '/alarme', name: 'Alarme', component: () => import('../views/AlarmeView.vue'),
         meta: {titleKey: 'routes.alarme'}},
     {path: '/alarm/:id', name: 'Alarm', component: () => import('../views/AlarmView.vue'),
@@ -32,7 +35,7 @@ const routes: RouteRecordRaw[] = [
         meta: {titleKey: 'routes.notFound'}},
 ]
 
-const READ_ONLY_ROUTES = ['Ansicht', 'Ablauf', 'Sitzung', 'Blatt', 'NotFound', 'Info', 'Hilfe']
+const READ_ONLY_ROUTES = ['Ansicht', 'Ablauf', 'Sitzung', 'Blatt', 'NotFound', 'Info', 'Hilfe', 'HelpTopic']
 
 /**
  * The tool's router, with web history in the browser and memory history when prerendering.
@@ -40,9 +43,12 @@ const READ_ONLY_ROUTES = ['Ansicht', 'Ablauf', 'Sitzung', 'Blatt', 'NotFound', '
  * Whoever only watches lands in the overview instead of an editor. The fields would change nothing
  * anyway, since the server takes no change from a read token, and a form that can be filled in to
  * no effect is worse than none.
+ * An unknown help topic leads to the help overview, also from another topic, and a new page starts at
+ * the top.
  */
 export function createAppRouter(history: RouterHistory) {
-    const router = createRouter({history, routes})
+    const router = createRouter({history, routes, scrollBehavior: (_to, _from, saved) => saved ?? {top: 0}})
+    router.beforeEach(target => target.name !== 'HelpTopic' || HELP_TOPICS.some(topic => topic.slug === target.params.slug) || {name: 'Hilfe'})
     router.beforeEach((target) => {
         if (!sitzung.nurLesen || READ_ONLY_ROUTES.includes(String(target.name))) return true
         return {name: 'Ansicht'}
