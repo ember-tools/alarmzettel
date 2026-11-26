@@ -10,38 +10,41 @@ import {
 import {anfahrt, fahrzeitSchaetzung, pruefen} from '../../scripts/ablauf'
 import type {Befund} from '../../scripts/ablauf'
 import {alsMinuten, dauer, uhrzeit, verschieben} from '../../scripts/zeit'
-import type {Lauf, Schritt} from '../../interfaces/Planung'
 
 /** The prefix of this instance's field ids, so labels find their fields when it appears more than once. */
 const fieldId = useId()
 
 /**
- * Alles, was an einem Schritt hängt. Die Kette zeigt es untereinander, der Tagesplan in einem
- * Fenster – geschrieben ist es einmal, damit an beiden Stellen dasselbe steht.
+ * Everything attached to a step. The chain shows it in a list, the day plan in a window; it is
+ * written once so both places show the same. The step is given by id and looked up in the
+ * workbook, which this component edits directly.
  */
-const {lauf, schritt} = defineProps<{ lauf: Lauf, schritt: Schritt }>()
+const {laufId, schrittId} = defineProps<{ laufId: string, schrittId: string }>()
+
+const lauf = computed(() => arbeitsmappe.planung.laeufe.find(kette => kette.id === laufId)!)
+const schritt = computed(() => lauf.value.schritte.find(eintrag => eintrag.id === schrittId)!)
 
 /** Geprüft wird der ganze Plan; hier steht, was diesen Schritt angeht. */
 const befunde = computed<Befund[]>(() =>
-    pruefen(plandaten()).filter(befund => befund.schrittId === schritt.id))
+    pruefen(plandaten()).filter(befund => befund.schrittId === schritt.value.id))
 
 function meldung(befund: Befund): string {
   return t(`ablauf.befund.${befund.art}`, befund.werte ?? {})
 }
 
 /** Die Fahrt, die vor diesem Aufenthalt von selbst entsteht. */
-const weg = computed(() => anfahrt(plandaten(), lauf, schritt))
+const weg = computed(() => anfahrt(plandaten(), lauf.value, schritt.value))
 
 /** Das Stichwort des Alarms – es steht als Platzhalter dort, wo die Bezeichnung leer bleibt. */
 const stichwortDerLage = computed(() => {
-  const punkt = programmpunkt(schritt.programmpunktId)
+  const punkt = programmpunkt(schritt.value.programmpunktId)
   return arbeitsmappe.alarme.find(alarm => alarm.id === punkt?.alarmId)?.stichwort ?? ''
 })
 
-const schaetzung = computed(() => fahrzeitSchaetzung(plandaten(), lauf, schritt))
+const schaetzung = computed(() => fahrzeitSchaetzung(plandaten(), lauf.value, schritt.value))
 
 /** Wie viele Köpfe an Bord sind – „Mimen (4)“ zählt vier. */
-const koepfe = computed(() => schritt.besatzung.reduce((summe, sitzt) => {
+const koepfe = computed(() => schritt.value.besatzung.reduce((summe, sitzt) => {
   const person = arbeitsmappe.kataloge.personen.find(p => p.id === sitzt.personId)
   return summe + (person?.anzahl || 1)
 }, 0))
@@ -53,18 +56,22 @@ const koepfe = computed(() => schritt.besatzung.reduce((summe, sitzt) => {
  */
 const vorgeschlagen = new Map<string, number>()
 
-/** Beim Wechsel des Ziels die geschätzte Fahrzeit vorschlagen, solange keine eigene dasteht. */
+/**
+ * Suggests the estimated travel time when the destination changes, as long as no own duration is
+ * set. The step is looked up again after the estimate arrives, since it may have been deleted
+ * meanwhile.
+ */
 async function zielGewaehlt() {
-  if (schritt.art !== 'fahrt') return
-  const vorher = lauf.schritte[lauf.schritte.indexOf(schritt) - 1]
+  if (schritt.value.art !== 'fahrt') return
+  const vorher = lauf.value.schritte[lauf.value.schritte.indexOf(schritt.value) - 1]
   if (!vorher) return
-  const eigene = dauer(schritt.von, schritt.bis)
-  if (eigene !== null && eigene !== vorgeschlagen.get(schritt.id)) return
-  const minuten = await fahrzeitSchaetzen(vorher.ortId, schritt.ortId, schritt.mittel)
-  if (minuten === null) return
-  vorgeschlagen.set(schritt.id, minuten)
-  schritt.bis = verschieben(schritt.von, minuten)
-  nachziehen(lauf, schritt)
+  const eigene = dauer(schritt.value.von, schritt.value.bis)
+  if (eigene !== null && eigene !== vorgeschlagen.get(schritt.value.id)) return
+  const minuten = await fahrzeitSchaetzen(vorher.ortId, schritt.value.ortId, schritt.value.mittel)
+  if (minuten === null || !lauf.value?.schritte.includes(schritt.value)) return
+  vorgeschlagen.set(schritt.value.id, minuten)
+  schritt.value.bis = verschieben(schritt.value.von, minuten)
+  nachziehen(lauf.value, schritt.value)
 }
 
 /**
@@ -73,24 +80,24 @@ async function zielGewaehlt() {
  * dass hier gewartet wird. Was nicht entstehen darf, ist eine Überschneidung.
  */
 function beginnGesetzt() {
-  const vorher = lauf.schritte[lauf.schritte.indexOf(schritt) - 1]
-  const beginn = alsMinuten(schritt.von)
-  if (vorher && beginn !== null && beginn < (alsMinuten(vorher.bis) ?? 0)) vorher.bis = schritt.von
-  if (beginn !== null && beginn >= (alsMinuten(schritt.bis) ?? 0)) {
-    schritt.bis = verschieben(schritt.von, 5)
+  const vorher = lauf.value.schritte[lauf.value.schritte.indexOf(schritt.value) - 1]
+  const beginn = alsMinuten(schritt.value.von)
+  if (vorher && beginn !== null && beginn < (alsMinuten(vorher.bis) ?? 0)) vorher.bis = schritt.value.von
+  if (beginn !== null && beginn >= (alsMinuten(schritt.value.bis) ?? 0)) {
+    schritt.value.bis = verschieben(schritt.value.von, 5)
   }
-  nachziehen(lauf, schritt)
+  nachziehen(lauf.value, schritt.value)
 }
 
 /** Ein Name, den es noch nicht gibt, wird angelegt; einer aus der Liste wird nur ausgewählt. */
 function materialGewaehlt(feld: HTMLInputElement) {
   const materialId = materialSichern(feld.value)
-  if (materialId) materialHinzufuegen(schritt, materialId)
+  if (materialId) materialHinzufuegen(schritt.value, materialId)
   feld.value = ''
 }
 
 function lageAnlegen() {
-  schritt.programmpunktId = programmpunktAnlegen().id
+  schritt.value.programmpunktId = programmpunktAnlegen().id
 }
 </script>
 

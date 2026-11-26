@@ -2,11 +2,11 @@
 import {CollapsibleSection, TextField} from '@emberbox/ui'
 import {computed, reactive, ref, useId, watch} from 'vue'
 import AddressField from '../components/base/AddressField.vue'
+import PersonCard from '../components/kataloge/PersonCard.vue'
 import {t} from '../i18n'
 import {arbeitsmappe} from '../store/arbeitsmappe'
 import {
-  entfernen as ausListe, ortAnlegen, personAnlegen, tagAnlegen, umschalten,
-  verfuegbarkeitAnlegen, wortHinzufuegen,
+  entfernen as ausListe, ortAnlegen, personAnlegen, tagAnlegen,
 } from '../store/planung'
 import {truppText} from '../scripts/staerke'
 import {STICHWOERTER} from '../interfaces/Alarm'
@@ -93,19 +93,6 @@ function materialHinzufuegen() {
 function materialEntfernen(stueck: Materialvorlage) {
   const stelle = arbeitsmappe.kataloge.material.indexOf(stueck)
   if (stelle >= 0) arbeitsmappe.kataloge.material.splice(stelle, 1)
-}
-
-/**
- * Ein Wort an einer Person: was der Katalog noch nicht kennt, kommt dort dazu – so wie ein neu
- * geschriebenes Stichwort oder ein neues Materialstück. Die Knöpfe daneben bleiben der schnelle
- * Weg für alles, was schon geführt wird.
- */
-function wortGeben(liste: 'rollen' | 'fahrerlaubnisse', an: string[], feld: HTMLInputElement) {
-  const wert = feld.value.trim()
-  feld.value = ''
-  if (!wert) return
-  wortHinzufuegen(arbeitsmappe.kataloge[liste], wert)
-  if (!an.includes(wert)) an.push(wert)
 }
 
 function ortEntfernen(ort: Ort) {
@@ -427,86 +414,7 @@ function truppVorschau(staerke: string): string {
       </p>
 
       <div class="grid gap-4">
-        <div v-for="person in arbeitsmappe.kataloge.personen" :key="person.id"
-             class="border border-default rounded p-3 bg-muted grid gap-3">
-          <div class="grid md:grid-cols-[1fr_6rem_auto_auto] gap-3 items-end">
-            <TextField v-model="person.name" :label="t('planung.personName')"/>
-            <div>
-              <label class="field-label" :for="`${fieldId}-count-${person.id}`">{{ t('planung.anzahl') }}</label>
-              <UInput :id="`${fieldId}-count-${person.id}`" v-model.number="person.anzahl" type="number" min="1" class="w-full"/>
-            </div>
-            <label class="flex items-center gap-2 text-sm h-9.5"
-                   :title="t('planung.blattHinweis')">
-              <input v-model="person.blatt" type="checkbox"/>
-              {{ t('planung.blatt') }}
-            </label>
-            <UButton size="sm" color="signal" variant="outline"
-                     @click="ausListe(arbeitsmappe.kataloge.personen, person)">
-              <UIcon name="i-lucide-trash-2"/>
-            </UButton>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-3">
-            <div>
-              <span class="field-label">{{ t('planung.rollen') }}</span>
-              <div class="flex flex-wrap gap-2 items-center">
-                <UButton v-for="wert in arbeitsmappe.kataloge.rollen" :key="wert" size="sm"
-                         :color="person.rollen.includes(wert) ? 'primary' : 'neutral'" :variant="person.rollen.includes(wert) ? 'solid' : 'outline'"
-                         @click="umschalten(person.rollen, wert)">
-                  {{ wert }}
-                </UButton>
-                <UInput type="text" list="rollenliste"
-                        :placeholder="t('planung.rolleDazu')"
-                        class="w-auto" @change="wortGeben('rollen', person.rollen, $event.target as HTMLInputElement)"/>
-              </div>
-            </div>
-            <div>
-              <span class="field-label">{{ t('planung.fahrerlaubnis') }}</span>
-              <div class="flex flex-wrap gap-2 items-center">
-                <UButton v-for="wert in arbeitsmappe.kataloge.fahrerlaubnisse" :key="wert" size="sm"
-                         :color="person.fahrerlaubnis.includes(wert) ? 'primary' : 'neutral'" :variant="person.fahrerlaubnis.includes(wert) ? 'solid' : 'outline'"
-                         @click="umschalten(person.fahrerlaubnis, wert)">
-                  {{ wert }}
-                </UButton>
-                <UInput type="text" list="klassenliste"
-                        :placeholder="t('planung.klasseDazu')"
-                        class="w-auto" @change="wortGeben('fahrerlaubnisse', person.fahrerlaubnis,
-                        $event.target as HTMLInputElement)"/>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex items-center gap-3 mb-2 flex-wrap">
-              <span class="field-label mb-0">{{ t('planung.verfuegbar') }}</span>
-              <UButton size="sm" color="neutral" variant="outline"
-                       @click="verfuegbarkeitAnlegen(person)">
-                <UIcon name="i-lucide-plus"/>
-                {{ t('planung.fensterNeu') }}
-              </UButton>
-            </div>
-            <p v-if="!person.verfuegbar.length" class="text-muted text-[13px]">
-              {{ t('planung.immerDa') }}
-            </p>
-            <div class="grid gap-2">
-              <div v-for="fenster in person.verfuegbar" :key="fenster.id"
-                   class="grid md:grid-cols-[1fr_1fr_auto] gap-2 items-end">
-                <div>
-                  <label class="field-label" :for="`${fieldId}-from-${fenster.id}`">{{ t('planung.von') }}</label>
-                  <UInput :id="`${fieldId}-from-${fenster.id}`" v-model="fenster.von" type="datetime-local" class="w-full"/>
-                </div>
-                <div>
-                  <label class="field-label" :for="`${fieldId}-to-${fenster.id}`">{{ t('planung.bis') }}</label>
-                  <UInput :id="`${fieldId}-to-${fenster.id}`" v-model="fenster.bis" type="datetime-local" class="w-full"/>
-                </div>
-                <UButton size="sm" color="signal" variant="outline"
-                         @click="ausListe(person.verfuegbar, fenster)">
-                  <UIcon name="i-lucide-x"/>
-                </UButton>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PersonCard v-for="person in arbeitsmappe.kataloge.personen" :key="person.id" :person-id="person.id"/>
       </div>
     </CollapsibleSection>
     <div class="grid md:grid-cols-2 gap-4">

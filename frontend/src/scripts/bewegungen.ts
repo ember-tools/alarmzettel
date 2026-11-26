@@ -215,6 +215,34 @@ export function bewegungsspuren(daten: Plandaten, datum: string,
         .map(spur => ({id: spur.id, name: spur.name}))
 }
 
+/** Every stay of the tracks on one day, by when it begins. */
+function staysOfDay(spuren: Spur[], datum: string): Anwesenheit[] {
+    const stehend: Anwesenheit[] = []
+    for (const spur of spuren) {
+        for (const eintrag of spur.schritte) {
+            if (eintrag.schritt.art !== 'aufenthalt' || tagVon(eintrag.schritt.von) !== datum) continue
+            stehend.push({spur, eintrag,
+                          von: minuteAmTag(eintrag.ankunft, datum),
+                          bis: minuteAmTag(eintrag.bis, datum)})
+        }
+    }
+    return stehend.sort((a, b) => a.von - b.von)
+}
+
+/** The places anyone stays at or drives between that day, in the catalogue's order. */
+function placesInvolved(daten: Plandaten, stehend: Anwesenheit[],
+                        fahrten: { spur: Spur, eintrag: Spurschritt }[]): string[] {
+    const beteiligt = new Set<string>()
+    for (const {eintrag} of stehend) beteiligt.add(eintrag.schritt.ortId)
+    for (const {eintrag} of fahrten) {
+        beteiligt.add(eintrag.anfahrt?.vonOrtId ?? eintrag.vonOrtId)
+        beteiligt.add(eintrag.schritt.ortId)
+    }
+    return daten.orte
+        .filter(ort => ort.id && beteiligt.has(ort.id))
+        .map(ort => ort.id)
+}
+
 /**
  * Das Bild eines Tages. Ein Ort bekommt ein Band, sobald jemand dort steht oder dorthin fährt;
  * Orte, an denen an diesem Tag nichts geschieht, tauchen nicht auf.
@@ -233,31 +261,14 @@ export function bewegungsbild(daten: Plandaten, datum: string, modus: Modus = 'f
     const spuren = nur ? alle.filter(spur => nur.has(spur.id)) : alle
     const amTag = (eintrag: Spurschritt) => tagVon(eintrag.schritt.von) === datum
 
-    const stehend: Anwesenheit[] = []
-    for (const spur of spuren) {
-        for (const eintrag of spur.schritte) {
-            if (eintrag.schritt.art !== 'aufenthalt' || !amTag(eintrag)) continue
-            stehend.push({spur, eintrag,
-                          von: minuteAmTag(eintrag.ankunft, datum),
-                          bis: minuteAmTag(eintrag.bis, datum)})
-        }
-    }
-    stehend.sort((a, b) => a.von - b.von)
+    const stehend = staysOfDay(spuren, datum)
 
     const fahrten = spuren.flatMap(spur => spur.schritte
         .filter(eintrag =>
             amTag(eintrag) && (eintrag.schritt.art === 'fahrt' || eintrag.anfahrt !== null))
         .map(eintrag => ({spur, eintrag})))
 
-    const beteiligt = new Set<string>()
-    for (const {eintrag} of stehend) beteiligt.add(eintrag.schritt.ortId)
-    for (const {eintrag} of fahrten) {
-        beteiligt.add(eintrag.anfahrt?.vonOrtId ?? eintrag.vonOrtId)
-        beteiligt.add(eintrag.schritt.ortId)
-    }
-    const reihenfolge = daten.orte
-        .filter(ort => ort.id && beteiligt.has(ort.id))
-        .map(ort => ort.id)
+    const reihenfolge = placesInvolved(daten, stehend, fahrten)
 
     const belegung = new Map<string, number[]>(reihenfolge.map(ortId => [ortId, []]))
     const reihen = new Map<string, number>()

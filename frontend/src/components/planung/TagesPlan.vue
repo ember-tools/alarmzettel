@@ -350,7 +350,7 @@ function stichworte(kachel: Kachel): string[] {
       </div>
     </div>
 
-    <SchrittFenster v-if="auswahl" :lauf="auswahl.lauf" :schritt="auswahl.schritt"
+    <SchrittFenster v-if="auswahl" :lauf-id="auswahl.lauf.id" :schritt-id="auswahl.schritt.id"
                     :name="auswahl.name" @schliessen="auswahl = null"/>
   </section>
 </template>

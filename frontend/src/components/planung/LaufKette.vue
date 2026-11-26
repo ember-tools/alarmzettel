@@ -41,7 +41,7 @@ const {lauf} = defineProps<{ lauf: Lauf }>()
         </UButton>
       </div>
 
-      <SchrittFelder :lauf="lauf" :schritt="schritt"/>
+      <SchrittFelder :lauf-id="lauf.id" :schritt-id="schritt.id"/>
     </div>
 
     <div class="flex gap-2 flex-wrap">
