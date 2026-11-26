@@ -28,19 +28,26 @@ export const sitzung = reactive({
     bekannt: [] as BekannteSitzung[],
 })
 
-function lesen<T>(schluessel: string, standard: T): T {
+/**
+ * A value stored as JSON, or the fallback when there is none or the browser refuses to read it.
+ * Each caller names its key, so the browser storage catalogue can be checked against the code.
+ */
+function parsedOr<T>(read: () => string | null, fallback: T): T {
     try {
-        const roh = localStorage.getItem(schluessel)
-        return roh ? JSON.parse(roh) as T : standard
+        const raw = read()
+        return raw ? JSON.parse(raw) as T : fallback
     } catch {
-        return standard
+        return fallback
     }
 }
 
-function schreiben(schluessel: string, wert: unknown) {
+/** Stores a value; a browser that refuses to store anything simply forgets it. */
+function storeQuietly(write: () => void): void {
     try {
-        localStorage.setItem(schluessel, JSON.stringify(wert))
-    } catch { /* ein Browser, der nichts speichern will, vergisst die Liste eben */ }
+        write()
+    } catch {
+        return
+    }
 }
 
 /** Woran man eine Sitzung wiedererkennt: erstes Stichwort und wie viele Alarme darin stehen. */
@@ -55,20 +62,25 @@ function merken(token: string) {
     const ohne = sitzung.bekannt.filter(eintrag => eintrag.token !== token)
     sitzung.bekannt = [{token, beschriftung: beschriftung(arbeitsmappe),
                         zuletzt: new Date().toISOString()}, ...ohne].slice(0, 20)
-    schreiben(BEKANNT, sitzung.bekannt)
+    storeQuietly(() => localStorage.setItem(BEKANNT, JSON.stringify(sitzung.bekannt)))
 }
 
 export function sitzungVergessen(token: string) {
     sitzung.bekannt = sitzung.bekannt.filter(eintrag => eintrag.token !== token)
-    schreiben(BEKANNT, sitzung.bekannt)
+    storeQuietly(() => localStorage.setItem(BEKANNT, JSON.stringify(sitzung.bekannt)))
+}
+
+/** The name this browser last worked under, empty when it has none yet. */
+export function rememberedName(): string {
+    return parsedOr<string>(() => localStorage.getItem(NAME), '')
 }
 
 export function name(): string {
-    return lesen<string>(NAME, '') || 'Ich'
+    return rememberedName() || 'Ich'
 }
 
 export function nameSetzen(wert: string) {
-    schreiben(NAME, wert.trim())
+    storeQuietly(() => localStorage.setItem(NAME, JSON.stringify(wert.trim())))
     verbindung.wer = wert.trim() || 'Ich'
 }
 
@@ -84,7 +96,7 @@ function uebernehmenIn(kopf: Sitzungskopf) {
  * was noch im `localStorage` liegt, damit die Umstellung niemandem seine Arbeit nimmt.
  */
 export async function sitzungStarten() {
-    sitzung.bekannt = lesen<BekannteSitzung[]>(BEKANNT, [])
+    sitzung.bekannt = parsedOr<BekannteSitzung[]>(() => localStorage.getItem(BEKANNT), [])
     const laufend = await laufendeSitzung()
     if (laufend) {
         await beitreten(laufend.token, name(), laufend.nurLesen)
