@@ -173,8 +173,9 @@ docker compose up
 
 That builds the image from this checkout. A prebuilt one is published to GHCR on every push to
 `main`, so `ghcr.io/ember-tools/alarmzettel:latest` works instead of `build: .` if you would
-rather not build it yourself. `compose.prod.yml` runs that image behind Traefik at
-<https://alarmzettel.emberbox.app>, one of the [Emberbox](https://emberbox.app) tools.
+rather not build it yourself. `compose.prod.yml` is a template for running that image behind
+Traefik, as at <https://alarmzettel.emberbox.app>, one of the [Emberbox](https://emberbox.app)
+tools; adapt entrypoint, certificate resolver and network to the target server.
 
 The application is then on <http://localhost:8080>. The `freigaben` volume, mounted at `/data`, holds
 the shared working sets, the downloaded address list and the map tile cache; everything else is
