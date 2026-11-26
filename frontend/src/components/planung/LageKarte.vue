@@ -23,7 +23,7 @@ import {storedOr, storeQuietly} from '../../store/browserStorage'
  */
 const TAKT = 10000
 
-const SPEICHER = 'alarmplaner_karte_folgt'
+const SPEICHER = 'alarmzettel_karte_folgt'
 
 const tage = computed(() => bewegungstage(plandaten()))
 const tag = ref('')

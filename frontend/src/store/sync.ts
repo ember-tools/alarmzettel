@@ -1,3 +1,4 @@
+import {createPoller} from '@emberbox/ui'
 import {reactive, watch} from 'vue'
 import client from '../api/http'
 import {arbeitsmappe, ersetzen, uebernehmen} from './arbeitsmappe'
@@ -34,11 +35,16 @@ export const verbindung = reactive({
  */
 let serverBild: Flachbild = {}
 
-let takt: number | undefined
-let anstehend = false
-let laeuftGerade = false
-
 const TAKT_MS = 3000
+
+/** The longest wait between two exchanges while the server cannot be reached. */
+const MAX_BACKOFF_MS = 30_000
+
+/** The wait between two exchanges while the tab is hidden; the others' edits arrive on return. */
+const HIDDEN_INTERVAL_MS = 30_000
+
+/** How long one exchange may take before it counts as failed, so a stalled request cannot hold up a PDF. */
+const EXCHANGE_TIMEOUT_MS = 10_000
 const RUHE_MS = 400
 const SPEICHER = 'alarmzettel_arbeitsraum'
 
@@ -178,32 +184,37 @@ function einarbeiten(antwort: Antwort, gesendet: Aenderung[], gesendetBild: Flac
  * connection costs time rather than work.
  */
 async function austauschen() {
-    if (!verbindung.token || laeuftGerade) {
-        anstehend = anstehend || laeuftGerade
-        return
-    }
-    laeuftGerade = true
+    const token = verbindung.token
+    if (!token) return
     try {
         const gesendetBild = flach(arbeitsmappe)
         const gesendet = verbindung.nurLesen ? [] : unterschied(serverBild, gesendetBild)
         const {data} = verbindung.nurLesen
-            ? await client.get<Antwort>(`/api/sitzung/${verbindung.token}/aenderungen`,
-                                        {params: {seit: verbindung.stand}})
+            ? await client.get<Antwort>(`/api/sitzung/${token}/aenderungen`,
+                                        {params: {seit: verbindung.stand}, timeout: EXCHANGE_TIMEOUT_MS})
             : await client.post<Antwort>(
-                `/api/sitzung/${verbindung.token}/aenderungen`,
-                {seit: verbindung.stand, wer: verbindung.wer, aenderungen: gesendet})
+                `/api/sitzung/${token}/aenderungen`,
+                {seit: verbindung.stand, wer: verbindung.wer, aenderungen: gesendet},
+                {timeout: EXCHANGE_TIMEOUT_MS})
+        if (verbindung.token !== token) return
         einarbeiten(data, gesendet, gesendetBild)
         verbindung.fehler = null
     } catch (fehler) {
+        if (verbindung.token !== token) return
         verbindung.fehler = (fehler as Error).message
-    } finally {
-        laeuftGerade = false
-        if (anstehend) {
-            anstehend = false
-            void austauschen()
-        }
+        throw fehler
     }
 }
+
+/**
+ * The beat of a joined session: one exchange at a time, every three seconds while the tab is shown
+ * and every thirty while it is hidden, backing off while the server cannot be reached.
+ */
+const poller = createPoller(austauschen, {
+    intervalMs: TAKT_MS,
+    maxIntervalMs: MAX_BACKOFF_MS,
+    hiddenIntervalMs: HIDDEN_INTERVAL_MS,
+})
 
 /**
  * Exchanges now instead of waiting for the next beat. Wanted before something is produced from
@@ -211,7 +222,7 @@ async function austauschen() {
  * browser happened to have a moment ago.
  */
 export async function jetztAbgleichen() {
-    if (verbindung.token) await austauschen()
+    if (verbindung.token) await poller.refresh()
 }
 
 let ruhe: number | undefined
@@ -219,7 +230,7 @@ let ruhe: number | undefined
 function beiAenderung() {
     if (!verbindung.token) return
     window.clearTimeout(ruhe)
-    ruhe = window.setTimeout(austauschen, RUHE_MS)
+    ruhe = window.setTimeout(() => void poller.refresh(), RUHE_MS)
 }
 
 watch(arbeitsmappe, beiAenderung, {deep: true})
@@ -245,7 +256,7 @@ export async function beitreten(token: string, wer: string, nurLesen = false) {
     einarbeiten(data, [], flach(arbeitsmappe))
     verbindung.laeuft = true
     merken(token, wer)
-    takt = window.setInterval(austauschen, TAKT_MS)
+    poller.start()
 }
 
 /**
@@ -269,9 +280,8 @@ export function schatten(): Flachbild {
 
 export function verlassen() {
     vergessen()
-    window.clearInterval(takt)
+    poller.stop()
     window.clearTimeout(ruhe)
-    takt = undefined
     verbindung.token = null
     verbindung.nurLesen = false
     verbindung.laeuft = false
