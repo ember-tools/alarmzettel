@@ -5,7 +5,7 @@ import {t} from '../i18n'
 usePage({
   title: `${t('app.name')} – ${t('app.untertitel')}`,
   description: t('info.description'),
-  path: '/info',
+  path: '/',
   structuredData: [webApplicationData({name: t('app.name'), description: t('info.description')})],
 })
 
@@ -27,7 +27,7 @@ const FEATURES = [
       <h1 class="headline m-0 text-4xl md:text-5xl">{{ t('app.untertitel') }}</h1>
       <p class="m-0 text-lg text-muted">{{ t('info.description') }}</p>
       <div class="flex flex-wrap gap-2">
-        <UButton to="/" icon="i-lucide-arrow-right" trailing :label="t('info.open')"/>
+        <UButton to="/alarme" icon="i-lucide-arrow-right" trailing :label="t('info.open')"/>
         <UButton to="/hilfe" color="neutral" variant="outline" icon="i-lucide-life-buoy" :label="t('nav.hilfe')"/>
       </div>
     </section>

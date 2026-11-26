@@ -1,3 +1,4 @@
+import asyncio
 import tempfile
 import unittest
 from pathlib import Path
@@ -10,8 +11,9 @@ class StaticResponseTest(unittest.TestCase):
     def setUpClass(cls):
         cls.folder = tempfile.TemporaryDirectory()
         root = Path(cls.folder.name)
-        (root / "pages" / "info").mkdir(parents=True)
-        (root / "pages" / "info" / "index.html").write_text("info page")
+        (root / "pages" / "hilfe").mkdir(parents=True)
+        (root / "pages" / "hilfe" / "index.html").write_text("help page")
+        (root / "pages" / "index.html").write_text("start page")
         (root / "index.html").write_text("shell")
         (root / "build.json").write_text("{}")
         (root / "robots.txt").write_text("robots")
@@ -25,14 +27,25 @@ class StaticResponseTest(unittest.TestCase):
         cls.folder.cleanup()
 
     def test_prerendered_page(self):
-        for path in ("info", "info/"):
+        for path in ("hilfe", "hilfe/"):
             response = main.static_response(path)
-            self.assertTrue(str(response.path).endswith("pages/info/index.html"))
+            self.assertTrue(str(response.path).endswith("pages/hilfe/index.html"))
             self.assertNotIn("x-robots-tag", response.headers)
 
+    def test_start_page_is_public(self):
+        for path in ("", "/"):
+            response = main.static_response(path)
+            self.assertTrue(str(response.path).endswith("pages/index.html"))
+            self.assertNotIn("x-robots-tag", response.headers)
+
+    def test_info_moved_to_the_start_page(self):
+        response = asyncio.run(main.info())
+        self.assertEqual(301, response.status_code)
+        self.assertEqual("/", response.headers["location"])
+
     def test_app_routes_get_the_noindex_shell(self):
-        for path in ("", "sitzung/abc", "alarm/1", "index.html", "pages/info/index.html", "./index.html",
-                     "pages/../index.html", "./pages/info/index.html", "info/../index.html"):
+        for path in ("alarme", "sitzung/abc", "alarm/1", "index.html", "pages/index.html", "pages/hilfe/index.html", "./index.html",
+                     "pages/../index.html", "./pages/hilfe/index.html", "hilfe/../index.html"):
             response = main.static_response(path)
             self.assertTrue(str(response.path).endswith("/index.html") and "pages" not in str(response.path))
             self.assertEqual("noindex, nofollow", response.headers["x-robots-tag"])

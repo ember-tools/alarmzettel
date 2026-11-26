@@ -4,13 +4,15 @@ import {sitzung} from '../store/sitzung'
 
 /**
  * The tool's routes. A sheet (`/blatt/…`) hangs off its own link and reads the session without
- * switching into it. `/planung` and `/freigabe/…` are old addresses kept as redirects, so links that
- * were already passed around still land somewhere sensible.
+ * switching into it. `/planung`, `/freigabe/…` and `/info` are old addresses kept as redirects, so links that
+ * were already passed around still land somewhere sensible. `/` is the public start page, the alarm list
+ * is `/alarme`.
  */
 const routes: RouteRecordRaw[] = [
-    {path: '/info', name: 'Info', component: () => import('../views/InfoView.vue'), meta: {public: true}},
+    {path: '/', name: 'Info', component: () => import('../views/InfoView.vue'), meta: {public: true}},
+    {path: '/info', redirect: '/'},
     {path: '/hilfe', name: 'Hilfe', component: () => import('../views/HelpView.vue'), meta: {public: true}},
-    {path: '/', name: 'Alarme', component: () => import('../views/AlarmeView.vue'),
+    {path: '/alarme', name: 'Alarme', component: () => import('../views/AlarmeView.vue'),
         meta: {titleKey: 'routes.alarme'}},
     {path: '/alarm/:id', name: 'Alarm', component: () => import('../views/AlarmView.vue'),
         meta: {titleKey: 'routes.alarm'}},

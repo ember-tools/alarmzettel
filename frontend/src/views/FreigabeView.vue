@@ -38,7 +38,7 @@ async function kopieAnfordern() {
 function kopieUebernehmen() {
   if (!freigabe.value) return
   ersetzen(uebernehmen(freigabe.value.arbeitsmappe))
-  router.push('/')
+  router.push('/alarme')
 }
 
 /**
@@ -56,7 +56,7 @@ async function mitarbeiten() {
   try {
     nameSetzen(name.value)
     await sitzungWechseln(String(route.params.token))
-    router.push(freigabe.value.nurLesen ? '/ansicht' : '/')
+    router.push(freigabe.value.nurLesen ? '/ansicht' : '/alarme')
   } catch (error) {
     fehler.value = await fehlertext(error)
   }

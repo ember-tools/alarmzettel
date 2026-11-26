@@ -79,13 +79,13 @@ async function pdf() {
 <template>
   <div v-if="!alarm" class="panel text-center py-10">
     <p>{{ t('nichtGefunden.titel') }}</p>
-    <UButton color="neutral" variant="outline" class="mt-3 inline-flex" to="/">{{ t('nichtGefunden.zurueck') }}</UButton>
+    <UButton color="neutral" variant="outline" class="mt-3 inline-flex" to="/alarme">{{ t('nichtGefunden.zurueck') }}</UButton>
   </div>
 
   <div v-else class="grid gap-5">
     <div class="flex items-center justify-between gap-3 flex-wrap">
       <div class="flex items-center gap-3">
-        <UButton size="sm" color="neutral" variant="outline" to="/">
+        <UButton size="sm" color="neutral" variant="outline" to="/alarme">
           <UIcon name="i-lucide-arrow-left"/>
           {{ t('aktion.zurueck') }}
         </UButton>

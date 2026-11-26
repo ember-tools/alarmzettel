@@ -6,7 +6,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import FileResponse
+from starlette.responses import FileResponse, RedirectResponse
 
 from services.adressen import adressen
 from services.sitzung import sitzungen
@@ -90,8 +90,11 @@ _static = Path(__file__).resolve().parent.parent / "static"
 def static_response(path: str) -> FileResponse:
     """Resolves a request outside the API to a file of the built frontend, see `spa`."""
     root = _static.resolve()
+    start = root / "pages" / "index.html"
+    if not path.strip("/") and start.is_file():
+        return FileResponse(start)
     page = (root / "pages" / path.strip("/") / "index.html").resolve()
-    if page.is_relative_to(root / "pages") and page != root / "pages" / "index.html" and page.is_file():
+    if page.is_relative_to(root / "pages") and page != start and page.is_file():
         return FileResponse(page)
     candidate = (root / path.strip("/")).resolve()
     if candidate.is_relative_to(root) and candidate != root and candidate.is_file():
@@ -100,6 +103,13 @@ def static_response(path: str) -> FileResponse:
             headers = {"Cache-Control": "no-store"} if relative == Path("build.json") else None
             return FileResponse(candidate, headers=headers)
     return FileResponse(root / "index.html", headers={"X-Robots-Tag": "noindex, nofollow"})
+
+
+@app.api_route("/info", methods=["GET", "HEAD"])
+@app.api_route("/info/", methods=["GET", "HEAD"])
+async def info():
+    """The start page lived here before `/` became public; old links and search results move along."""
+    return RedirectResponse("/", status_code=301)
 
 
 if _static.is_dir():
