@@ -15,6 +15,7 @@ class StaticResponseTest(unittest.TestCase):
         (root / "index.html").write_text("shell")
         (root / "build.json").write_text("{}")
         (root / "robots.txt").write_text("robots")
+        (root / "manifest.webmanifest").write_text("{}")
         cls.previous = main._static
         main._static = root
 
@@ -41,6 +42,10 @@ class StaticResponseTest(unittest.TestCase):
 
     def test_built_files_are_served(self):
         self.assertTrue(str(main.static_response("robots.txt").path).endswith("robots.txt"))
+
+    def test_manifest_has_its_media_type(self):
+        response = main.static_response("manifest.webmanifest")
+        self.assertEqual("application/manifest+json", response.media_type)
 
     def test_paths_outside_the_build_fall_back_to_the_shell(self):
         response = main.static_response("../main.py")
