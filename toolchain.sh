@@ -105,7 +105,7 @@ Docker
   docker-dev            Start the dev stack: backend with --reload, Vite on 5175
 
 Combined
-  verify                be-test, fe-build, sna-check, the two sync checks, the
+  verify                be-test, fe-build, fe-lint, sna-check, the two sync checks, the
                         Polar-Koordinaten and den Ablaufplan - what CI runs
 EOF
 }
@@ -278,6 +278,7 @@ print(Adressen(settings.adressen_datei, settings.adressen_tage).bestand())" ;;
     verify)
         "$ROOT/toolchain.sh" be-test
         "$ROOT/toolchain.sh" fe-build
+        "$ROOT/toolchain.sh" fe-lint
         "$ROOT/toolchain.sh" sna-check
         "$ROOT/toolchain.sh" sync-pfade
         # Ein zweites Mal mit dem Ablaufbeispiel: der Alarmzettel-Beispieldatensatz kennt weder

@@ -229,6 +229,18 @@ docker compose -f compose.dev.yml up
 
 They talk to the real API and really render; where Typst is missing they skip themselves.
 
+### Linters
+
+```bash
+./toolchain.sh fe-lint   # ESLint, duplication, browser storage, em dashes and comments
+./toolchain.sh fe-audit  # the same, printing everything without failing
+```
+
+The linters come from [`@emberbox/lint`](https://www.npmjs.com/package/@emberbox/lint), shared by the
+Emberbox tools; `frontend/emberbox-lint.config.mjs` says what they read. Every value the frontend keeps
+in the browser is listed with its purpose in `frontend/browser-storage.json`. `./toolchain.sh verify`
+runs them too, as CI does on every pull request and on `main`.
+
 ### Layout
 
 ```

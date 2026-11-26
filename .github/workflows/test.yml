@@ -56,6 +56,10 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
       - uses: actions/setup-python@v7
         with:
           python-version: '3.14'

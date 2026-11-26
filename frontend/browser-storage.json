@@ -29,6 +29,18 @@
       "key": "alarmplaner_karte_folgt",
       "purpose": "Ob die Lagekarte dem gewählten Schritt folgt.",
       "kind": "LOCAL_STORAGE"
+    },
+    {
+      "key": "alarmplaner_kataloge",
+      "purpose": "Welche Abschnitte in Katalogen und Ablauf aufgeklappt sind.",
+      "kind": "LOCAL_STORAGE",
+      "source": "@emberbox/ui"
+    },
+    {
+      "key": "vueuse-color-scheme",
+      "purpose": "Ob die Seite hell oder dunkel erscheint.",
+      "kind": "LOCAL_STORAGE",
+      "source": "@emberbox/ui"
     }
   ]
 }
