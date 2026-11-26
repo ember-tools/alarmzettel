@@ -318,19 +318,19 @@ watch(() => [bild, gewaehlt.value, dark.value], () => zeichnen(), {deep: true})
     <div class="flex flex-wrap items-center gap-x-5 gap-y-1 mb-2 text-[13px]">
       <span class="flex items-center gap-2">
         <span class="inline-block w-6 h-3 rounded-sm border"
-              :style="{background: `${legendenfarben.stehend}33`, borderColor: legendenfarben.stehend}"></span>
+              :style="{background: `${legendenfarben.stehend}33`, borderColor: legendenfarben.stehend}" />
         <UIcon name="i-lucide-map-pin" class="text-muted"/>
         {{ t('ablauf.legende.aufenthalt') }}
       </span>
       <span class="flex items-center gap-2">
         <span class="inline-block w-6 h-0 border-t-2"
-              :style="{borderColor: legendenfarben.signal}"></span>
+              :style="{borderColor: legendenfarben.signal}" />
         <UIcon name="i-lucide-truck" :style="{color: legendenfarben.signal}"/>
         {{ t('ablauf.legende.fahrt') }}
       </span>
       <span class="flex items-center gap-2">
         <span class="inline-block w-6 h-0 border-t-2 border-dashed"
-              :style="{borderColor: legendenfarben.signal}"></span>
+              :style="{borderColor: legendenfarben.signal}" />
         <UIcon name="i-lucide-footprints"
                            :style="{color: legendenfarben.signal}"/>
         {{ t('ablauf.legende.fussweg') }}
@@ -339,7 +339,7 @@ watch(() => [bild, gewaehlt.value, dark.value], () => zeichnen(), {deep: true})
 
     <div ref="behaelter"
          :style="{height: `${bild.baender.reduce((summe, band) => summe + band.reihen, 0) * REIHE + 90}px`}"
-         class="w-full"></div>
+         class="w-full" />
     <p class="text-muted text-[13px] mt-1">{{ t('ablauf.bewegungHinweis') }}</p>
   </div>
 </template>

@@ -129,8 +129,9 @@ async function laden(event: Event) {
     </div>
 
     <input ref="datei" type="file" accept="application/json" class="hidden" @change="laden"/>
-    <input ref="tabelle" type="file" class="hidden" @change="tabelleLaden"
-           accept=".ods,.xlsx,application/vnd.oasis.opendocument.spreadsheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+    <input ref="tabelle" type="file" class="hidden"
+           accept=".ods,.xlsx,application/vnd.oasis.opendocument.spreadsheet,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+           @change="tabelleLaden"/>
 
     <p v-if="meldung" class="text-sm text-muted">{{ meldung }}</p>
     <p v-if="fehler" class="text-sm text-(--eb-signal-text)">{{ fehler }}</p>

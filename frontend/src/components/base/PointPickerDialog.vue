@@ -69,12 +69,12 @@ onBeforeUnmount(removeMap)
   <UModal v-model:open="open" :title="t('adresse.punktTitel')" :description="t('adresse.punktHinweis')"
           :ui="{content: 'sm:max-w-3xl'}">
     <template #body>
-      <div ref="container" class="h-[55vh] min-h-72 rounded-sm border border-default"></div>
+      <div ref="container" class="h-[55vh] min-h-72 rounded-sm border border-default" />
     </template>
     <template #footer>
       <div class="flex w-full flex-wrap items-center gap-3">
         <span class="tabular text-sm">{{ chosen ? markeAlsText(chosen) : t('adresse.punktKeiner') }}</span>
-        <span class="grow"></span>
+        <span class="grow" />
         <UButton v-if="address.koordinaten" size="sm" color="signal" variant="outline" icon="i-lucide-trash-2"
                  :label="t('adresse.punktLoeschen')" @click="emit('set', '')"/>
         <UButton size="sm" icon="i-lucide-check" :disabled="!chosen" :label="t('adresse.punktSetzen')"

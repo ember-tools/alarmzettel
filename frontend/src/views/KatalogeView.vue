@@ -359,7 +359,7 @@ function truppVorschau(staerke: string): string {
       </form>
       <p v-if="stichwortvorschlaege.length" class="text-muted text-[13px] mb-3">
         {{ t('kataloge.stichwortFehlen') }}
-        <UButton size="sm" color="neutral" variant="outline" class="ml-2 mb-1" v-for="text in stichwortvorschlaege" :key="text"
+        <UButton v-for="text in stichwortvorschlaege" :key="text" size="sm" color="neutral" variant="outline" class="ml-2 mb-1"
                  @click="stichwortUebernehmen(text)">
           {{ text }}
         </UButton>
@@ -373,7 +373,7 @@ function truppVorschau(staerke: string): string {
         <div v-for="eintrag in stichwoerter.liste" :key="eintrag.id"
              class="flex gap-2 items-center">
           <UInput v-model="eintrag.text" type="text"
-                  @change="stichwortUmbenannt(eintrag)" class="w-full"/>
+                  class="w-full" @change="stichwortUmbenannt(eintrag)"/>
           <UButton size="sm" color="signal" variant="outline" class="shrink-0"
                    :title="t('kataloge.eintragEntfernen')"
                    @click="stichwortEntfernen(arbeitsmappe.kataloge.stichwoerter.indexOf(eintrag))">
@@ -447,28 +447,28 @@ function truppVorschau(staerke: string): string {
             <div>
               <span class="field-label">{{ t('planung.rollen') }}</span>
               <div class="flex flex-wrap gap-2 items-center">
-                <UButton size="sm" v-for="wert in arbeitsmappe.kataloge.rollen" :key="wert"
+                <UButton v-for="wert in arbeitsmappe.kataloge.rollen" :key="wert" size="sm"
                          :color="person.rollen.includes(wert) ? 'primary' : 'neutral'" :variant="person.rollen.includes(wert) ? 'solid' : 'outline'"
                          @click="umschalten(person.rollen, wert)">
                   {{ wert }}
                 </UButton>
                 <UInput type="text" list="rollenliste"
                         :placeholder="t('planung.rolleDazu')"
-                        @change="wortGeben('rollen', person.rollen, $event.target as HTMLInputElement)" class="w-auto"/>
+                        class="w-auto" @change="wortGeben('rollen', person.rollen, $event.target as HTMLInputElement)"/>
               </div>
             </div>
             <div>
               <span class="field-label">{{ t('planung.fahrerlaubnis') }}</span>
               <div class="flex flex-wrap gap-2 items-center">
-                <UButton size="sm" v-for="wert in arbeitsmappe.kataloge.fahrerlaubnisse" :key="wert"
+                <UButton v-for="wert in arbeitsmappe.kataloge.fahrerlaubnisse" :key="wert" size="sm"
                          :color="person.fahrerlaubnis.includes(wert) ? 'primary' : 'neutral'" :variant="person.fahrerlaubnis.includes(wert) ? 'solid' : 'outline'"
                          @click="umschalten(person.fahrerlaubnis, wert)">
                   {{ wert }}
                 </UButton>
                 <UInput type="text" list="klassenliste"
                         :placeholder="t('planung.klasseDazu')"
-                        @change="wortGeben('fahrerlaubnisse', person.fahrerlaubnis,
-                        $event.target as HTMLInputElement)" class="w-auto"/>
+                        class="w-auto" @change="wortGeben('fahrerlaubnisse', person.fahrerlaubnis,
+                        $event.target as HTMLInputElement)"/>
               </div>
             </div>
           </div>
@@ -507,7 +507,7 @@ function truppVorschau(staerke: string): string {
       </div>
     </CollapsibleSection>
     <div class="grid md:grid-cols-2 gap-4">
-      <CollapsibleSection storage-key="alarmplaner_kataloge" v-for="liste in listen" :key="liste.schluessel" :name="liste.schluessel"
+      <CollapsibleSection v-for="liste in listen" :key="liste.schluessel" storage-key="alarmplaner_kataloge" :name="liste.schluessel"
                       :title="liste.titel" :count="arbeitsmappe.kataloge[liste.schluessel].length">
 
         <form class="flex gap-2 mb-3" @submit.prevent="hinzufuegen(liste.schluessel)">

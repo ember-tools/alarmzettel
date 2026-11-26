@@ -67,7 +67,7 @@ function zeit(wann: string): string {
           {{ t('ablauf.derWievielte', {n: einsatz.nummer}) }}
         </span>
         <span class="text-muted text-sm">{{ ortName(einsatz.ortId) }}</span>
-        <span class="grow"></span>
+        <span class="grow" />
         <span class="tabular text-sm text-muted">
           {{ t('ablauf.einsatzZeiten', {
             da: uhrzeit(einsatz.da), bis: uhrzeit(einsatz.bis),

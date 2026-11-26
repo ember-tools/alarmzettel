@@ -115,12 +115,12 @@ function lageAnlegen() {
       <div>
         <label class="field-label">{{ t('ablauf.beginn') }}</label>
         <UInput v-model="schritt.von" type="datetime-local" step="300"
-                @change="beginnGesetzt()" class="w-full"/>
+                class="w-full" @change="beginnGesetzt()"/>
       </div>
       <div>
         <label class="field-label">{{ t('ablauf.ende') }}</label>
         <UInput v-model="schritt.bis" type="datetime-local" step="300"
-                @change="nachziehen(lauf, schritt)" class="w-full"/>
+                class="w-full" @change="nachziehen(lauf, schritt)"/>
       </div>
       <div>
         <label class="field-label">
@@ -244,7 +244,7 @@ function lageAnlegen() {
           </UFieldGroup>
           <UInput type="text" list="materialliste"
                   :placeholder="t('ablauf.materialDazu')"
-                  @change="materialGewaehlt($event.target as HTMLInputElement)" class="w-auto"/>
+                  class="w-auto" @change="materialGewaehlt($event.target as HTMLInputElement)"/>
         </div>
       </div>
 

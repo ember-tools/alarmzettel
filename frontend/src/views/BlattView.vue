@@ -231,7 +231,7 @@ onBeforeUnmount(() => {
           </div>
           <p class="text-muted text-[13px] mt-1">{{ t('blatt.hinweis') }}</p>
         </div>
-        <UButton size="sm" color="neutral" variant="outline" v-if="zeilen.length" @click="pdf">
+        <UButton v-if="zeilen.length" size="sm" color="neutral" variant="outline" @click="pdf">
           <UIcon name="i-lucide-file-text"/>
           {{ t('blatt.pdf') }}
         </UButton>

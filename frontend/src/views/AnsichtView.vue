@@ -54,7 +54,7 @@ async function pdf() {
     <p v-if="fehler" class="text-sm text-(--eb-signal-text)">{{ fehler }}</p>
 
     <div v-if="reiter.length > 1" class="flex flex-wrap gap-2">
-      <UButton size="sm" v-for="name in reiter" :key="name"
+      <UButton v-for="name in reiter" :key="name" size="sm"
                :color="ansicht === name ? 'primary' : 'neutral'" :variant="ansicht === name ? 'solid' : 'outline'" @click="ansicht = name">
         {{ t(`ansicht.reiter.${name}`) }}
       </UButton>

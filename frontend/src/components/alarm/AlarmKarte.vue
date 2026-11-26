@@ -53,7 +53,7 @@ const fahrzeuge = computed(() =>
       <div class="flex items-baseline gap-3 flex-wrap">
         <h2 class="headline text-xl">{{ alarm.stichwort || t('liste.ohneStichwort') }}</h2>
         <span v-if="alarm.einsatzNr" class="tabular text-muted">{{ alarm.einsatzNr }}</span>
-        <span class="grow"></span>
+        <span class="grow" />
         <span class="tabular text-sm">
           {{ `${alarm.einsatzDatum} ${alarm.einsatzZeit}`.trim() }}
         </span>

@@ -34,7 +34,7 @@ const {lauf} = defineProps<{ lauf: Lauf }>()
           <span v-if="mehrereTage()" class="text-muted">{{ tagVon(schritt.von) }}</span>
           {{ uhrzeit(schritt.von) }}–{{ uhrzeit(schritt.bis) }}
         </span>
-        <span class="grow"></span>
+        <span class="grow" />
         <UButton size="sm" color="signal" variant="outline"
                  @click="entfernen(lauf.schritte, schritt)">
           <UIcon name="i-lucide-x"/>

@@ -196,7 +196,7 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
         <option v-for="eintrag in tage" :key="eintrag" :value="eintrag">{{ eintrag }}</option>
       </select>
       <span v-else class="text-muted text-sm">{{ tag }}</span>
-      <span class="grow"></span>
+      <span class="grow" />
       <span class="tabular text-lg">{{ uhrzeit(zeitpunkt) }}</span>
       <UButton size="sm" :color="folgt ? 'primary' : 'neutral'" :variant="folgt ? 'solid' : 'outline'"
                @click="folgenUmschalten">
@@ -208,7 +208,7 @@ watch(tage, liste => { if (!liste.includes(tag.value) && liste.length) tag.value
            class="w-full mb-3" @input="folgenBeenden"/>
 
     <div class="grid lg:grid-cols-[1fr_280px] gap-4 items-start">
-      <div ref="behaelter" class="h-[60vh] min-h-80 rounded border border-default"></div>
+      <div ref="behaelter" class="h-[60vh] min-h-80 rounded border border-default" />
 
       <div class="grid gap-2">
         <h3 class="eyebrow">{{ t('ablauf.naechste') }}</h3>

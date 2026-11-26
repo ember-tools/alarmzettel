@@ -72,9 +72,9 @@ watch(modus, () => alleZeigen())
     <section v-if="spuren.length" class="panel">
       <div class="flex items-baseline gap-3 flex-wrap mb-3">
         <h2 class="section-title">{{ t('ablauf.bewegung') }}</h2>
-        <span class="grow"></span>
+        <span class="grow" />
         <div class="flex gap-2 flex-wrap">
-          <UButton size="sm" v-for="name in MODI" :key="name"
+          <UButton v-for="name in MODI" :key="name" size="sm"
                    :color="modus === name ? 'primary' : 'neutral'" :variant="modus === name ? 'solid' : 'outline'" @click="umschalten(name)">
             {{ t(`ablauf.modus.${name}`) }}
           </UButton>
@@ -83,7 +83,7 @@ watch(modus, () => alleZeigen())
 
       <div class="flex flex-wrap items-center gap-2">
         <span class="eyebrow mr-1">{{ t('ablauf.zeigen') }}</span>
-        <UButton size="sm" v-for="spur in spuren" :key="spur.id"
+        <UButton v-for="spur in spuren" :key="spur.id" size="sm"
                  :color="versteckt.has(spur.id) ? 'neutral' : 'primary'" :variant="versteckt.has(spur.id) ? 'outline' : 'solid'" :class="versteckt.has(spur.id) ? 'is-off' : ''"
                  :title="t('ablauf.nurDiese')"
                  @click="zeigen(spur.id)" @dblclick="nurEine(spur.id)">
@@ -91,7 +91,7 @@ watch(modus, () => alleZeigen())
             :name="versteckt.has(spur.id) ? 'i-lucide-x' : 'i-lucide-check'"/>
           {{ spur.name || t('ablauf.ohneName') }}
         </UButton>
-        <UButton size="sm" color="neutral" variant="outline" v-if="versteckt.size" @click="alleZeigen">
+        <UButton v-if="versteckt.size" size="sm" color="neutral" variant="outline" @click="alleZeigen">
           {{ t('ablauf.alleZeigen') }}
         </UButton>
       </div>
@@ -105,8 +105,8 @@ watch(modus, () => alleZeigen())
     <section v-for="bild in bilder" :key="`${bild.modus}-${bild.datum}`" class="panel">
       <div class="flex items-baseline gap-3 flex-wrap mb-3">
         <h2 class="section-title">{{ bild.datum }}</h2>
-        <span class="grow"></span>
-        <UButton size="sm" color="neutral" variant="outline" v-if="gewaehlt" @click="gewaehlt = null">
+        <span class="grow" />
+        <UButton v-if="gewaehlt" size="sm" color="neutral" variant="outline" @click="gewaehlt = null">
           {{ t('ablauf.alleHervorheben') }}
         </UButton>
       </div>

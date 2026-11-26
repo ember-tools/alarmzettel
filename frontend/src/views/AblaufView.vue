@@ -123,7 +123,7 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
     <p v-if="fehler" class="text-(--eb-signal-text) text-sm">{{ fehler }}</p>
 
     <div class="flex flex-wrap gap-2">
-      <UButton size="sm" v-for="name in reiter" :key="name"
+      <UButton v-for="name in reiter" :key="name" size="sm"
                :color="ansicht === name ? 'primary' : 'neutral'" :variant="ansicht === name ? 'solid' : 'outline'" @click="ansicht = name">
         {{ t(`ablauf.ansicht.${name}`) }}
       </UButton>
@@ -144,15 +144,15 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
     <section class="panel">
       <h2 class="section-title">{{ t('ablauf.einplanen') }}</h2>
       <div class="flex flex-wrap gap-2">
-        <UButton size="sm" color="neutral" variant="outline" v-for="fahrzeug in arbeitsmappe.kataloge.fahrzeuge.filter(v => offen({fahrzeugId: v.id}))"
-                :key="fahrzeug.id"
-                @click="einplanen({fahrzeugId: fahrzeug.id})">
+        <UButton v-for="fahrzeug in arbeitsmappe.kataloge.fahrzeuge.filter(v => offen({fahrzeugId: v.id}))"
+                 :key="fahrzeug.id" size="sm" color="neutral" variant="outline"
+                 @click="einplanen({fahrzeugId: fahrzeug.id})">
           <UIcon name="i-lucide-plus"/>
           {{ fahrzeug.funkrufname || t('ablauf.ohneName') }}
         </UButton>
-        <UButton size="sm" color="neutral" variant="outline" v-for="person in arbeitsmappe.kataloge.personen.filter(p => offen({personId: p.id}))"
-                :key="person.id"
-                @click="einplanen({personId: person.id})">
+        <UButton v-for="person in arbeitsmappe.kataloge.personen.filter(p => offen({personId: p.id}))"
+                 :key="person.id" size="sm" color="neutral" variant="outline"
+                 @click="einplanen({personId: person.id})">
           <UIcon name="i-lucide-plus"/>
           {{ person.name || t('ablauf.ohneName') }}
         </UButton>
@@ -164,7 +164,7 @@ async function drucken(holen: () => Promise<Blob>, name: string) {
       {{ t('ablauf.keineKetten') }}
     </p>
 
-    <CollapsibleSection storage-key="alarmplaner_kataloge" v-for="lauf in arbeitsmappe.planung.laeufe" :key="lauf.id"
+    <CollapsibleSection v-for="lauf in arbeitsmappe.planung.laeufe" :key="lauf.id" storage-key="alarmplaner_kataloge"
                     :name="`kette-${lauf.id}`" :title="beschriftung(lauf)"
                     :icon="lauf.fahrzeugId ? 'i-lucide-table' : 'i-lucide-users'"
                     :count="lauf.schritte.length" default-open>

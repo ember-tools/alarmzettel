@@ -76,7 +76,7 @@ function alarmFuerWaehlen(gruppe: number, fahrzeug: number) {
   <section class="panel">
     <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
       <h2 class="section-title">{{ t('abschnitt.einsatzmittel') }}</h2>
-      <UButton size="sm" color="neutral" variant="outline" v-if="!ausPlan" @click="gruppeHinzufuegen">
+      <UButton v-if="!ausPlan" size="sm" color="neutral" variant="outline" @click="gruppeHinzufuegen">
         <UIcon name="i-lucide-plus"/>
         {{ t('einsatzmittel.gruppeNeu') }}
       </UButton>
