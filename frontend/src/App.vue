@@ -70,7 +70,7 @@ useHead({
       <RouterView/>
     </main>
 
-    <AppFooter tool="Alarmplaner" source="https://github.com/ember-tools/alarmzettel" license="AGPL-3.0"
+    <AppFooter tool="Alarmzettel" source="https://github.com/ember-tools/alarmzettel" license="AGPL-3.0"
                help="/hilfe"/>
   </EmberboxApp>
 </template>

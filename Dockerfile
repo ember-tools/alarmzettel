@@ -57,9 +57,9 @@ ENV SITZUNG_VERZEICHNIS=/data/freigaben \
     TILE_DIR=/data/tiles \
     LOG_FORMAT=json
 RUN mkdir -p src/render/tmp /data/freigaben /data/tiles && chmod 1777 src/render/tmp \
- && useradd --system --uid 10001 alarmplaner \
- && chown -R alarmplaner:alarmplaner /app /data
-USER alarmplaner
+ && useradd --system --uid 10001 alarmzettel \
+ && chown -R alarmzettel:alarmzettel /app /data
+USER alarmzettel
 VOLUME ["/data"]
 
 EXPOSE 8000

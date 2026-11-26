@@ -1,7 +1,7 @@
 export default {
     app: {
-        name: 'Alarmplaner',
-        untertitel: 'Alarmzettel schreiben und Übungstage planen',
+        name: 'Alarmzettel',
+        untertitel: 'Alarme für Einsatzübungen schreiben und Übungstage planen',
     },
     nav: {
         alarme: 'Alarme',
@@ -10,7 +10,7 @@ export default {
         planung: 'Ablauf',
         info: 'Was ist das?',
         hilfe: 'Hilfe',
-        zurApp: 'Zum Alarmplaner',
+        zurApp: 'Alarmzettel öffnen',
     },
     routes: {
         alarme: 'Alarme',
@@ -432,12 +432,12 @@ export default {
         zurueck: 'Zur Alarmliste',
     },
     help: {
-        pageTitle: 'Hilfe – Alarmplaner',
-        description: 'So schreibt man im Alarmplaner Alarmzettel, pflegt Kataloge, plant Übungstage und arbeitet gemeinsam.',
-        title: 'Hilfe zum Alarmplaner',
+        pageTitle: 'Hilfe – Alarmzettel',
+        description: 'So schreibt man Alarmzettel, pflegt Kataloge, plant Übungstage und arbeitet gemeinsam.',
+        title: 'Hilfe',
         overview: {
             title: 'Überblick',
-            1: 'Der Alarmplaner schreibt die Alarmzettel der Berliner Feuerwehr für Einsatzübungen und plant auf Wunsch den Übungstag drumherum.',
+            1: 'Hier schreibst du die Alarmzettel der Berliner Feuerwehr für Einsatzübungen und planst auf Wunsch den Übungstag drumherum.',
             2: 'Alles, was du eingibst, liegt in einer Arbeitsmappe in deinem Browser. Wer gemeinsam arbeiten will, legt eine Sitzung an; dann liegt die Arbeitsmappe zusätzlich auf dem Server.',
         },
         alarms: {
@@ -480,8 +480,8 @@ export default {
     },
     info: {
         description: 'Alarmzettel der Berliner Feuerwehr schreiben und Übungstage planen: Einsätze erfassen, Einsatzmittel einteilen, Zettel als PDF drucken und gemeinsam im Browser arbeiten. Kostenlos und ohne Anmeldung.',
-        open: 'Alarmplaner öffnen',
-        featuresTitle: 'Was der Alarmplaner kann',
+        open: 'Alarmzettel öffnen',
+        featuresTitle: 'Funktionen im Überblick',
         features: {
             alarms: {title: 'Alarme erfassen', text: 'Einsatz, Stichwort, Adressen, Beteiligte, Hinweise und Einsatzmittelaufgebot, mit so vielen Gruppen und Fahrzeugen wie nötig.'},
             pdf: {title: 'Zettel als PDF', text: 'Ein Blatt je Alarm im Format der Berliner Feuerwehr, mit Vorschau beim Tippen, einzeln oder alle in einer Datei.'},

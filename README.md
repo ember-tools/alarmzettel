@@ -1,4 +1,4 @@
-# Alarmplaner
+# Alarmzettel
 
 A tool for planning a fire brigade exercise day and for producing the Berlin fire brigade's alarm
 slips that go with it.
